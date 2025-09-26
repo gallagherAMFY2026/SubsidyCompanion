@@ -1,0 +1,95 @@
+{
+  "schema": {
+    "sources": {
+      "grants_gov_search2": {
+        "id_fields": ["id", "number", "opportunityNumber"],
+        "primary_key": "first_non_null(number, id)",
+        "secondary_key": "sha1(normalize(title) + '|' + normalize(agencyCode) + '|' + normalize(openDate))",
+        "canonical_url": "https://www.grants.gov/search-results-detail/{{number}}",
+        "notes": "search2 returns id, number, title, agencyCode, openDate, closeDate, oppStatus, docType, alnist"
+      },
+      "grants_gov_detail": {
+        "id_fields": ["opportunityNumber"],
+        "primary_key": "opportunityNumber",
+        "secondary_key": "sha1(normalize(title) + '|' + normalize(agencyCode) + '|' + normalize(postDate))",
+        "canonical_url": "opportunitySynopsisURL || opportunityAdditionalInfoURL"
+      },
+      "usda_hq_rss": {
+        "primary_key": "guid || sha1(normalize_url(link) + '|' + normalize(title))",
+        "time_bucket": "day",
+        "canonical_url": "normalize_url(link)"
+      },
+      "fns_rss": {
+        "primary_key": "guid || sha1(normalize_url(link))",
+        "secondary_key": "sha1(normalize(title))",
+        "canonical_url": "normalize_url(link)"
+      },
+      "rd_rss": {
+        "primary_key": "guid || sha1(normalize_url(link))",
+        "canonical_url": "normalize_url(link)"
+      },
+      "ars_rss": {
+        "primary_key": "guid || sha1(normalize_url(link))",
+        "canonical_url": "normalize_url(link)"
+      },
+      "nass_rss": {
+        "primary_key": "guid || sha1(normalize_url(link))",
+        "canonical_url": "normalize_url(link)"
+      },
+      "fs_rss": {
+        "primary_key": "guid || sha1(normalize_url(link))",
+        "canonical_url": "normalize_url(link)"
+      }
+    },
+    "cross_source": {
+      "merge_key": [
+        "eq(grants.number, rss.grants_number_from_url)",
+        "fuzzy(title)",
+        "agencyCode_or_host",
+        "category_or_keyword_match"
+      ],
+      "similarity_threshold": 0.88,
+      "notes": "Prefer exact match on Grants.gov opportunity number parsed from RSS links; otherwise use fuzzy title + agency/host."
+    },
+    "canonicalization": {
+      "prefer_https": true,
+      "strip_query_params": ["utm_source","utm_medium","utm_campaign","utm_term","utm_content","gclid","fbclid"],
+      "normalize_host_aliases": [
+        ["www.grants.gov","grants.gov"],
+        ["www.usda.gov","usda.gov"],
+        ["www.fns.usda.gov","fns.usda.gov"],
+        ["www.rd.usda.gov","rd.usda.gov"]
+      ]
+    },
+    "collision_resolution": {
+      "precedence": ["grants_gov_detail","grants_gov_search2","usda_hq_rss","fns_rss","rd_rss","ars_rss","nass_rss","fs_rss"],
+      "field_rules": {
+        "opportunity_number": "from(grants_gov_detail || grants_gov_search2)",
+        "title": "latest_by_precedence",
+        "agency_code": "from(grants_gov_detail || grants_gov_search2)",
+        "published_at": "earliest_by_precedence",
+        "post_date": "from(grants_gov_detail || grants_gov_search2)",
+        "close_date": "earliest_non_null",
+        "opp_status": "latest_by_precedence",
+        "aln_list": "union_unique",
+        "funding_category": "from(grants_gov_detail || grants_gov_search2)",
+        "eligibilities": "union_unique",
+        "estimated_funding": "max_by_precedence",
+        "expected_awards": "max_by_precedence",
+        "synopsis_url": "prefer_deepest_path",
+        "description": "richest_html_by_precedence"
+      }
+    },
+    "normalization": {
+      "date_format": "YYYY-MM-DD",
+      "money_fields_usd": ["estimated_funding"],
+      "rounding": {"estimated_funding": 0},
+      "text_cleanup": ["trim","collapse_whitespace","strip_html"]
+    },
+    "audit": {
+      "store_source_payload": true,
+      "diff_fields": ["title","opp_status","close_date","estimated_funding","eligibilities","description"],
+      "keep_history_days": 365
+    }
+  }
+}

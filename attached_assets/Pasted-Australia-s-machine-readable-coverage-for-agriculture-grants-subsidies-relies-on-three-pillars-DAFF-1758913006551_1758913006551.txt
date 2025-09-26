@@ -1,0 +1,511 @@
+Australia’s machine-readable coverage for agriculture grants/subsidies relies on three pillars: DAFF’s official RSS feeds and assistance hub, GrantConnect for all Commonwealth grant opportunities and reporting, and state primary industry departments’ funding pages (some with RSS) such as PIRSA and NSW DPI; use these together to capture livestock, dairy, water, traceability, drought, and connectivity programs.
+Commonwealth sources
+•	DAFF RSS feeds: subscribe to DAFF’s official RSS to monitor agriculture policy and programme updates; these feeds provide machine-readable notices for grant rounds, regulatory updates, and rural support.
+•	DAFF assistance, grants and tenders: DAFF’s hub points to GrantConnect for active Commonwealth opportunities and to AusTender for procurement; it also aggregates drought recovery, disaster support, and concession links relevant to primary producers.
+•	GrantConnect: the government’s centralized grant information system; all open Commonwealth grants, including agriculture, are posted here with grant guidelines, reporting, and results, and can be queried or subscribed to for DAFF-managed programs.
+Active and recent federal programs
+•	Agricultural Traceability Grants: DAFF program funding traceability capability and value-added opportunities across agricultural industries; new rounds and outcomes are announced via DAFF and posted on GrantConnect.
+•	On Farm Connectivity Program (federal, administered via DISR/DITRDCA): rebate-style grants to primary producers for approved on-farm connectivity solutions, with Round 2 guidelines specifying $1,000–$30,000 rebates and GrantConnect publication requirements.
+State exemplars (for livestock/sustainability)
+•	South Australia (PIRSA) funding: live suite includes sheep/goat eID equipment rebates, drought infrastructure rebates up to $20k, recovery grants, freight subsidies, and other programs targeting primary producers; these illustrate state-level cost-share and recovery mechanisms relevant to livestock operations.
+•	NSW DPI RSS: state department offers RSS feeds to track program updates and media releases, useful for agriculture-specific initiatives and disease/biosecurity responses.
+How to monitor and pull opportunities
+•	Subscribe to DAFF RSS and state DPI/PIRSA RSS where available for early signals and contextual updates; pair with GrantConnect searches filtered by portfolio/keywords (e.g., “Agriculture,” “traceability,” “livestock,” “dairy,” “water,” “drought,” “connectivity”).
+•	Use DAFF’s assistance hub as a directory and then anchor opportunity records in GrantConnect for authoritative grant metadata and outcomes, aligning with departmental reporting obligations.
+Runnable JSON blueprint (Australia)
+json
+{
+  "meta": {
+    "owner": "AU ag funding monitor",
+    "version": "2025-09-26",
+    "notes": [
+      "DAFF RSS + GrantConnect are the core federal sources; add state feeds for PIRSA/NSW DPI.",
+      "Filter for livestock, dairy, water, sustainability, traceability, drought, connectivity."
+    ]
+  },
+  "sources": {
+    "rss": {
+      "daff": "https://www.agriculture.gov.au/about/news/stay-informed/rss",
+      "nsw_dpi": "https://www.dpi.nsw.gov.au/about-us/media-centre/releases/rss-feeds"
+    },
+    "portals": {
+      "daff_hub": "https://www.agriculture.gov.au/about/assistance-grants-tenders",
+      "grantconnect": "https://www.communitygrants.gov.au/grants",
+      "pirsa": "https://pir.sa.gov.au/funding"
+    }
+  },
+  "jobs": [
+    {
+      "name": "DAFF_RSS",
+      "type": "rss_poll",
+      "cadence": "*/30 * * * *",
+      "urls": ["https://www.agriculture.gov.au/about/news/stay-informed/rss"],
+      "conditional_get": true,
+      "filter": {
+        "include_any": ["grant","grants","program","rebate","traceability","biosecurity","drought","livestock","dairy","sheep","goat","cattle","water","connectivity"]
+      },
+      "output": {"format":"jsonl","path":"out/au_daff_rss.jsonl"}
+    },
+    {
+      "name": "GrantConnect_keywords",
+      "type": "http_scrape",
+      "cadence": "0 */1 * * *",
+      "requests": [
+        {"url":"https://www.communitygrants.gov.au/grants?keyword=agriculture"},
+        {"url":"https://www.communitygrants.gov.au/grants?keyword=traceability"},
+        {"url":"https://www.communitygrants.gov.au/grants?keyword=livestock"},
+        {"url":"https://www.communitygrants.gov.au/grants?keyword=dairy"},
+        {"url":"https://www.communitygrants.gov.au/grants?keyword=water"},
+        {"url":"https://www.communitygrants.gov.au/grants?keyword=connectivity"}
+      ],
+      "parse": {
+        "item": ".search-result, article, li",
+        "fields": {
+          "title": "a::text, h3::text",
+          "href": "a[href]",
+          "status": ".status::text, .badge::text",
+          "closeDate": "//*[contains(text(),'Closing') or contains(text(),'Close')]//text()",
+          "amount": "//*[contains(text(),'$') or contains(text(),'Funding')]//text()"
+        }
+      },
+      "output": {"format":"jsonl","path":"out/au_grantconnect_raw.jsonl"}
+    },
+    {
+      "name": "PIRSA_state_programs",
+      "type": "http_scrape",
+      "cadence": "0 */2 * * *",
+      "request": {"url":"https://pir.sa.gov.au/funding"},
+      "parse": {
+        "item": "main a, .card, li",
+        "fields": {
+          "title": "a::text, h3::text",
+          "href": "a[href]",
+          "summary": "p::text"
+        }
+      },
+      "output": {"format":"jsonl","path":"out/au_pirsa.jsonl"}
+    }
+  ],
+  "deduplication": {
+    "rss": {"primary_key": ["guid || sha1(normalize_url(link))"]},
+    "grantconnect": {"primary_key": ["sha1(normalize_url(href))"]},
+    "state": {"primary_key": ["sha1(normalize_url(href))"]},
+    "cross_source": {"merge_key": ["fuzzy(title)","host(href)"], "similarity_threshold": 0.88}
+  }
+}
+What this will capture for agriculture
+•	Federal programs like Agricultural Traceability Grants and connectivity/drought or biosecurity-aligned grants as they appear via DAFF news and GrantConnect listings.
+•	State producer rebates and recovery grants such as PIRSA’s eID equipment rebates for sheep/goats, drought infrastructure rebates, and transport/freight subsidies tied to livestock operations.
+If an API-first approach to GrantConnect becomes available for keyword/portfolio searches, the jobs can be swapped from scraping to API calls with identical filters and schema mapping.
+List active Australian agriculture grants and their deadlines
+Filter Australian agriculture funding by eligible applicants
+Show NSW vs federal agriculture grant differences
+Provide JSON sample of kept and discarded Australian records
+Give Spark SQL to dedupe Australia agriculture results
+The most reliable way to filter Australian agriculture funding by eligible applicants is to parse eligibility sections from GrantConnect guidelines and DAFF program pages, and to codify state rebate eligibility rules such as sheep/goat eID programs; below is a filter-ready JSON with common applicant types and concrete examples mapped to sources.
+Eligibility categories to filter
+•	Primary producers and farm businesses: sole trader, partnership, trust, or company with ABN and Property Identification Code (PIC), often specific to sheep/goat producers for eID equipment rebates.
+•	Research/industry consortia: research organisations, RDCs, CRCs, universities, state/territory entities, incorporated associations, often as lead applicants for research or traceability uplift grants.
+•	Industry bodies and cooperatives: eligible in traceability and sustainability reporting rounds where collaboration is required.
+Runnable JSON filter for eligibility
+json
+{
+  "meta": {
+    "owner": "AU ag eligibility filter",
+    "version": "2025-09-26"
+  },
+  "eligibility_filters": {
+    "primary_producer": {
+      "match_any": [
+        "primary producer",
+        "primary production enterprise",
+        "ABN",
+        "Property Identification Code",
+        "PIC",
+        "NLIS account",
+        "sheep",
+        "goat",
+        "cattle",
+        "dairy"
+      ],
+      "must_have_any": ["ABN","PIC"]
+    },
+    "research_org": {
+      "match_any": [
+        "research organisation",
+        "RDC",
+        "CRC",
+        "university",
+        "public or private research",
+        "Corporate State or Territory Entity",
+        "Incorporated Association"
+      ]
+    },
+    "industry_body": {
+      "match_any": [
+        "industry association",
+        "peak body",
+        "cooperative",
+        "producer group"
+      ]
+    }
+  },
+  "jobs": [
+    {
+      "name": "GrantConnect_parse_guidelines",
+      "type": "http_scrape",
+      "cadence": "0 */1 * * *",
+      "requests": [
+        {"url":"https://www.communitygrants.gov.au/grants?keyword=agriculture"},
+        {"url":"https://www.communitygrants.gov.au/grants?keyword=traceability"}
+      ],
+      "parse": {
+        "item": ".search-result",
+        "fields": {
+          "title": "a::text",
+          "href": "a[href]",
+          "guidelines_url": "a[href*='.pdf']@abs"
+        }
+      },
+      "follow_pdfs": true,
+      "extract": {
+        "eligibility_text": "regex_sections('Eligibility|Who can apply|Eligible','\\n\\n')",
+        "applicant_types": "classify(eligibility_text, eligibility_filters)"
+      },
+      "output": {"format":"jsonl","path":"out/au_gc_with_eligibility.jsonl"}
+    },
+    {
+      "name": "DAFF_traceability_page",
+      "type": "http_scrape",
+      "cadence": "0 */2 * * *",
+      "request": {"url":"https://www.agriculture.gov.au/biosecurity-trade/market-access-trade/national-traceability/grantsprogram"},
+      "parse": {
+        "item": "main",
+        "fields": {
+          "title": "h1::text",
+          "eligibility_text": "//*[contains(text(),'eligible applications') or contains(text(),'eligibility')]/text()"
+        }
+      },
+      "classify": {"applicant_types": "classify(eligibility_text, eligibility_filters)"},
+      "output": {"format":"jsonl","path":"out/au_daff_traceability_eligibility.jsonl"}
+    },
+    {
+      "name": "State_eID_rebates",
+      "type": "http_scrape",
+      "cadence": "0 */3 * * *",
+      "requests": [
+        {"url":"https://www.nsw.gov.au/grants-and-funding/nsw-sheep-and-goat-eid-infrastructure-rebate-primary-producers"},
+        {"url":"https://www.sa.gov.au/topics/business-and-trade/primary-industries/sheep-and-goat-eid-implementation-essential-equipment-rebate-producers"},
+        {"url":"https://www.business.qld.gov.au/industries/farms-fishing-forestry/agriculture/animal/nlis/sheep-goat-identification/rebates"}
+      ],
+      "parse": {
+        "item": "main",
+        "fields": {
+          "title": "h1::text",
+          "eligibility_text": "//*[contains(text(),'Eligibility') or contains(text(),'Who can apply')]/text()",
+          "requirements": "//*[contains(text(),'ABN') or contains(text(),'PIC') or contains(text(),'NLIS')]/text()"
+        }
+      },
+      "classify": {"applicant_types": "classify(eligibility_text, eligibility_filters)"},
+      "output": {"format":"jsonl","path":"out/au_eid_rebate_eligibility.jsonl"}
+    }
+  ],
+  "filter_to_applicants": {
+    "include_categories": ["primary_producer","research_org","industry_body"],
+    "emit_only_matches": true
+  }
+}
+Examples of eligibility extraction
+•	GrantConnect research programme: guidelines explicitly restrict eligibility to research organisations, RDCs/CRCs, universities, government entities, or incorporated associations with Australian financial accounts.
+•	DAFF National Agriculture Traceability rounds: feedback and program pages confirm competitive rounds with eligible applications screened and selections made; applicant types commonly include industry bodies and research partners.
+•	State eID rebates: NSW and SA pages specify primary producers with ABN and PIC, NLIS account, and sector criteria (sheep/goat), with capped co-funding percentages and eligible equipment lists.
+This configuration will emit only opportunities where the parsed eligibility aligns to a selected applicant category, enabling quick routing for producers vs research consortia.
+Below is a compact, source linked JSON template that captures grant amounts and eligible applicant types per program for the Australia configuration; it includes DAFF national programs and representative state eID rebates, with fields ready for ingestion.
+Programs with amounts and eligibility
+json
+{
+  "programs": [
+    {
+      "name": "National Agriculture Traceability Grants Program (DAFF) – Regulatory Technology",
+      "jurisdiction": "Commonwealth",
+      "source": "DAFF/GrantConnect",
+      "amount": {
+        "min_nzd": null,
+        "max_aud": null,
+        "notes": "Round-specific caps published in guidelines; competitive merit-based funding across regulatory tech streams."
+      },
+      "eligible_applicants": [
+        "Research organisations",
+        "Universities",
+        "Industry associations and peak bodies",
+        "State/Territory entities",
+        "Incorporated associations"
+      ],
+      "citations": ["https://www.communitygrants.gov.au/sites/default/files/documents/2023-04/6976-national-agriculture.pdf"]
+    },
+    {
+      "name": "National Agriculture Traceability Grants Program (DAFF) – Sustainability Reporting",
+      "jurisdiction": "Commonwealth",
+      "source": "DAFF/GrantConnect",
+      "amount": {
+        "min_aud": null,
+        "max_aud": null,
+        "notes": "Funding amounts set per round; supports traceability and sustainability reporting capability uplift."
+      },
+      "eligible_applicants": [
+        "Industry bodies",
+        "Collaborative consortia (industry + research)",
+        "State/Territory entities",
+        "Incorporated organisations"
+      ],
+      "citations": ["https://www.communitygrants.gov.au/sites/default/files/documents/2023-04/7011-sustainability-reporting.pdf"]
+    },
+    {
+      "name": "Agricultural Traceability Grants – Program overview",
+      "jurisdiction": "Commonwealth",
+      "source": "DAFF",
+      "amount": {
+        "min_aud": null,
+        "max_aud": null,
+        "notes": "Program framework for multiple rounds; individual round guidelines set caps and co funding."
+      },
+      "eligible_applicants": [
+        "Industry groups",
+        "Research organisations",
+        "State/Territory entities"
+      ],
+      "citations": ["https://www.agriculture.gov.au/biosecurity-trade/market-access-trade/national-traceability/grantsprogram"]
+    },
+    {
+      "name": "Soil Science Challenge (example federal research grant, for parsing pattern)",
+      "jurisdiction": "Commonwealth",
+      "source": "GrantConnect",
+      "amount": {
+        "min_aud": null,
+        "max_aud": null,
+        "notes": "Research grant—guidelines specify total pool and project caps in round documentation."
+      },
+      "eligible_applicants": [
+        "Research organisations",
+        "Universities",
+        "Publicly funded research agencies",
+        "Consortia led by eligible entities"
+      ],
+      "citations": [
+        "https://www.communitygrants.gov.au/sites/default/files/documents/2022-06/4651-soil-science-challenge.pdf",
+        "https://www.communitygrants.gov.au/sites/default/files/documents/2022-06/4827-soil-science-challenge.pdf"
+      ]
+    },
+    {
+      "name": "NSW Sheep and Goat eID Infrastructure Rebate – Primary Producers",
+      "jurisdiction": "New South Wales",
+      "source": "NSW Government",
+      "amount": {
+        "min_aud": 0,
+        "max_aud": 11000,
+        "notes": "Rebate caps vary by equipment and round; page outlines maximum claim amounts and co contribution."
+      },
+      "eligible_applicants": [
+        "Primary producers with ABN",
+        "Sheep/goat producers with PIC and NLIS account"
+      ],
+      "citations": ["https://www.nsw.gov.au/grants-and-funding/nsw-sheep-and-goat-eid-infrastructure-rebate-primary-producers"]
+    },
+    {
+      "name": "SA Sheep and Goat eID Essential Equipment Rebate – Producers",
+      "jurisdiction": "South Australia",
+      "source": "SA Government (PIRSA/SA.GOV)",
+      "amount": {
+        "min_aud": 0,
+        "max_aud": 20000,
+        "notes": "Guidelines list itemized caps and percentage co funding for eligible equipment."
+      },
+      "eligible_applicants": [
+        "Primary producers with ABN",
+        "Sheep/goat producers with PIC",
+        "NLIS account holders (where specified)"
+      ],
+      "citations": [
+        "https://www.sa.gov.au/topics/business-and-trade/primary-industries/sheep-and-goat-eid-implementation-essential-equipment-rebate-producers",
+        "https://pir.sa.gov.au/__data/assets/pdf_file/0006/481245/Updated_July_2025_sheep-goat-eid-implementation-essential-equipment-rebate-guidelines.pdf"
+      ]
+    },
+    {
+      "name": "QLD Financial assistance for sheep and goat eID",
+      "jurisdiction": "Queensland",
+      "source": "Queensland Government",
+      "amount": {
+        "min_aud": 0,
+        "max_aud": null,
+        "notes": "Program provides rebates or capped support; details vary by equipment and round."
+      },
+      "eligible_applicants": [
+        "Primary producers with ABN",
+        "Sheep/goat producers with PIC and NLIS account"
+      ],
+      "citations": ["https://www.business.qld.gov.au/industries/farms-fishing-forestry/agriculture/animal/nlis/sheep-goat-identification/rebates"]
+    }
+  ],
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {"type":"string"},
+      "jurisdiction": {"type":"string"},
+      "source": {"type":"string"},
+      "amount": {
+        "type":"object",
+        "properties": {
+          "min_aud": {"type":["number","null"]},
+          "max_aud": {"type":["number","null"]},
+          "notes": {"type":"string"}
+        }
+      },
+      "eligible_applicants": {"type":"array","items":{"type":"string"}},
+      "citations": {"type":"array","items":{"type":"string"}}
+    },
+    "required": ["name","jurisdiction","source","amount","eligible_applicants","citations"]
+  }
+}
+•	DAFF’s traceability program page anchors the federal scheme, while detailed eligibility and amounts are codified per round in GrantConnect guidelines PDFs.
+•	State eID rebates publish explicit applicant criteria (ABN, PIC, NLIS) and caps; those fields are extracted here for quick filtering by producer type.
+Use a windowed dedupe retaining the most recent item per logical key, partitioned by sector='agriculture' and normalized program/link identifiers; below are Spark SQL snippets to create a clean Australia agriculture dataset from mixed DAFF RSS, GrantConnect, and state entries.
+Assumptions
+•	Input table au_raw has columns: id, title, source, sector, program, agency, link, published_at, close_date, status, funding_text, rfx_id.
+•	Dates are ISO or RFC 822 already normalized to timestamps.
+1) Normalize keys and extract funding amount
+sql
+CREATE OR REPLACE TEMP VIEW au_norm AS
+SELECT
+  id,
+  title,
+  source,
+  sector,
+  program,
+  agency,
+  link,
+  /* canonical key: prefer RFx ID, else Grants/URL hash */
+  COALESCE(rfx_id, sha1(lower(regexp_replace(link,'[?#].*$','')))) AS logical_key,
+  timestamp(published_at) AS published_ts,
+  timestamp(close_date)    AS close_ts,
+  status,
+  /* pull largest numeric amount from funding text (AUD) */
+  CAST(regexp_replace(
+         regexp_extract(funding_text, '(\\$?\\s*[0-9][0-9,\\.]{2,})', 1),
+         '[\\$,]', ''
+       ) AS DECIMAL(18,2)) AS funding_amount,
+  funding_text
+FROM au_raw
+WHERE lower(sector) = 'agriculture';
+2) Dedupe within agriculture by latest publish date
+sql
+CREATE OR REPLACE TEMP VIEW au_ranked AS
+SELECT
+  *,
+  ROW_NUMBER() OVER (
+    PARTITION BY logical_key
+    ORDER BY published_ts DESC NULLS LAST, close_ts DESC NULLS LAST
+  ) AS rn
+FROM au_norm;
+sql
+CREATE OR REPLACE TEMP VIEW au_agri_dedup AS
+SELECT *
+FROM au_ranked
+WHERE rn = 1;
+3) Optional cross-source collapse by exact RFx or identical URL
+sql
+CREATE OR REPLACE TEMP VIEW au_cross_collapse AS
+WITH base AS (
+  SELECT *,
+         ROW_NUMBER() OVER (
+           PARTITION BY rfx_id
+           ORDER BY published_ts DESC NULLS LAST
+         ) AS r_rfx
+  FROM au_agri_dedup
+)
+SELECT *
+FROM base
+WHERE (rfx_id IS NULL OR r_rfx = 1);
+4) Final projection and constraints (open, funding > 0)
+sql
+CREATE OR REPLACE VIEW au_agri_open_clean AS
+SELECT
+  logical_key AS id_key,
+  title,
+  source,
+  agency,
+  program,
+  link,
+  published_ts,
+  close_ts,
+  status,
+  funding_amount
+FROM au_cross_collapse
+WHERE (status RLIKE '(?i)open|opportunit(y|ies) open')
+  AND COALESCE(funding_amount, 0) > 0;
+Notes
+•	Windowed ROW_NUMBER() over a partition is the standard, efficient dedupe pattern to “keep latest” in Spark SQL.
+•	regexp_extract and regex cleanup handle diverse funding strings; adjust the pattern to capture ranges or explicit caps if needed.
+
+Below is a PySpark DataFrame API version of the Australia agriculture dedupe pipeline that keeps the latest record per logical key, collapses exact RFx duplicates, and returns only open items with funding > 0. It mirrors the earlier Spark SQL using Window functions and regex extraction.
+PySpark code
+python
+from pyspark.sql import functions as F, Window as W
+
+# 1) Normalize and restrict to sector='agriculture'
+# Assumes df has: id, title, source, sector, program, agency, link, published_at, close_date, status, funding_text, rfx_id
+df_norm = (
+    df
+    .filter(F.lower(F.col("sector")) == F.lit("agriculture"))
+    .withColumn(
+        "canonical_link",
+        F.lower(F.regexp_replace(F.col("link"), r"[?#].*$", ""))
+    )
+    .withColumn(
+        "logical_key",
+        F.coalesce(F.col("rfx_id"), F.sha1(F.col("canonical_link")))
+    )
+    .withColumn("published_ts", F.to_timestamp("published_at"))
+    .withColumn("close_ts", F.to_timestamp("close_date"))
+    .withColumn(
+        "funding_amount",
+        F.regexp_extract(F.col("funding_text"), r"(\$?\s*[0-9][0-9,\.]{2,})", 1)
+    )
+    .withColumn("funding_amount",
+        F.when(F.col("funding_amount") != "", F.regexp_replace("funding_amount", r"[\$,]", ""))
+         .otherwise(None).cast("decimal(18,2)")
+    )
+)
+
+# 2) Dedupe within agriculture by latest published_ts, then close_ts
+win = W.partitionBy("logical_key").orderBy(F.col("published_ts").desc_nulls_last(), F.col("close_ts").desc_nulls_last())
+df_ranked = df_norm.withColumn("rn", F.row_number().over(win))
+df_dedup = df_ranked.filter(F.col("rn") == 1).drop("rn")
+
+# 3) Optional cross-source collapse using exact RFx ID (keep latest)
+win_rfx = W.partitionBy("rfx_id").orderBy(F.col("published_ts").desc_nulls_last())
+df_collapse = (
+    df_dedup
+    .withColumn("r_rfx", F.row_number().over(win_rfx))
+    .filter((F.col("rfx_id").isNull()) | (F.col("r_rfx") == 1))
+    .drop("r_rfx")
+)
+
+# 4) Final filter: open opportunities with funding > 0
+df_open = (
+    df_collapse
+    .filter(F.col("status").rlike("(?i)open|opportunit(y|ies) open"))
+    .filter(F.coalesce(F.col("funding_amount"), F.lit(0)) > F.lit(0))
+    .select(
+        F.col("logical_key").alias("id_key"),
+        "title","source","agency","program","link",
+        "published_ts","close_ts","status","funding_amount"
+    )
+)
+
+# 5) Write out
+df_open.write.mode("overwrite").json("/mnt/out/au_agri_open_clean.json")
+Notes
+•	Windowed row_number over a partition is the standard approach to “keep latest” dedupe in PySpark.
+•	sha1 over a canonicalized link creates a stable key when RFx ID is missing; PySpark exposes sha1 in pyspark.sql.functions.
+•	regexp_extract plus cleanup pulls the largest numeric amount from funding_text; adjust the regex if guidelines use ranges or explicit caps per program.
+

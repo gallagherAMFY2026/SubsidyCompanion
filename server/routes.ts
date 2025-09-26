@@ -3,10 +3,27 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { rssService } from "./services/rssService";
 import { grantsGovService } from "./services/grantsGovService";
+import { brazilService } from "./services/brazilService";
+import { chileService } from "./services/chileService";
+import { newZealandService } from "./services/newZealandService";
+import { 
+  validateBody, 
+  validateQuery, 
+  rateLimit, 
+  requireAdminAuth,
+  brazilSyncPortalSchema,
+  chileSearchTermsSchema,
+  grantsSearchSchema,
+  programsSearchSchema,
+  generalSyncSchema
+} from "./middleware/validation";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // RSS and subsidy program endpoints
-  app.get("/api/programs", async (req, res) => {
+  app.get("/api/programs", 
+    rateLimit(20, 5 * 60 * 1000), // 20 requests per 5 minutes
+    validateQuery(programsSearchSchema),
+    async (req, res) => {
     try {
       const { query, category, location, force_refresh } = req.query;
       
@@ -33,7 +50,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/programs/deadlines", async (req, res) => {
+  app.get("/api/programs/deadlines", 
+    rateLimit(20, 5 * 60 * 1000), // 20 requests per 5 minutes
+    async (req, res) => {
     try {
       const deadlines = await rssService.getUpcomingDeadlines();
       res.json(deadlines);
@@ -43,9 +62,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/programs/sync", async (req, res) => {
+  app.post("/api/programs/sync", 
+    requireAdminAuth,
+    rateLimit(3, 10 * 60 * 1000), // 3 requests per 10 minutes
+    validateBody(generalSyncSchema),
+    async (req, res) => {
     try {
-      await rssService.syncRssData();
+      const { maxPages, forceRefresh } = req.body;
+      await rssService.syncRssData(forceRefresh);
       res.json({ success: true, message: 'RSS data synced successfully' });
     } catch (error) {
       console.error('Error syncing RSS data:', error);
@@ -54,8 +78,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Grants.gov endpoints
-  app.get("/api/grants/search", async (req, res) => {
+  app.get("/api/grants/search", 
+    rateLimit(10, 5 * 60 * 1000), // 10 requests per 5 minutes
+    validateQuery(grantsSearchSchema),
+    async (req, res) => {
     try {
+      // Use validated and coerced parameters from middleware
       const { 
         agencies, 
         keyword, 
@@ -65,14 +93,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         fundingCategories
       } = req.query;
       
-      // Validate and parse query parameters
+      // Use validated parameters directly from middleware
       const searchParams = grantsGovService.validateSearchParams({
-        agencies: agencies as string,
-        keyword: keyword as string,
-        rows: rows ? parseInt(rows as string) : undefined,
-        startRecordNum: startRecordNum ? parseInt(startRecordNum as string) : undefined,
-        oppStatuses: oppStatuses as string,
-        fundingCategories: fundingCategories as string
+        agencies,
+        keyword,
+        rows,
+        startRecordNum,
+        oppStatuses,
+        fundingCategories
       });
       
       const opportunities = await grantsGovService.searchOpportunities(searchParams);
@@ -99,9 +127,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/grants/sync", async (req, res) => {
+  app.post("/api/grants/sync", 
+    requireAdminAuth,
+    rateLimit(3, 10 * 60 * 1000), // 3 requests per 10 minutes
+    validateBody(generalSyncSchema),
+    async (req, res) => {
     try {
-      const processed = await grantsGovService.syncOpportunities();
+      const { maxPages } = req.body;
+      const processed = await grantsGovService.syncOpportunities(maxPages);
       res.json({ 
         success: true, 
         message: `Grants.gov sync completed: ${processed} opportunities processed` 
@@ -112,9 +145,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/grants/sync-usda", async (req, res) => {
+  app.post("/api/grants/sync-usda", 
+    requireAdminAuth,
+    rateLimit(2, 15 * 60 * 1000), // 2 requests per 15 minutes
+    validateBody(generalSyncSchema),
+    async (req, res) => {
     try {
-      const processed = await grantsGovService.syncUSDAAgencyOpportunities();
+      const { maxPages } = req.body;
+      const processed = await grantsGovService.syncUSDAAgencyOpportunities(maxPages);
       res.json({ 
         success: true, 
         message: `USDA agency sync completed: ${processed} opportunities processed` 
@@ -122,6 +160,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error syncing USDA agencies:', error);
       res.status(500).json({ error: 'Failed to sync USDA agency data' });
+    }
+  });
+
+  // Brazil agricultural funding endpoints
+  app.post("/api/brazil/sync", 
+    requireAdminAuth,
+    rateLimit(5, 15 * 60 * 1000), // 5 requests per 15 minutes
+    validateBody(generalSyncSchema),
+    async (req, res) => {
+    try {
+      const initialized = await brazilService.initialize();
+      if (!initialized) {
+        return res.status(400).json({ 
+          error: 'Brazil service initialization failed. Please check API token configuration.' 
+        });
+      }
+
+      const { maxPages } = req.body;
+      const results = await brazilService.syncAllSources(maxPages);
+      const totalProcessed = results.transfers + results.mapaNews + results.bndesNews;
+      
+      res.json({ 
+        success: true, 
+        message: `Brazil sync completed: ${totalProcessed} programs processed`,
+        breakdown: {
+          portalTransparencia: results.transfers,
+          mapaNews: results.mapaNews,
+          bndesNews: results.bndesNews
+        }
+      });
+    } catch (error) {
+      console.error('Error syncing Brazil data:', error);
+      res.status(500).json({ error: 'Failed to sync Brazil agricultural funding data' });
+    }
+  });
+
+  app.post("/api/brazil/sync-portal", 
+    requireAdminAuth,
+    rateLimit(3, 10 * 60 * 1000), // 3 requests per 10 minutes
+    validateBody(brazilSyncPortalSchema),
+    async (req, res) => {
+    try {
+      const { program, maxPages } = req.body;
+      
+      const initialized = await brazilService.initialize();
+      if (!initialized) {
+        return res.status(400).json({ 
+          error: 'Brazil service initialization failed. Please check API token configuration.' 
+        });
+      }
+
+      const transfers = await brazilService.fetchPortalTransfers(program, maxPages);
+      res.json({ 
+        success: true, 
+        message: `Portal da Transparência sync completed: ${transfers.length} transfers fetched`,
+        data: transfers
+      });
+    } catch (error) {
+      console.error('Error syncing Portal da Transparência:', error);
+      res.status(500).json({ error: 'Failed to sync Portal da Transparência data' });
+    }
+  });
+
+  app.get("/api/brazil/mapa-news", async (req, res) => {
+    try {
+      const news = await brazilService.scrapeMapaNews();
+      res.json({ 
+        success: true, 
+        data: news,
+        count: news.length
+      });
+    } catch (error) {
+      console.error('Error fetching MAPA news:', error);
+      res.status(500).json({ error: 'Failed to fetch MAPA news' });
+    }
+  });
+
+  app.get("/api/brazil/bndes-news", async (req, res) => {
+    try {
+      const news = await brazilService.scrapeBndesNews();
+      res.json({ 
+        success: true, 
+        data: news,
+        count: news.length
+      });
+    } catch (error) {
+      console.error('Error fetching BNDES news:', error);
+      res.status(500).json({ error: 'Failed to fetch BNDES news' });
+    }
+  });
+
+  app.get("/api/brazil/programs", async (req, res) => {
+    try {
+      const { source } = req.query;
+      let programs;
+      
+      if (source) {
+        programs = await storage.getSubsidyProgramsBySource(source as string);
+      } else {
+        // Get all Brazil programs
+        const sources = ['portal_transparencia', 'mapa_news', 'bndes_news'];
+        programs = [];
+        for (const sourceType of sources) {
+          const sourcePrograms = await storage.getSubsidyProgramsBySource(sourceType);
+          programs.push(...sourcePrograms);
+        }
+      }
+      
+      res.json(programs);
+    } catch (error) {
+      console.error('Error fetching Brazil programs:', error);
+      res.status(500).json({ error: 'Failed to fetch Brazil programs' });
     }
   });
 
@@ -168,6 +318,126 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error fetching logs:', error);
       res.status(500).json({ error: 'Failed to fetch logs' });
+    }
+  });
+
+  // Chile agricultural funding endpoints
+  app.post("/api/chile/sync", 
+    requireAdminAuth,
+    rateLimit(5, 15 * 60 * 1000), // 5 requests per 15 minutes
+    validateBody(generalSyncSchema),
+    async (req, res) => {
+    try {
+      const initialized = await chileService.initialize();
+      if (!initialized) {
+        return res.status(400).json({ 
+          error: 'Chile service initialization failed. Please check connectivity.' 
+        });
+      }
+
+      const { maxPages } = req.body;
+      const results = await chileService.syncAllSources(maxPages);
+      const totalProcessed = results.tenders + results.budget + results.minagriNews + results.fiaCalls;
+      
+      res.json({ 
+        success: true, 
+        message: `Chile sync completed: ${totalProcessed} programs processed`,
+        breakdown: {
+          chileCompraTenders: results.tenders,
+          presupuestoAbierto: results.budget,
+          minagriNews: results.minagriNews,
+          fiaCalls: results.fiaCalls
+        }
+      });
+    } catch (error) {
+      console.error('Error syncing Chile data:', error);
+      res.status(500).json({ error: 'Failed to sync Chile agricultural funding data' });
+    }
+  });
+
+  app.get("/api/chile/chilecompra-tenders", 
+    rateLimit(10, 5 * 60 * 1000), // 10 requests per 5 minutes
+    validateQuery(chileSearchTermsSchema),
+    async (req, res) => {
+    try {
+      const { searchTerms } = req.query;
+      const terms = searchTerms ? (searchTerms as string).split(',') : undefined;
+      
+      const tenders = await chileService.fetchChileCompraTenders(terms);
+      res.json({ 
+        success: true, 
+        data: tenders,
+        count: tenders.length
+      });
+    } catch (error) {
+      console.error('Error fetching ChileCompra tenders:', error);
+      res.status(500).json({ error: 'Failed to fetch ChileCompra tenders' });
+    }
+  });
+
+  app.get("/api/chile/presupuesto-abierto", async (req, res) => {
+    try {
+      const budget = await chileService.fetchPresupuestoAbierto();
+      res.json({ 
+        success: true, 
+        data: budget,
+        count: budget.length
+      });
+    } catch (error) {
+      console.error('Error fetching Presupuesto Abierto data:', error);
+      res.status(500).json({ error: 'Failed to fetch Presupuesto Abierto data' });
+    }
+  });
+
+  app.get("/api/chile/minagri-news", async (req, res) => {
+    try {
+      const news = await chileService.scrapeMinagriNews();
+      res.json({ 
+        success: true, 
+        data: news,
+        count: news.length
+      });
+    } catch (error) {
+      console.error('Error fetching MINAGRI news:', error);
+      res.status(500).json({ error: 'Failed to fetch MINAGRI news' });
+    }
+  });
+
+  app.get("/api/chile/fia-calls", async (req, res) => {
+    try {
+      const calls = await chileService.scrapeFiaCalls();
+      res.json({ 
+        success: true, 
+        data: calls,
+        count: calls.length
+      });
+    } catch (error) {
+      console.error('Error fetching FIA calls:', error);
+      res.status(500).json({ error: 'Failed to fetch FIA calls' });
+    }
+  });
+
+  app.get("/api/chile/programs", async (req, res) => {
+    try {
+      const { source } = req.query;
+      let programs;
+      
+      if (source) {
+        programs = await storage.getSubsidyProgramsBySource(source as string);
+      } else {
+        // Get all Chile programs
+        const sources = ['chilecompra_api', 'presupuesto_abierto', 'minagri_news', 'fia_calls'];
+        programs = [];
+        for (const sourceType of sources) {
+          const sourcePrograms = await storage.getSubsidyProgramsBySource(sourceType);
+          programs.push(...sourcePrograms);
+        }
+      }
+      
+      res.json(programs);
+    } catch (error) {
+      console.error('Error fetching Chile programs:', error);
+      res.status(500).json({ error: 'Failed to fetch Chile programs' });
     }
   });
 

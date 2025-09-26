@@ -1,0 +1,348 @@
+New Zealand farmer-facing funding today is centered on MPI’s funding and rural support programs (with RSS), the new Primary Sector Growth Fund replacing SFF Futures, targeted rural wellbeing/catchment funds, and legacy SFF Futures projects; there are no universal livestock-only grants, but co-investment and contestable funds regularly back livestock, dairy, water, and sustainable practice projects, complemented by occasional research funds in livestock emissions.
+Where funding lives
+•	MPI “Funding and rural support”: official hub linking to all current grant/partnership schemes, community support, catchment group support, and sector programmes; this should be the primary discovery point and it exposes RSS feeds for update monitoring.
+•	Farming funds and programmes: MPI’s consolidated list for innovation and producer/community support across agriculture, aquaculture, forestry, and rural resilience; this is the best entry for livestock, dairy, water, and sustainable practices.
+Current core funds
+•	Primary Sector Growth Fund (PSGF): launched May 2025 to replace Sustainable Food and Fibre Futures, with NZD $246m over four years for practical, business-led projects delivering productivity and “farm and forest gate” returns; prioritizes market-driven initiatives and cost reduction.
+•	Rural Wellbeing Fund: contestable fund for rural community wellbeing initiatives administered by MPI, with parallel baseline funding for Rural Support Trusts; initial budget lines were announced in May 2025.
+•	Catchment groups support: Budget 2025 notes ongoing support of NZD $36m over four years via MPI for catchment groups, often tied to freshwater plans and on-farm practice improvements.
+Legacy and transition
+•	SFF Futures status: closed to new applications on 23 May 2025 and replaced by PSGF; existing SFF projects continue under MPI with project finder and portfolio impact analysis indicating 9x ROI modeled over 30 years.
+•	SFF Futures structure insights: third-party analysis describes grant tiers (“Grants,” “Hybrids,” “Partnerships”) and minimum project sizes used before closure, which helps calibrate co-funding expectations for PSGF-style proposals.
+Livestock, dairy, water, sustainability focus
+•	Livestock emissions research: New Zealand historically operated the Global Partnerships in Livestock Emissions Research fund, supporting tools and practices to cut emissions in grazing systems; while that call is historical, it demonstrates NZ’s funding lineage in livestock mitigation.
+•	Policy context and sector health: USDA FAS 2025 sector report highlights ongoing government focus on reducing on-farm emissions and improving freshwater farm plans, framing where PSGF and MPI supports are directed.
+Practical monitoring setup
+•	MPI RSS feeds: subscribe to MPI’s official RSS directory to track farming funds, programmes, and environmental funding notices without manual checks.
+•	Beehive releases: monitor ministerial announcements (Agriculture/Forestry) for new contests like PSGF and Wellbeing Fund, which then link back to MPI for application details.
+•	GETS tenders: some funds (e.g., Rural Wellbeing Fund governance or audits of SFF projects) appear on the GETS procurement portal as tenders/registrations; polling GETS can capture operational facets and contracting windows.
+Representative programs and use cases
+•	PSGF project types: productivity tools, higher-value product development, cost reduction initiatives, and practical on-farm applications suited to dairy, red meat, and mixed livestock operations; projects are expected to be commercially focused and co-funded.
+•	Community and wellbeing: the Rural Wellbeing Fund and baseline support for Rural Support Trusts strengthen the people-side of farming, a relevant layer for uptake and resilience in livestock regions.
+•	Continuing SFF projects: even though SFF is closed, existing dairy, water quality, and sustainable practice projects are still live and can be reference points or partners for new PSGF proposals.
+Quick-start endpoint and polling list
+•	MPI hub pages: Funding and rural support; Farming funds and programmes; SFF Futures (status and project finder).
+•	MPI RSS: central RSS directory for news, updates, and programme notices ready for scheduler ingestion.
+•	Beehive releases: PSGF and rural wellbeing budget announcements to catch new streams first.
+•	GETS examples: Rural Wellbeing Fund notice and SFF Futures audit tender format, illustrating procurement channel signals.
+Implementation guidance
+•	Target MPI’s RSS plus the two core funding pages with change detection, then mirror intake windows and criteria into an internal tracker for livestock/dairy/water-aligned projects.
+•	For each livestock segment (cattle, sheep, goats, deer, dairy), frame PSGF proposals around measurable cost-reduction, emissions reductions, or water outcomes, aligning to the government’s reduced red tape/productivity narrative from 2025 releases.
+•	Maintain a watch for rural wellbeing and catchment support announcements, which often accompany on-farm practice funding and enable complementary resourcing for farmer groups.
+{
+  "meta": {
+    "owner": "NZ ag funding monitor",
+    "version": "2025-09-26",
+    "notes": [
+      "MPI exposes official RSS; Beehive has RSS by portfolio; GETS lists tenders (including fund admin/audits).",
+      "Focus keywords: livestock, dairy, water, catchment, emissions, wellbeing, PSGF, SFF."
+    ]
+  },
+  "sources": {
+    "mpi_rss": ["https://www.mpi.govt.nz/news/media-releases/rss.xml"],
+    "beehive_rss": ["https://www.beehive.govt.nz/rss.xml"],
+    "mpi_funding_pages": [
+      "https://www.mpi.govt.nz/funding-rural-support/",
+      "https://www.mpi.govt.nz/funding-rural-support/farming-funds-and-programmes/",
+      "https://www.mpi.govt.nz/funding-rural-support/sustainable-food-fibre-futures/"
+    ],
+    "gets": {
+      "base": "https://www.gets.govt.nz",
+      "examples": [
+        "https://www.gets.govt.nz/MPI/ExternalTenderDetails.htm?id=31880904",
+        "https://www.gets.govt.nz/MPI/ExternalTenderDetails.htm?id=25528669"
+      ]
+    }
+  },
+  "jobs": [
+    {
+      "name": "MPI_RSS_Poll",
+      "type": "rss_poll",
+      "cadence": "*/30 * * * *",
+      "urls": ["https://www.mpi.govt.nz/news/media-releases/rss.xml"],
+      "headers": {"User-Agent":"AgFundingMonitor/1.0 (+alerts@example.com)"},
+      "conditional_get": true,
+      "filter": {
+        "include_any": ["fund", "grant", "programme", "PSGF", "SFF", "wellbeing", "catchment", "dairy", "livestock", "water", "emissions"]
+      },
+      "output": {"format":"jsonl","path":"out/nz_mpi_rss.jsonl"}
+    },
+    {
+      "name": "Beehive_RSS_Poll",
+      "type": "rss_poll",
+      "cadence": "*/30 * * * *",
+      "urls": ["https://www.beehive.govt.nz/rss.xml"],
+      "headers": {"User-Agent":"AgFundingMonitor/1.0 (+alerts@example.com)"},
+      "conditional_get": true,
+      "filter": {
+        "include_any": ["Agriculture", "Forestry", "Primary Sector", "PSGF", "wellbeing", "catchment", "Rural Wellbeing"]
+      },
+      "output": {"format":"jsonl","path":"out/nz_beehive_rss.jsonl"}
+    },
+    {
+      "name": "MPI_pages_change_detect",
+      "type": "http_snapshot_compare",
+      "cadence": "0 */1 * * *",
+      "urls": [
+        "https://www.mpi.govt.nz/funding-rural-support/",
+        "https://www.mpi.govt.nz/funding-rural-support/farming-funds-and-programmes/",
+        "https://www.mpi.govt.nz/funding-rural-support/sustainable-food-fibre-futures/"
+      ],
+      "diff": {"threshold_chars": 200},
+      "notify_on_change": true,
+      "output": {"format":"jsonl","path":"out/nz_mpi_pages_diffs.jsonl"}
+    },
+    {
+      "name": "GETS_search_MPI_examples",
+      "type": "http_scrape",
+      "cadence": "0 */2 * * *",
+      "requests": [
+        {"url": "https://www.gets.govt.nz/MPI/ExternalTenderDetails.htm?id=31880904"},
+        {"url": "https://www.gets.govt.nz/MPI/ExternalTenderDetails.htm?id=25528669"}
+      ],
+      "parse": {
+        "item": "#main, body",
+        "fields": {
+          "title": "h1::text, .heading-title::text",
+          "closeDate": "td:contains('Close Date') + td::text",
+          "organisation": "td:contains('Organisation') + td::text",
+          "rfxId": "td:contains('RFx ID') + td::text",
+          "tenderType": "td:contains('Tender Type') + td::text"
+        }
+      },
+      "output": {"format":"jsonl","path":"out/nz_gets_examples.jsonl"}
+    }
+  ],
+  "deduplication": {
+    "rss": {"primary_key": ["guid || sha1(normalize_url(link))"]},
+    "gets": {"primary_key": ["rfxId || sha1(normalize(title)+normalize(organisation))"]},
+    "cross_source": {"merge_key": ["fuzzy(title)","host(link)"], "similarity_threshold": 0.88}
+  },
+  "alerts": {
+    "keywords": [
+      "PSGF","SFF","wellbeing","catchment","dairy","cattle","sheep","goat","deer","equine","water","freshwater","emissions","methane","nitrate","farm plan"
+    ],
+    "priority": [
+      {"if":"source=='rss' && contains_any(title, ['PSGF','wellbeing','catchment'])","priority":"high"},
+      {"if":"contains_any(title,['dairy','cattle','sheep','water'])","priority":"medium"}
+    ]
+  }
+}
+Below is a runnable JSON job that collects New Zealand opportunities and filters to sector=agriculture, only open items with funding > 0, and outputs a normalized JSON schema. It pulls from MPI RSS, Beehive RSS, and scrapes MPI funding pages for open calls, then applies filters and emits a consistent schema.
+NZ agriculture opportunities filter (open, funding > 0)
+json
+{
+  "meta": {
+    "owner": "NZ agriculture opportunities",
+    "version": "2025-09-26",
+    "notes": [
+      "Sources: MPI RSS, Beehive RSS, MPI funding pages (including PSGF).",
+      "Filter: sector=agriculture, status=open, funding_amount_nzd > 0."
+    ]
+  },
+  "sources": {
+    "rss": {
+      "mpi": "https://www.mpi.govt.nz/news/media-releases/rss.xml",
+      "beehive": "https://www.beehive.govt.nz/rss.xml"
+    },
+    "pages": {
+      "funding_hub": "https://www.mpi.govt.nz/funding-rural-support/",
+      "funds_list": "https://www.mpi.govt.nz/funding-rural-support/farming-funds-and-programmes/",
+      "psgf": "https://www.mpi.govt.nz/funding-rural-support/primary-sector-growth-fund/primary-sector-growth-fund-psgf-expression-of-interest-form/"
+    }
+  },
+  "jobs": [
+    {
+      "name": "fetch_rss",
+      "type": "rss_poll",
+      "cadence": "*/30 * * * *",
+      "urls": [
+        "https://www.mpi.govt.nz/news/media-releases/rss.xml",
+        "https://www.beehive.govt.nz/rss.xml"
+      ],
+      "conditional_get": true,
+      "output": {"format": "jsonl", "path": "out/nz_rss_raw.jsonl"}
+    },
+    {
+      "name": "scrape_pages",
+      "type": "http_scrape",
+      "cadence": "0 */1 * * *",
+      "requests": [
+        {"url": "https://www.mpi.govt.nz/funding-rural-support/"},
+        {"url": "https://www.mpi.govt.nz/funding-rural-support/farming-funds-and-programmes/"},
+        {"url": "https://www.mpi.govt.nz/funding-rural-support/primary-sector-growth-fund/primary-sector-growth-fund-psgf-expression-of-interest-form/"}
+      ],
+      "parse": {
+        "item": "a, article, .card",
+        "fields": {
+          "title": "a::text, h1::text, h2::text, h3::text",
+          "href": "a[href]",
+          "status": "//*[contains(text(),'open') or contains(text(),'Applications open')]/text()",
+          "funding": "//*[contains(text(),'$') or contains(text(),'NZD')]/text()",
+          "deadline": "//*[contains(text(),'close') or contains(text(),'deadline')]/text()"
+        }
+      },
+      "output": {"format": "jsonl", "path": "out/nz_pages_raw.jsonl"}
+    },
+    {
+      "name": "normalize_and_filter",
+      "type": "transform",
+      "input": ["out/nz_rss_raw.jsonl", "out/nz_pages_raw.jsonl"],
+      "steps": [
+        {"op":"extract_psgf","pattern":"Primary Sector Growth Fund|PSGF","sector":"agriculture"},
+        {"op":"infer_sector","rules":[
+          {"if":"contains_any(title,'farm|farming|dairy|livestock|sheep|cattle|goat|deer|equine|water|catchment|emissions|PSGF|SFF')","sector":"agriculture"}
+        ]},
+        {"op":"extract_status","rules":[
+          {"if":"contains_any(text,'open|Applications open')","status":"open"},
+          {"if":"contains_any(text,'closed|Applications closed')","status":"closed"}
+        ]},
+        {"op":"extract_funding_amount_nzd","regex":"\\$\\s?([0-9][0-9,\\.]+)"},
+        {"op":"normalize_deadline","regex":"(\\d{1,2}\\s+[A-Za-z]{3,9}\\s+\\d{4}|\\d{4}-\\d{2}-\\d{2})"}
+      ],
+      "filter": {
+        "where_all": [
+          {"field":"sector","eq":"agriculture"},
+          {"field":"status","eq":"open"},
+          {"field":"funding_amount_nzd","gt":0}
+        ]
+      },
+      "project_schema": {
+        "id": "sha1(normalize_url(link) || title)",
+        "title": "title",
+        "source": "source",
+        "program": "program || 'MPI/Ministerial'",
+        "sector": "agriculture",
+        "status": "open",
+        "funding_amount_nzd": "funding_amount_nzd",
+        "deadline": "deadline || null",
+        "link": "link",
+        "publisher": "publisher || 'MPI/ NZ Government'",
+        "published_at": "pubDate || discovered_at"
+      },
+      "output": {"format":"jsonl","path":"out/nz_opportunities_open_ag.jsonl"}
+    }
+  ],
+  "schema": {
+    "type": "object",
+    "properties": {
+      "id": {"type":"string"},
+      "title": {"type":"string"},
+      "source": {"type":"string", "enum":["rss","page"]},
+      "program": {"type":"string"},
+      "sector": {"type":"string", "const":"agriculture"},
+      "status": {"type":"string", "enum":["open"]},
+      "funding_amount_nzd": {"type":"number", "minimum": 0},
+      "deadline": {"type":["string","null"], "description":"ISO date or human-readable if not parsed"},
+      "link": {"type":"string"},
+      "publisher": {"type":"string"},
+      "published_at": {"type":"string"}
+    },
+    "required": ["id","title","sector","status","funding_amount_nzd","link"]
+  }
+}
+•	MPI RSS feed reference confirms machine-readable updates for programmes and media releases; the funding hub and PSGF pages provide the authoritative programme details and open/close states.
+
+Below is a concise, production ready deduplication schema for New Zealand that unifies MPI RSS, Beehive RSS, and GETS tenders; it defines stable keys (including RFx ID), cross source merge keys, and field precedence tuned to funding opportunities.
+NZ dedupe schema (JSON)
+json
+{
+  "schema": {
+    "sources": {
+      "mpi_rss": {
+        "primary_key": "guid || sha1(normalize_url(link) + '|' + normalize(title))",
+        "time_bucket": "day",
+        "canonical_url": "normalize_url(link)"
+      },
+      "beehive_rss": {
+        "primary_key": "guid || sha1(normalize_url(link))",
+        "secondary_key": "sha1(normalize(title))",
+        "canonical_url": "normalize_url(link)"
+      },
+      "gets_tender": {
+        "id_fields": ["RFx ID", "Reference Number"],
+        "primary_key": "toString(RFx_ID) || sha1(normalize(title) + '|' + normalize(organisation))",
+        "secondary_key": "sha1(toString(Open_Date) + '|' + toString(Close_Date) + '|' + normalize(Title))",
+        "canonical_url": "normalize_url(detail_url)"
+      }
+    },
+    "cross_source": {
+      "merge_key": [
+        "eq(parsed_rfx_id_from_title_or_link, RFx_ID)",
+        "fuzzy(title)",
+        "host(canonical_url)"
+      ],
+      "similarity_threshold": 0.88,
+      "notes": "Exact join on RFx ID if present in links/titles; otherwise fallback to fuzzy title + host."
+    },
+    "canonicalization": {
+      "prefer_https": true,
+      "strip_query_params": ["utm_source","utm_medium","utm_campaign","gclid","fbclid"],
+      "normalize_host_aliases": [
+        ["www.mpi.govt.nz","mpi.govt.nz"],
+        ["www.beehive.govt.nz","beehive.govt.nz"],
+        ["www.gets.govt.nz","gets.govt.nz"]
+      ]
+    },
+    "collision_resolution": {
+      "precedence": ["gets_tender","mpi_rss","beehive_rss"],
+      "field_rules": {
+        "title": "latest_by_precedence",
+        "publisher": "from(gets_tender || mpi_rss || beehive_rss)",
+        "published_at": "earliest_by_precedence",
+        "close_date": "earliest_non_null",
+        "status": "latest_by_precedence",
+        "funding_amount_nzd": "max_by_precedence",
+        "description": "richest_html_by_precedence",
+        "link": "prefer_deepest_path"
+      }
+    },
+    "normalization": {
+      "date_format": "YYYY-MM-DD",
+      "money_fields_nzd": ["funding_amount_nzd","Awarded Amount"],
+      "rounding": {"money_fields_nzd": 0},
+      "text_cleanup": ["trim","collapse_whitespace","strip_html"]
+    },
+    "audit": {
+      "store_source_payload": true,
+      "diff_fields": ["title","status","close_date","funding_amount_nzd","description"],
+      "keep_history_days": 365
+    }
+  }
+}
+Why these keys
+•	MPI and Beehive are RSS based, so GUID or canonical link+title hashing with a day bucket provides stable dedupe for announcements and programme updates.
+•	GETS exposes a unique RFx ID in open data documentation and UI; using RFx ID as the primary key prevents duplicate tenders and anchors cross source merges when ministerial/MPI posts reference a specific RFx.
+
+Here’s a compact rules block to “keep latest publish date when duplicates conflict,” which can be dropped into any of the country schemas; it sets conflict precedence to the most recent published_at across sources and preserves alternates for traceability.
+Latest publish date wins (JSON)
+json
+{
+  "conflicts": {
+    "resolution": "latest_publish_wins",
+    "compare_field": "published_at",
+    "date_formats": [
+      "YYYY-MM-DD",
+      "ddd, DD MMM YYYY HH:mm:ss ZZ"
+    ],
+    "rules": {
+      "choose_record": "max_date(published_at)",
+      "merge_fields": {
+        "title": "latest_by_date",
+        "status": "latest_by_date",
+        "deadline": "earliest_non_null",
+        "funding_amount": "max_by_date",
+        "description": "richest_html_by_date",
+        "link": "prefer_deepest_path"
+      },
+      "audit": {
+        "keep_all_sources": true,
+        "store_previous": true,
+        "previous_field": "superseded_by_latest"
+      }
+    }
+  }
+}
+Implementation notes
+•	Normalize RSS pubDate using RFC 822/1123 formats before comparison; many government RSS feeds use this standard.
+•	If a source lacks pubDate, fall back to detected page date or ingest timestamp; still apply “max_date” selection to keep the newest.

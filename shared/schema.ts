@@ -30,10 +30,10 @@ export const subsidyPrograms = pgTable("subsidy_programs", {
   program: text("program"),
   
   // Multi-source support
-  dataSource: text("data_source").notNull(), // 'grants_gov', 'rss_usda', 'rss_aafc', 'rss_provincial', 'agpal'
+  dataSource: text("data_source").notNull(), // 'grants_gov', 'rss_usda', 'rss_aafc', 'rss_provincial', 'agpal', 'portal_transparencia', 'mapa_news', 'bndes_news', 'minagri_news', 'fia_calls', 'chilecompra_api', 'presupuesto_abierto'
   sourceUrl: text("source_url").notNull(), // Original source URL where data was fetched
   sourceAgency: text("source_agency"), // USDA-AMS, AAFC, etc.
-  country: text("country").notNull(), // 'US', 'CA'
+  country: text("country").notNull(), // 'US', 'CA', 'BR', 'CL'
   region: text("region"), // State/Province/Territory
   
   // Enhanced metadata
@@ -104,7 +104,6 @@ export const dataFetchLogs = pgTable("data_fetch_logs", {
 export const insertSubsidyProgramSchema = createInsertSchema(subsidyPrograms).omit({
   createdAt: true,
   updatedAt: true,
-  dedupeKey: true, // This will be computed automatically
   daysUntilDeadline: true, // This will be computed automatically
 });
 

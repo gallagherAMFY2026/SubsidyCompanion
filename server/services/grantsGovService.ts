@@ -1,5 +1,6 @@
 import { storage } from '../storage';
-import { InsertSubsidyProgram } from '@shared/schema';
+import { partitionedDeduplicationService } from './deduplicationService.js';
+import { InsertSubsidyProgram, SubsidyProgram } from '@shared/schema';
 import { z } from 'zod';
 
 // Validation schemas
@@ -55,6 +56,36 @@ export class GrantsGovService {
   ];
 
   private readonly PRIORITY_AGENCIES = ['USDA-AMS', 'USDA-FNS', 'USDA-RD'];
+
+  /**
+   * Sync all programs from grants.gov with US deduplication
+   */
+  async syncAllPrograms(maxPages?: number): Promise<number> {
+    console.log('Starting comprehensive grants.gov program sync...');
+    
+    const processed = await this.syncOpportunities({}, maxPages);
+    
+    console.log(`All grants.gov programs sync completed: ${processed} processed`);
+    return processed;
+  }
+
+  /**
+   * Sync USDA agency opportunities specifically
+   */
+  async syncUSDAAgencyOpportunities(maxPages?: number): Promise<number> {
+    console.log('Starting USDA agency-specific sync...');
+    
+    const usdaSearchParams = {
+      agencies: 'USDA',
+      fundingCategories: 'AG',
+      oppStatuses: 'forecasted|posted|modified'
+    };
+    
+    const processed = await this.syncOpportunities(usdaSearchParams, maxPages);
+    
+    console.log(`USDA agency sync completed: ${processed} processed`);
+    return processed;
+  }
 
   /**
    * Utility function for retrying requests with exponential backoff
@@ -484,7 +515,7 @@ export class GrantsGovService {
   /**
    * Sync opportunities to storage with improved deduplication and upsert logic
    */
-  async syncOpportunities(searchParams: Partial<Omit<GrantsGovSearchParams, 'startRecordNum' | 'rows'>> = {}): Promise<number> {
+  async syncOpportunities(searchParams: Partial<Omit<GrantsGovSearchParams, 'startRecordNum' | 'rows'>> = {}, maxPages?: number): Promise<number> {
     console.log('Starting grants.gov sync with pagination...');
     
     // Use pagination to get all opportunities
@@ -519,6 +550,10 @@ export class GrantsGovService {
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
+    
+    // Apply cross-source US deduplication across ALL US sources
+    console.log('Applying cross-source US deduplication to all US programs...');
+    await this.performComprehensiveDeduplication();
     
     console.log(`grants.gov sync completed: ${processed} processed, ${created} created, ${updated} updated, ${enriched} enriched`);
     return processed;
@@ -637,6 +672,54 @@ export class GrantsGovService {
     }
     
     return totalProcessed;
+  }
+
+  /**
+   * Perform comprehensive cross-source deduplication
+   */
+  async performComprehensiveDeduplication(): Promise<void> {
+    try {
+      // Get all US programs across sources
+      const allUSPrograms = await this.getAllUSPrograms();
+      
+      if (allUSPrograms.length === 0) {
+        console.log('No US programs found for deduplication');
+        return;
+      }
+      
+      console.log(`Starting comprehensive deduplication of ${allUSPrograms.length} US programs`);
+      
+      // Apply partitioned deduplication
+      const dedupedPrograms = await partitionedDeduplicationService.deduplicatePrograms(allUSPrograms);
+      
+      console.log(`Comprehensive deduplication completed: ${allUSPrograms.length} → ${dedupedPrograms.length} programs`);
+      
+    } catch (error) {
+      console.error('Error in comprehensive deduplication:', error);
+    }
+  }
+
+  /**
+   * Get all US agricultural programs across data sources
+   */
+  private async getAllUSPrograms(): Promise<SubsidyProgram[]> {
+    const usSources = [
+      'grants_gov', 'grants_gov_search', 'grants_gov_detail',
+      'usda_hq_rss', 'fns_rss', 'rd_rss', 'ars_rss', 'nass_rss', 'fs_rss'
+    ];
+    
+    const allPrograms: SubsidyProgram[] = [];
+    
+    for (const source of usSources) {
+      try {
+        const sourcePrograms = await storage.getSubsidyProgramsBySource(source);
+        allPrograms.push(...sourcePrograms);
+      } catch (error) {
+        console.warn(`Error fetching programs from source ${source}:`, error);
+      }
+    }
+    
+    return allPrograms;
   }
 }
 
