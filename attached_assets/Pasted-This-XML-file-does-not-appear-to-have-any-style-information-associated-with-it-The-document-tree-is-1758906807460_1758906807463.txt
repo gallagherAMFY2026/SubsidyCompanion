@@ -1,0 +1,1109 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>Canada News Centre - Agriculture and Agri-Food Canada</title>
+<subtitle>Canada News Centre</subtitle>
+<updated>2025-09-25T12:10:30-04:00</updated>
+<link href="http://localhost:8181/io-server/gc/news/en/v2?dept=agricultureagrifood&sort=publishedDate&orderBy=desc&publishedDate%3E=2020-08-09&pick=100&format=atom&atomtitle=Canada%20News%20Centre%20-%20Agriculture%20and%20Agri-Food%20Canada" rel="self"/>
+<id>https://www.canada.ca/en/news.html</id>
+<logo>https://www.canada.ca/etc/designs/canada/wet-boew/assets/wmms-blk.svg</logo>
+<entry>
+<title>Minister MacDonald to highlight federal support to expand trade into high-growth regions across Canada and the world</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/09/minister-macdonald-to-highlight-federal-support-to-expand-trade-into-high-growth-regions-across-canada-and-the-world.html</id>
+<summary type="html">The Honourable Heath MacDonald, Minister of Agriculture and Agri-Food, will host a roundtable with members of the Prince Edward Island agriculture, fisheries, and aquaculture industries to discuss recently announced investments that will fund activities to reduce trade barriers and seize new opportunities domestically and abroad.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2025-09-25T12:04:32-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/09/minister-macdonald-to-highlight-federal-support-to-expand-trade-into-high-growth-regions-across-canada-and-the-world.html"/>
+</entry>
+<entry>
+<title>Federal, Provincial and Territorial Ministers of Agriculture meet to support a resilient and competitive agriculture and agri-food sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/09/federal-provincial-and-territorial-ministers-of-agriculture-meet-to-support-a-resilient-and-competitive-agriculture-and-agri-food-sector.html</id>
+<summary type="html">The annual conference of federal, provincial and territorial (FPT) Ministers of Agriculture was held in Winnipeg, Manitoba, from September 7 to 9, 2025. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-09-09T16:36:57-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/09/federal-provincial-and-territorial-ministers-of-agriculture-meet-to-support-a-resilient-and-competitive-agriculture-and-agri-food-sector.html"/>
+</entry>
+<entry>
+<title>Backgrounder: Summary of items from the 2025 Annual Meeting of Federal, Provincial and Territorial (FPT) Ministers of Agriculture</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/09/backgrounder-summary-of-items-from-the-2025-annual-meeting-of-federal-provincial-and-territorial-fpt-ministers-of-agriculture.html</id>
+<summary type="html">Ministers were updated on the full range of activity by FPT officials related to the implementation of Business Risk Management (BRM) programs under Sustainable Canadian Agricultural Partnership, including recent adjustments agreed to at their meeting in July. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="backgrounders"/>
+<updated>2025-09-09T16:35:05-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/09/backgrounder-summary-of-items-from-the-2025-annual-meeting-of-federal-provincial-and-territorial-fpt-ministers-of-agriculture.html"/>
+</entry>
+<entry>
+<title>Canada and Ontario investing $4.77 million in agri-food research</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/09/canada-and-ontario-investing-477-million-in-agri-food-research.html</id>
+<summary type="html">The governments of Canada and Ontario are investing up to $4.77 million in 48 research and innovation projects and supporting 20 companies through the Ontario Agri-Food Research Initiative (OAFRI). </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-09-08T14:32:27-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/09/canada-and-ontario-investing-477-million-in-agri-food-research.html"/>
+</entry>
+<entry>
+<title>Minister MacDonald, Minister Kostyshyn and other provincial and territorial ministers of agriculture to address media following the Annual Conference of Federal, Provincial and Territorial Ministers of Agriculture</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/09/minister-macdonald-minister-kostyshyn-and-other-provincial-and-territorial-ministers-of-agriculture-to-address-media-following-the-annual-conferenc.html</id>
+<summary type="html">The Honourable Heath MacDonald, federal Minister of Agriculture and Agri-Food, and the Honourable Ron Kostyshyn, Manitoba Minister of Agriculture, as well as other provincial and territorial ministers of agriculture will be addressing media following the Annual Conference of Federal, Provincial and Territorial Ministers of Agriculture.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2025-09-08T11:00:25-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/09/minister-macdonald-minister-kostyshyn-and-other-provincial-and-territorial-ministers-of-agriculture-to-address-media-following-the-annual-conferenc.html"/>
+</entry>
+<entry>
+<title>Canada and Ontario investing $14.6 million to help farmers make improvements to farmlands</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/09/canada-and-ontario-investing-146-million-to-help-farmers-make-improvements-to-farmlands.html</id>
+<summary type="html">The governments of Canada and Ontario are investing up to $14.6 million through the Resilient Agricultural Landscape Program (RALP) to help farmers make other improvements to their farmland.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-09-03T10:57:36-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/09/canada-and-ontario-investing-146-million-to-help-farmers-make-improvements-to-farmlands.html"/>
+</entry>
+<entry>
+<title>Canada, B.C. help food, beverage producers reach new markets</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/08/canada-bc-help-food-beverage-producers-reach-new-markets.html</id>
+<summary type="html">Food and beverage producers and processors in British Columbia are getting help to increase sales and build export markets so the province has a more resilient and diverse economy in the future.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-08-22T12:06:42-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/08/canada-bc-help-food-beverage-producers-reach-new-markets.html"/>
+</entry>
+<entry>
+<title>Statement by Minister MacDonald following meeting with representatives from the Government of Saskatchewan and canola industry leaders</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/08/statement-by-minister-macdonald-following-meeting-with-representatives-from-the-government-of-saskatchewan-and-canola-industry-leaders.html</id>
+<summary type="html">The Honourable Heath MacDonald, Minister of Agriculture and Agri-Food issued the following statement after meeting with representatives from the Government of Saskatchewan and leaders from the Canadian canola sector.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="statements"/>
+<updated>2025-08-21T16:11:35-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/08/statement-by-minister-macdonald-following-meeting-with-representatives-from-the-government-of-saskatchewan-and-canola-industry-leaders.html"/>
+</entry>
+<entry>
+<title>Assistance provided to farms to increase water supply</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/08/assistance-provided-to-farms-to-increase-water-supply.html</id>
+<summary type="html">Nova Scotia farmers will have access to additional support to increase their supply of water.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-08-20T12:59:58-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/08/assistance-provided-to-farms-to-increase-water-supply.html"/>
+</entry>
+<entry>
+<title>Minister MacDonald announces initial list of Livestock Tax Deferral regions for 2025</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/08/minister-macdonald-announces-initial-list-of-livestock-tax-deferral-regions-for-2025.html</id>
+<summary type="html">Today, the Honourable Heath MacDonald, Minister of Agriculture and Agri-Food, announced the initial list of regions that will qualify for the Livestock Tax Deferral in 2025.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-08-18T12:25:48-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/08/minister-macdonald-announces-initial-list-of-livestock-tax-deferral-regions-for-2025.html"/>
+</entry>
+<entry>
+<title>From a tough crop year to livestock feed gains in Alberta</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/08/from-a-tough-crop-year-to-livestock-feed-gains-in-alberta.html</id>
+<summary type="html">The governments of Canada and Alberta, through the Sustainable Canadian Agricultural Partnership, increased the low yield allowance so farmers can use poor crops for feed. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-08-08T14:47:51-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/08/from-a-tough-crop-year-to-livestock-feed-gains-in-alberta.html"/>
+</entry>
+<entry>
+<title>Minister MacDonald concludes first trade mission to strengthen ties and promote Canadian agriculture and agri-food in the Indo-Pacific</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/08/minister-macdonald-concludes-first-trade-mission-to-strengthen-ties-and-promote-canadian-agriculture-and-agri-food-in-the-indo-pacific.html</id>
+<summary type="html">The Honourable Heath MacDonald, Minister of Agriculture and Agri-Food, has concluded a productive seven-day trade mission to Indonesia, Singapore, and the Philippines.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-08-08T11:29:10-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/08/minister-macdonald-concludes-first-trade-mission-to-strengthen-ties-and-promote-canadian-agriculture-and-agri-food-in-the-indo-pacific.html"/>
+</entry>
+<entry>
+<title>Canada and Ontario investing more than $1.7 million to support honey beekeeping operations</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/08/canada-and-ontario-investing-more-than-17-million-to-support-honey-beekeeping-operations.html</id>
+<summary type="html">Investment will help hundreds of beekeepers improve their honey bee colonies and boost competitiveness in the face of U.S. tariffs.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-08-01T15:57:47-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/08/canada-and-ontario-investing-more-than-17-million-to-support-honey-beekeeping-operations.html"/>
+</entry>
+<entry>
+<title>Federal Agriculture Minister Heath MacDonald to visit Indonesia, Singapore and the Philippines to strengthen Indo-Pacific partnerships</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/federal-agriculture-minister-heath-macdonald-to-visit-indonesia-singapore-and-the-philippines-to-strengthen-indo-pacific-partnerships.html</id>
+<summary type="html">The Honourable Heath MacDonald, Minister of Agriculture and Agri-Food, will travel to Indonesia, Singapore and the Philippines to advance Canada’s agricultural trade interests in the Indo-Pacific.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2025-07-28T14:38:44-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/federal-agriculture-minister-heath-macdonald-to-visit-indonesia-singapore-and-the-philippines-to-strengthen-indo-pacific-partnerships.html"/>
+</entry>
+<entry>
+<title>Canada, B.C. strengthen support for farmers dealing with unexpected losses</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/canada-bc-strengthen-support-for-farmers-dealing-with-unexpected-losses.html</id>
+<summary type="html">The governments of Canada and B.C. are making changes to the AgriStability program to provide more financial support to B.C. farmers, following a virtual meeting of the federal, provincial and territorial ministers of agriculture. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-07-25T15:41:37-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/canada-bc-strengthen-support-for-farmers-dealing-with-unexpected-losses.html"/>
+</entry>
+<entry>
+<title>Canada and Manitoba announce support for livestock producers affected by drought conditions  </title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/canada-and-manitoba-announce-support-for-livestock-producers-affected-by-drought-conditions.html</id>
+<summary type="html">The governments of Canada and Manitoba are announcing support measures to aid Manitoba’s livestock producers affected by drought conditions, federal Minister of Agriculture and Agri-Food Heath MacDonald and Manitoba Agriculture Minister Ron Kostyshyn announced today. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-07-24T15:07:35-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/canada-and-manitoba-announce-support-for-livestock-producers-affected-by-drought-conditions.html"/>
+</entry>
+<entry>
+<title>Governments of Canada and Manitoba investing over $6 million to strengthen local food processing sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/governments-of-canada-and-manitoba-investing-over-6-million-to-strengthen-local-food-processing-sector.html</id>
+<summary type="html">The governments of Canada and Manitoba are investing more than $6 million to help modernize food processing facilities and increase food production capacity across Manitoba under the Sustainable Canadian Agricultural Partnership (Sustainable CAP), federal Agriculture and Agri-Food Minister Heath MacDonald and Manitoba Agriculture Minister Ron Kostyshyn announced today.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-07-23T16:21:22-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/governments-of-canada-and-manitoba-investing-over-6-million-to-strengthen-local-food-processing-sector.html"/>
+</entry>
+<entry>
+<title>Governments of Canada and Saskatchewan announce changes to 2025 AgriStability program</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/governments-of-canada-and-saskatchewan-announce-changes-to-2025-agristability-program.html</id>
+<summary type="html">Following a virtual meeting of Federal, Provincial and Territorial (FPT) Ministers of Agriculture, Federal Minister of Agriculture and Agri-Food Heath MacDonald and Saskatchewan Minister of Agriculture Daryl Harrison announced Saskatchewan producers will see changes to AgriStability for the 2025 program year. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-07-21T14:39:02-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/governments-of-canada-and-saskatchewan-announce-changes-to-2025-agristability-program.html"/>
+</entry>
+<entry>
+<title>Federal, Provincial and Territorial Ministers of Agriculture meet to help strengthen the resilience and competitiveness of the sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/federal-provincial-and-territorial-ministers-of-agriculture-meet-to-help-strengthen-the-resilience-and-competitiveness-of-the-sector.html</id>
+<summary type="html">Yesterday, federal, provincial and territorial (FPT) Ministers of Agriculture met virtually to discuss ways to support a more resilient and competitive agriculture sector and food supply chains that make up Canada’s agri-food landscape.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-07-18T15:59:47-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/federal-provincial-and-territorial-ministers-of-agriculture-meet-to-help-strengthen-the-resilience-and-competitiveness-of-the-sector.html"/>
+</entry>
+<entry>
+<title>New program encourages growth for Prince Edward Island's horticulture industry</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/new-program-encourages-growth-for-prince-edward-islands-horticulture-industry.html</id>
+<summary type="html">A new Sustainable Canadian Agricultural Partnership (Sustainable CAP) program is now available to Prince Edward Island horticulture producers to help diversify crops, adapt to changing climates, and increase the supply of Island food products in markets across Canada.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-07-11T10:54:14-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/new-program-encourages-growth-for-prince-edward-islands-horticulture-industry.html"/>
+</entry>
+<entry>
+<title>Canada and Ontario investing to improve energy efficiency in province’s agri-food industry</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/canada-and-ontario-investing-to-improve-energy-efficiency-in-provinces-agri-food-industry.html</id>
+<summary type="html">Provincial and federal investment of up to $3 million will help farmers implement energy efficiency projects that will help boost their competitiveness in the face of U.S. tariffs</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-07-08T15:53:26-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/canada-and-ontario-investing-to-improve-energy-efficiency-in-provinces-agri-food-industry.html"/>
+</entry>
+<entry>
+<title>Canada and Ontario strengthening province's agri-food industry</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/canada-and-ontario-strengthening-provinces-agri-food-industry.html</id>
+<summary type="html">Provincial and federal governments investing $4.4 million to support small agri-food businesses, expand export opportunities and increase food safety</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-07-04T11:09:11-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/canada-and-ontario-strengthening-provinces-agri-food-industry.html"/>
+</entry>
+<entry>
+<title>Federal Agriculture Minister Heath MacDonald to attend the Calgary Stampede</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/07/federal-agriculture-minister-heath-macdonald-to-attend-the-calgary-stampede.html</id>
+<summary type="html">The Honourable Heath MacDonald, Minister of Agriculture and Agri-Food, will travel to Alberta next week to attend the Calgary Stampede and meet with key stakeholders from the agriculture and agri-food industry. Alberta is crucial to Canada’s agricultural sector, accounting for more than a quarter of farm revenues – the highest in the country.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2025-07-04T10:31:22-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/07/federal-agriculture-minister-heath-macdonald-to-attend-the-calgary-stampede.html"/>
+</entry>
+<entry>
+<title>Governments of Canada and Saskatchewan provide drought support with the doubled low yield appraisal</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/06/governments-of-canada-and-saskatchewan-provide-drought-support-with-the-doubled-low-yield-appraisal.html</id>
+<summary type="html">Today, federal Minister of Agriculture and Agri-Food Heath MacDonald and Saskatchewan Minister of Agriculture Daryl Harrison announced the Saskatchewan Crop Insurance Corporation (SCIC) is implementing measures to offer support to producers facing this year’s challenging dry conditions.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-06-27T14:42:24-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/06/governments-of-canada-and-saskatchewan-provide-drought-support-with-the-doubled-low-yield-appraisal.html"/>
+</entry>
+<entry>
+<title>Ontario strengthening province’s cattle farm sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/06/ontario-strengthening-provinces-cattle-farm-sector.html</id>
+<summary type="html">The governments of Canada and Ontario are investing up to $5 million to help make community grazing pastures in Ontario more productive and resilient.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-06-26T13:49:40-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/06/ontario-strengthening-provinces-cattle-farm-sector.html"/>
+</entry>
+<entry>
+<title>New website supports Prince Edward Island producers</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/06/new-website-supports-prince-edward-island-producers.html</id>
+<summary type="html">A new website developed by the provincial Department of Agriculture is now available to help Prince Edward Island’s agriculture industry better understand and access programs available through the Sustainable Canadian Agricultural Partnership (Sustainable CAP).</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-06-25T11:01:23-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/06/new-website-supports-prince-edward-island-producers.html"/>
+</entry>
+<entry>
+<title>Governments of Canada and Saskatchewan invest $3.4 million to support USask's IntegrOmes project</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/06/governments-of-canada-and-saskatchewan-invest-34-million-to-support-usasks-integromes-project.html</id>
+<summary type="html">Canada's Minister of Agriculture and Agri-Food Heath MacDonald and Saskatchewan Agriculture Minister Daryl Harrison announced $3.4 million over four years to support the development of two new facilities at the University of Saskatchewan (USask) which includes the Omics Resource Centre at the Western College of Veterinary Medicine (WCVM) and Beef Reprotech facilities at the Livestock and Forage Centre of Excellence (LFCE).</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-06-17T13:32:41-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/06/governments-of-canada-and-saskatchewan-invest-34-million-to-support-usasks-integromes-project.html"/>
+</entry>
+<entry>
+<title>Federal Agriculture Minister Heath MacDonald to visit Saskatchewan</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/06/federal-agriculture-minister-heath-macdonald-to-visit-saskatchewan.html</id>
+<summary type="html">The Honourable Heath MacDonald, Minister of Agriculture and Agri-Food, will travel to Saskatchewan later this week on a multi-day visit to meet with key stakeholders from the agriculture industry in Saskatchewan, a province that accounts for more than 40% of Canada’s cultivated farmland.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2025-06-12T13:32:48-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/06/federal-agriculture-minister-heath-macdonald-to-visit-saskatchewan.html"/>
+</entry>
+<entry>
+<title>Saskatchewan agriculture industry benefits from funding for research demonstration projects</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/06/saskatchewan-agriculture-industry-benefits-from-funding-for-research-demonstration-projects.html</id>
+<summary type="html">The governments of Canada and Saskatchewan announced that 32 Agriculture Demonstration of Practices and Technologies (ADOPT) projects and 6 Strategic Field Program (SFP) projects received more than $1.4 million in funding in 2024–25 under the Sustainable Canadian Agricultural Partnership (Sustainable CAP).</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-06-06T13:09:55-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/06/saskatchewan-agriculture-industry-benefits-from-funding-for-research-demonstration-projects.html"/>
+</entry>
+<entry>
+<title>Agriculture Student Scholarship recipients announced in Saskatchewan </title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/05/agriculture-student-scholarship-recipients-announced-in-saskatchewan.html</id>
+<summary type="html">Saskatchewan students pursuing a post-secondary education in agriculture were awarded the Agriculture Student Scholarship. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-05-05T15:43:36-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/05/agriculture-student-scholarship-recipients-announced-in-saskatchewan.html"/>
+</entry>
+<entry>
+<title>Saskatchewan Irrigation Development Program closing</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/05/saskatchewan-irrigation-development-program-closing.html</id>
+<summary type="html">The Saskatchewan Ministry of Agriculture will be closing application intake under the Irrigation Development Program as of April 30, 2025.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-05-01T09:44:40-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/05/saskatchewan-irrigation-development-program-closing.html"/>
+</entry>
+<entry>
+<title>AgriStability enrolment deadline extended to July 31, 2025 (Saskatchewan)</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/04/agristability-enrolment-deadline-extended-to-july-31-2025-saskatchewan.html</id>
+<summary type="html">Today, Saskatchewan Agriculture Minister Daryl Harrison, along with federal, provincial, and territorial governments, announced the AgriStability enrolment deadline for the existing 2025 program year is extended (without penalty) from April 30, 2025, to July 31, 2025.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-04-29T11:34:27-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/04/agristability-enrolment-deadline-extended-to-july-31-2025-saskatchewan.html"/>
+</entry>
+<entry>
+<title>Governments of Canada and Manitoba extend deadline for agricultural supports</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/04/governments-of-canada-and-manitoba-extend-deadline-for-agricultural-supports.html</id>
+<summary type="html">The federal, provincial, and territorial governments including Manitoba have extended the enrolment deadline for the 2025 AgriStability program to July 31, 2025, in response to tariffs in the agriculture sector and to allow producers time to enroll in the program as they manage the impact of current market disruptions.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-04-28T16:18:04-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/04/governments-of-canada-and-manitoba-extend-deadline-for-agricultural-supports.html"/>
+</entry>
+<entry>
+<title>Governments extend AgriStability enrolment deadline for 2025 program year</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/04/governments-extend-agristability-enrolment-deadline-for-2025-program-year.html</id>
+<summary type="html">Given the pressures and uncertainties facing the agricultural sector, federal, provincial and territorial governments have agreed to extend the AgriStability enrolment deadline from April 30, 2025, to July 31, 2025, for the 2025 program year.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-04-25T16:03:23-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/04/governments-extend-agristability-enrolment-deadline-for-2025-program-year.html"/>
+</entry>
+<entry>
+<title>Government of Canada announces support for agricultural sector following the imposition of tariffs by China</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/government-of-canada-announces-support-for-agricultural-sector-following-the-imposition-of-tariffs-by-china.html</id>
+<summary type="html">Our hard-working producers provide world-class food to Canadians and the world. Their products meet the highest standards, our inspection systems are robust, and we adhere to rules-based trade. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-22T19:28:32-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/government-of-canada-announces-support-for-agricultural-sector-following-the-imposition-of-tariffs-by-china.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces investment to support the health and safety of  Canadian farmers ahead of Canadian Agricultural Safety Week</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-announces-investment-to-support-the-health-and-safety-of-canadian-farmers-ahead-of-canadian-agricultural-safety-week.html</id>
+<summary type="html">The Government of Canada is committed to safeguarding the health and well-being of Canada’s agricultural community while supporting the long-term sustainability and success of the sector.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-13T17:00:49-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-announces-investment-to-support-the-health-and-safety-of-canadian-farmers-ahead-of-canadian-agricultural-safety-week.html"/>
+</entry>
+<entry>
+<title>Additional support available for Prince Edward Island agriculture industry in response to tariff threats</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/additional-support-available-for-prince-edward-island-agriculture-industry-in-response-to-tariff-threats.html</id>
+<summary type="html">The Government of Canada and the Prince Edward Island (PEI) Department of Agriculture are redirecting funds into existing programs that support farmers and agri-businesses in finding new markets and foster innovation.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-11T13:17:17-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/additional-support-available-for-prince-edward-island-agriculture-industry-in-response-to-tariff-threats.html"/>
+</entry>
+<entry>
+<title>Federal, Provincial and Territorial Ministers of Agriculture meet to discuss evolving Canada-United States trading relationship</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/federal-provincial-and-territorial-ministers-of-agriculture-meet-to-discuss-evolving-canada-united-states-trading-relationship.html</id>
+<summary type="html">Yesterday, the Honourable Lawrence MacAulay, federal Minister of Agriculture and Agri-Food and the Honourable Ron Kostyshyn, Manitoba Minister of Agriculture, met with their colleagues, provincial and territorial Ministers of Agriculture, as part of ongoing discussions related to the impacts and potential responses to unjustified tariffs being implemented by the United States.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-08T14:45:30-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/federal-provincial-and-territorial-ministers-of-agriculture-meet-to-discuss-evolving-canada-united-states-trading-relationship.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces funding to support Canadian hog producers in the event of a potential African swine fever outbreak</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-announces-funding-to-support-canadian-hog-producers-in-the-event-of-a-potential-african-swine-fever-outbreak.html</id>
+<summary type="html">The Government of Canada is committed to protecting the resilience of Canada's rural communities and the Canadian pork sector by supporting prevention efforts and preparing to respond in the event of an African Swine Fever (ASF) outbreak.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-07T17:05:35-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-announces-funding-to-support-canadian-hog-producers-in-the-event-of-a-potential-african-swine-fever-outbreak.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces interest-free limit under the Advance Payments Program will be set at $250,000 for 2025</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-announces-interest-free-limit-under-the-advance-payments-program-will-be-set-at-250000-for-2025.html</id>
+<summary type="html">Today, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, announced that the Government of Canada will set the interest-free limit of the Advance Payments Program at $250,000 for the 2025 program year. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-07T14:05:36-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-announces-interest-free-limit-under-the-advance-payments-program-will-be-set-at-250000-for-2025.html"/>
+</entry>
+<entry>
+<title>Government of Canada announces support to increase dairy processing capacity on Prince Edward Island</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/government-of-canada-announces-support-to-increase-dairy-processing-capacity-on-prince-edward-island.html</id>
+<summary type="html">Today, Bobby Morrissey, Member of Parliament for Egmont, on behalf of the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, and the Honourable Gudie Hutchings, Minister of Rural Economic Development and Minister responsible for the Atlantic Canada Opportunities Agency (ACOA), announced a federal investment of up to $12 million for Amalgamated Dairies Limited (ADL).</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-07T08:12:54-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/government-of-canada-announces-support-to-increase-dairy-processing-capacity-on-prince-edward-island.html"/>
+</entry>
+<entry>
+<title>Government of Canada announces support for local food infrastructure projects across Canada</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/government-of-canada-announces-support-for-local-food-infrastructure-projects-across-canada.html</id>
+<summary type="html">Today, Kody Blois, Parliamentary Secretary to the Minister of Agriculture and Agri-Food, and Member of Parliament for Kings–Hants, on behalf of the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, visited the Town of Truro and announced up to $5.6 million to support 87 new projects across Canada under the Small Scale Projects component of the Local Food Infrastructure Fund (LFIF).</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-06T14:40:46-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/government-of-canada-announces-support-for-local-food-infrastructure-projects-across-canada.html"/>
+</entry>
+<entry>
+<title>Database: List of Local Food Infrastructure Fund projects (Small Scale Projects intake)</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/database-list-of-local-food-infrastructure-fund-projects-small-scale-projects-intake.html</id>
+<summary type="html">The 61 projects announced to date under the Small Scale Projects intake of the Local Food Infrastructure Fund (LFIF) total nearly $4 million to help improve food security in communities through investments in equipment and infrastructure needs.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="backgrounders"/>
+<updated>2025-03-06T11:30:08-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/database-list-of-local-food-infrastructure-fund-projects-small-scale-projects-intake.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces launch of new initiative to promote mental wellbeing among producers in Canada</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-announces-launch-of-new-initiative-to-promote-mental-wellbeing-among-producers-in-canada.html</id>
+<summary type="html">The life of a farmer is demanding and comes with different challenges and uncertainty.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-06T09:52:09-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-announces-launch-of-new-initiative-to-promote-mental-wellbeing-among-producers-in-canada.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay to announce federal support to increase dairy processing capacity on Prince Edward Island</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-to-announce-federal-support-to-increase-dairy-processing-capacity-on-prince-edward-island.html</id>
+<summary type="html">The Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, along with Mr. Bobby Morrissey, Member of Parliament for Egmont, will be in Summerside, Prince Edward Island, to announce federal investments to Amalgamated Dairies Limited (ADL) in support of dairy processing.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2025-03-06T09:19:02-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/minister-macaulay-to-announce-federal-support-to-increase-dairy-processing-capacity-on-prince-edward-island.html"/>
+</entry>
+<entry>
+<title>PS Blois to announce investments to strengthen food security</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/ps-blois-to-announce-investments-to-strengthen-food-security.html</id>
+<summary type="html">Kody Blois, Parliamentary Secretary to the Minister of Agriculture and Agri-Food and Member of Parliament for Kings–Hants, will be in Truro, Nova Scotia, to announce federal investments in support of local food infrastructure projects across Canada.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2025-03-05T13:32:07-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/ps-blois-to-announce-investments-to-strengthen-food-security.html"/>
+</entry>
+<entry>
+<title>Better meeting the needs of agricultural producers – Expanded and simplified crop insurance coverage</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/03/better-meeting-the-needs-of-agricultural-producers--expanded-and-simplified-crop-insurance-coverage.html</id>
+<summary type="html">The Government of Québec and the Government of Canada are announcing major changes to the Crop Insurance Program (ASREC) to better meet the changing needs of agricultural businesses, particularly in the context of climate change.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-03-03T14:37:39-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/03/better-meeting-the-needs-of-agricultural-producers--expanded-and-simplified-crop-insurance-coverage.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces over $116 million to help farmers adopt clean technologies</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/02/minister-macaulay-announces-over-116-million-to-help-farmers-adopt-clean-technologies.html</id>
+<summary type="html">Today, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, announced more than $116 million under the Agricultural Clean Technology (ACT) Program.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-02-28T10:02:31-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/02/minister-macaulay-announces-over-116-million-to-help-farmers-adopt-clean-technologies.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay visits Washington, D.C. to strengthen ties with Canada's most important partner</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/02/minister-macaulay-visits-washington-dc-to-strengthen-ties-with-canadas-most-important-partner.html</id>
+<summary type="html">Canada and the United States share one of the most integrated trading relationships in the world, especially when it comes to agriculture. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-02-27T13:41:28-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/02/minister-macaulay-visits-washington-dc-to-strengthen-ties-with-canadas-most-important-partner.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces the re-appointment of three members to Farm Credit Canada's Board of Directors</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/02/minister-macaulay-announces-the-re-appointment-of-three-members-to-farm-credit-canadas-board-of-directors.html</id>
+<summary type="html">The Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food announced the re-appointment of 3 members, Michele Hengen, James Laws, and Govert Verstralen to Farm Credit Canada’s Board of Directors. The 3 members have each served on the Board since 2017 and will continue for a term of 4 years, effective immediately.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-02-21T14:58:15-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/02/minister-macaulay-announces-the-re-appointment-of-three-members-to-farm-credit-canadas-board-of-directors.html"/>
+</entry>
+<entry>
+<title>Price protection insurance to support beef producers</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/02/price-protection-insurance-to-support-beef-producers.html</id>
+<summary type="html">Nova Scotia’s beef producers can now get financial protection through the Maritime Livestock Price Insurance Pilot Program. The new business risk management tool will allow producers to purchase price protection on beef cattle in the form of an insurance policy to protect against unexpected market declines.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-02-20T11:39:11-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/02/price-protection-insurance-to-support-beef-producers.html"/>
+</entry>
+<entry>
+<title>Governments of Canada and Saskatchewan announce continued commitment through the 2025 Crop Insurance Program</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/02/governments-of-canada-and-saskatchewan-announce-continued-commitment-through-the-2025-crop-insurance-program.html</id>
+<summary type="html">Today, Canada’s Minister of Agriculture and Agri-Food Lawrence MacAulay and Saskatchewan Agriculture Minister Daryl Harrison announced continued funding and commitment through the 2025 Crop Insurance Program, administered by the Saskatchewan Crop Insurance Corporation (SCIC). </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-02-19T13:23:42-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/02/governments-of-canada-and-saskatchewan-announce-continued-commitment-through-the-2025-crop-insurance-program.html"/>
+</entry>
+<entry>
+<title>Promoting commitment to sustainable agriculture – More than $35M in support for farmers</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/02/promoting-commitment-to-sustainable-agriculture--more-than-35m-in-support-for-farmers.html</id>
+<summary type="html">The Government of Canada and the Government of Quebec announce $35.3 million, part of which is funded under the Sustainable Canadian Agricultural Partnership, to support producers who adopt more sustainable farming practices.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-02-17T15:51:19-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/02/promoting-commitment-to-sustainable-agriculture--more-than-35m-in-support-for-farmers.html"/>
+</entry>
+<entry>
+<title>Governments support crop health projects through research and innovation</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/02/governments-support-crop-health-projects-through-research-and-innovation.html</id>
+<summary type="html">The governments of Canada and Manitoba are providing $4.7 million in grant funding under the Sustainable Canadian Agriculture Partnership (Sustainable CAP) to support 36 projects, including several that benefit the future of crop health in Manitoba, under the Research and Innovation Program over the next three years, federal Agriculture and Agri-Food Minister Lawrence MacAulay and Manitoba Agriculture Minister Ron Kostyshyn announced today at CropConnect.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-02-13T11:38:14-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/02/governments-support-crop-health-projects-through-research-and-innovation.html"/>
+</entry>
+<entry>
+<title>Message from Minister Lawrence MacAulay on Canada's Agriculture Day 2025</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/02/message-from-minister-lawrence-macaulay-on-canadas-agriculture-day-2025.html</id>
+<summary type="html">Today, on Canada's Agriculture Day, we recognize all of our Canadian farmers and celebrate the great work they do. Canada is a world leader when it comes to agriculture, with a strong food system that is supported by dedicated farmers who work year-round to put top-quality food on our tables.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="statements"/>
+<updated>2025-02-11T09:44:43-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/02/message-from-minister-lawrence-macaulay-on-canadas-agriculture-day-2025.html"/>
+</entry>
+<entry>
+<title>Federal, Provincial and Territorial Ministers of Agriculture meet to discuss Canada-United States trading relationship</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/02/federal-provincial-and-territorial-ministers-of-agriculture-meet-to-discuss-canada-united-states-trading-relationship.html</id>
+<summary type="html">Yesterday, the Honourable Lawrence MacAulay, federal Minister of Agriculture and Agri-Food, convened provincial and territorial Ministers of Agriculture to discuss several key areas of interest for Canada’s agriculture sector in the current context of the Canada-United States trading relationship.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-02-08T08:43:51-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/02/federal-provincial-and-territorial-ministers-of-agriculture-meet-to-discuss-canada-united-states-trading-relationship.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces 10 organizations to deliver the School Food Infrastructure Fund to help strengthen food security in communities across Canada</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/01/minister-macaulay-announces-10-organizations-to-deliver-the-school-food-infrastructure-fund-to-help-strengthen-food-security-in-communities-across-.html</id>
+<summary type="html">Kids need access to nutritious food at school so they can learn, grow, and reach their full potential. That is why the Government of Canada is taking action to strengthen wider community and local food systems through investments in infrastructure that expand the reach and impact of school food programming.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-01-31T12:32:36-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/01/minister-macaulay-announces-10-organizations-to-deliver-the-school-food-infrastructure-fund-to-help-strengthen-food-security-in-communities-across-.html"/>
+</entry>
+<entry>
+<title>New suite of initiatives aimed at growing the Prince Edward Island livestock sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/01/new-suite-of-initiatives-aimed-at-growing-the-prince-edward-island-livestock-sector.html</id>
+<summary type="html">In collaboration with the Government of Canada, the Province of Prince Edward Island (PEI) is launching new funding opportunities to further support its cattle and livestock sectors.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-01-30T16:17:13-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/01/new-suite-of-initiatives-aimed-at-growing-the-prince-edward-island-livestock-sector.html"/>
+</entry>
+<entry>
+<title>Governments of Canada and Saskatchewan invest in livestock and forage research</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/01/governments-of-canada-and-saskatchewan-invest-in-livestock-and-forage-research.html</id>
+<summary type="html">Today, Canada's Minister of Agriculture and Agri-Food Lawrence MacAulay and Saskatchewan's Minister of Agriculture Daryl Harrison announced $6.9 million to jointly support livestock and forage-related scientific research in Saskatchewan in 2025, combined with co-funding from industry partners for a total of $7.2 million.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-01-29T13:13:14-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/01/governments-of-canada-and-saskatchewan-invest-in-livestock-and-forage-research.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces funding to help farmers lower emissions and build resilience</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/01/minister-macaulay-announces-funding-to-help-farmers-lower-emissions-and-build-resilience.html</id>
+<summary type="html">Farmers care deeply about the land and have been leaders when it comes to taking action to protect the environment and strengthen the competitiveness of our agricultural businesses and economy.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-01-28T14:12:44-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/01/minister-macaulay-announces-funding-to-help-farmers-lower-emissions-and-build-resilience.html"/>
+</entry>
+<entry>
+<title>2025 AgriInsurance program announced at Manitoba Ag Days</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/01/2025-agriinsurance-program-announced-at-manitoba-ag-days.html</id>
+<summary type="html">The Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food and Manitoba Agriculture Minister, Ron Kostyshyn announced details of the 2025 AgriInsurance program, administered by Manitoba Agricultural Services Corporation (MASC).</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-01-23T08:19:46-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/01/2025-agriinsurance-program-announced-at-manitoba-ag-days.html"/>
+</entry>
+<entry>
+<title>Message from Minister Lawrence MacAulay on Bell Let's Talk Day 2025</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/01/message-from-minister-lawrence-macaulay-on-bell-lets-talk-day-2025.html</id>
+<summary type="html">Today, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, issued the following statement to mark Bell Let’s Talk Day:</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="statements"/>
+<updated>2025-01-22T10:44:28-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/01/message-from-minister-lawrence-macaulay-on-bell-lets-talk-day-2025.html"/>
+</entry>
+<entry>
+<title>Governments of Canada and Saskatchewan invest in crop research</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/01/governments-of-canada-and-saskatchewan-invest-in-crop-research.html</id>
+<summary type="html">Canada's Minister of Agriculture and Agri-Food Lawrence MacAulay and Saskatchewan's Minister of Agriculture Daryl Harrison today announced a total of $9.4 million in funding for crop-related research, in addition to $5.4 million in co-funding from industry partners for a combined total of $14.8 million in 2025.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-01-15T14:01:01-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/01/governments-of-canada-and-saskatchewan-invest-in-crop-research.html"/>
+</entry>
+<entry>
+<title>Governments investing in Ontario’s dairy processing sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/01/governments-investing-in-ontarios-dairy-processing-sector.html</id>
+<summary type="html">The governments of Canada and Ontario are investing up to $7.18 million through the Sustainable Canadian Agricultural Partnership (Sustainable CAP) in 70 projects across the province to enhance and modernize dairy processing capacity and food safety. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-01-15T12:04:15-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/01/governments-investing-in-ontarios-dairy-processing-sector.html"/>
+</entry>
+<entry>
+<title>Government of Canada to open new intake period for Youth Employment and Skills Program</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2025/01/government-of-canada-to-open-new-intake-period-for-youth-employment-and-skills-program.html</id>
+<summary type="html">Today, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, announced that applications will open for the Youth Employment and Skills Program (YESP) on January 27, 2025.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2025-01-09T14:23:57-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2025/01/government-of-canada-to-open-new-intake-period-for-youth-employment-and-skills-program.html"/>
+</entry>
+<entry>
+<title>New funding to support agricultural workforce on Prince Edward Island</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/12/new-funding-to-support-agricultural-workforce-on-prince-edward-island.html</id>
+<summary type="html">A new program will help the agriculture industry on Prince Edward Island continue to build capacity and improve training for those working in it.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-12-12T12:08:18-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/12/new-funding-to-support-agricultural-workforce-on-prince-edward-island.html"/>
+</entry>
+<entry>
+<title>Applications now open for the 2025 Saskatchewan Agriculture Student Scholarship</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/12/applications-now-open-for-the-2025-saskatchewan-agriculture-student-scholarship.html</id>
+<summary type="html">The governments of Canada and Saskatchewan are pleased to announce that applications are now being accepted for the 2025 Agriculture Student Scholarship. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-12-11T11:06:14-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/12/applications-now-open-for-the-2025-saskatchewan-agriculture-student-scholarship.html"/>
+</entry>
+<entry>
+<title>Saskatchewan’s New Next Gen Agriculture Mentorship Program Cohort Announced </title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/12/saskatchewans-new-next-gen-agriculture-mentorship-program-cohort-announced.html</id>
+<summary type="html">The mentee and mentor pairing for the Saskatchewan Next Gen Agriculture Mentorship Program Cohort Six was announced today in Regina. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-12-09T12:37:59-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/12/saskatchewans-new-next-gen-agriculture-mentorship-program-cohort-announced.html"/>
+</entry>
+<entry>
+<title>New funding supports Indigenous food sovereignty, security</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/11/new-funding-supports-indigenous-food-sovereignty-security.html</id>
+<summary type="html">Indigenous farmers, communities and governments can access new funding to help strengthen food security and sovereignty, and increase Indigenous participation in B.C.’s agriculture and food sectors.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-11-29T12:47:17-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/11/new-funding-supports-indigenous-food-sovereignty-security.html"/>
+</entry>
+<entry>
+<title>Governments announce available funding to enhance Ontario’s agri-food sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/11/governments-announce-available-funding-to-enhance-ontarios-agri-food-sector.html</id>
+<summary type="html">The governments of Canada and Ontario are still accepting applications for 3 initiatives designed to enhance the province’s $50.7 billion agri-food sector through the Sustainable Canadian Agricultural Partnership (Sustainable CAP).</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-11-27T14:05:07-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/11/governments-announce-available-funding-to-enhance-ontarios-agri-food-sector.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay attends Agribition and announces support for Canadian agriculture</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/11/minister-macaulay-attends-agribition-and-announces-support-for-canadian-agriculture.html</id>
+<summary type="html">This week, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, joined farmers, exporters, and industry stakeholders at the Canadian Western Agribition (CWA) in Regina, Saskatchewan.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-11-26T16:31:23-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/11/minister-macaulay-attends-agribition-and-announces-support-for-canadian-agriculture.html"/>
+</entry>
+<entry>
+<title>Sustainability and growth in the Canadian beef sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/11/sustainability-and-growth-in-the-canadian-beef-sector.html</id>
+<summary type="html">The Government of Canada is investing over $5.4 million in 5 projects aimed at driving growth in the Canadian beef sector.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="backgrounders"/>
+<updated>2024-11-26T16:31:14-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/11/sustainability-and-growth-in-the-canadian-beef-sector.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces funding for innovations in sustainable agricultural technology</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/11/minister-macaulay-announces-funding-for-innovations-in-sustainable-agricultural-technology.html</id>
+<summary type="html">Today, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, announced an investment of more than $7.2 million for 4 projects through the AgriInnovate Program, an initiative under the Sustainable Canadian Agricultural Partnership. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-11-22T15:11:02-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/11/minister-macaulay-announces-funding-for-innovations-in-sustainable-agricultural-technology.html"/>
+</entry>
+<entry>
+<title>AgriInnovate Program: Innovations in sustainable agriculture</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/11/agriinnovate-program-innovations-in-sustainable-agriculture.html</id>
+<summary type="html">The Government of Canada is investing over $7.2 million in 4 innovative projects aimed at improving sustainability in Canadian agriculture.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="backgrounders"/>
+<updated>2024-11-22T15:10:56-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/11/agriinnovate-program-innovations-in-sustainable-agriculture.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay concludes productive visit to China</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/11/minister-macaulay-concludes-productive-visit-to-china.html</id>
+<summary type="html">Last week, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, visited Beijing, China, where he met with Chinese industry leaders, importers, and key Canadian stakeholders to advocate for improved commercial opportunities for Canadian farmers, processors and exporters, and reinforce Canada's commitment to exploring ways to support fair competition, a level playing field for businesses, and more open, sustainable and inclusive trade.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-11-19T13:40:44-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/11/minister-macaulay-concludes-productive-visit-to-china.html"/>
+</entry>
+<entry>
+<title>Helping Alberta kids lead with heart, head, hands and health</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/11/helping-alberta-kids-lead-with-heart-head-hands-and-health.html</id>
+<summary type="html">A new investment in 4-H Alberta will offer the province's youth new opportunities to get into agriculture.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-11-12T16:15:10-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/11/helping-alberta-kids-lead-with-heart-head-hands-and-health.html"/>
+</entry>
+<entry>
+<title>Encouraging Albertans to "Rat on Rats!"</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/11/encouraging-albertans-to-rat-on-rats.html</id>
+<summary type="html">A new campaign is reminding Albertans to do their part to help keep Alberta rat-free. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-11-05T13:16:39-05:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/11/encouraging-albertans-to-rat-on-rats.html"/>
+</entry>
+<entry>
+<title>An additional $22.2 million to support farm businesses affected by weather hazards in 2023</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/an-additional-222-million-to-support-farm-businesses-affected-by-weather-hazards-in-2023.html</id>
+<summary type="html">The Government of Canada and the Government of Quebec are launching the Canada-Quebec Initiative to Help Mitigate the Impacts of Excess Rainfall in Quebec in 2023 (known as AgriRecovery).</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-31T10:45:10-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/an-additional-222-million-to-support-farm-businesses-affected-by-weather-hazards-in-2023.html"/>
+</entry>
+<entry>
+<title>Governments strengthening Ontario's food supply system</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-strengthening-ontarios-food-supply-system.html</id>
+<summary type="html">The governments of Canada and Ontario are investing up to $7.5 million to support 365 projects that will help the province's farmers, food processors, and essential farm-supporting agribusinesses protect their operations against pests and diseases while enhancing operational resilience and strengthening public trust in our food supply system.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-25T11:04:44-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-strengthening-ontarios-food-supply-system.html"/>
+</entry>
+<entry>
+<title>Governments helping fruit sector seek new opportunities</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-helping-fruit-sector-seek-new-opportunities.html</id>
+<summary type="html">The governments of Canada and Ontario are helping 128 apple, tender fruit, and table grape producers grow more popular and hardy varieties of produce. The Growing Future Opportunities Initiative, with funding through the Sustainable Canadian Agricultural Partnership (Sustainable CAP), is supporting these projects through a $4.4 million investment.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-21T10:36:29-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-helping-fruit-sector-seek-new-opportunities.html"/>
+</entry>
+<entry>
+<title>Changes to AgriStability program saving Alberta farmers time and money</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/changes-to-agristability-program-saving-alberta-farmers-time-and-money.html</id>
+<summary type="html">Farmers are vital to Alberta's economy, providing essential food resources and driving rural prosperity, yet they often face burdensome paperwork and high accounting fees that hinder their productivity. Governments are making changes to the AgriStability program to address these challenges. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-18T11:53:26-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/changes-to-agristability-program-saving-alberta-farmers-time-and-money.html"/>
+</entry>
+<entry>
+<title>Governments strengthening mental health services for international agricultural workers</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-strengthening-mental-health-services-for-international-agricultural-workers.html</id>
+<summary type="html">The governments of Canada and Ontario are investing nearly $1.8 million over 2 years to provide international agricultural workers (IAWs) in Ontario with enhanced access to mental health supports in Spanish, Tagalog, French and English.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-17T11:22:12-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-strengthening-mental-health-services-for-international-agricultural-workers.html"/>
+</entry>
+<entry>
+<title>Government of Canada announces funding to improve the sustainability and competitiveness of Canadian cereals</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/government-of-canada-announces-funding-to-improve-the-sustainability-and-competitiveness-of-canadian-cereals.html</id>
+<summary type="html">Cereal crops are a staple of Canada’s agricultural sector. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-15T13:04:37-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/government-of-canada-announces-funding-to-improve-the-sustainability-and-competitiveness-of-canadian-cereals.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces research funding for an innovative, sustainable poultry sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/minister-macaulay-announces-research-funding-for-an-innovative-sustainable-poultry-sector.html</id>
+<summary type="html">Today, the Honorable Lawrence MacAulay, Minister of Agriculture and Agri-Food, toured the University of Guelph's research facilities to meet with researchers and learn about their innovative work in support of a sustainable poultry sector.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-15T11:39:16-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/minister-macaulay-announces-research-funding-for-an-innovative-sustainable-poultry-sector.html"/>
+</entry>
+<entry>
+<title>Terry Duguid to announce investments to the Canadian cereals sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/terry-duguid-to-announce-investments-to-the-canadian-cereals-sector.html</id>
+<summary type="html">Terry Duguid to announce investments to the Canadian cereals sector</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2024-10-11T10:28:19-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/terry-duguid-to-announce-investments-to-the-canadian-cereals-sector.html"/>
+</entry>
+<entry>
+<title>Governments investing to improve Ontario farmland</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-investing-to-improve-ontario-farmland.html</id>
+<summary type="html">The governments of Canada and Ontario have awarded over $12.2 million in support to 213 projects designed to help farmers make their agricultural lands more healthy and resilient.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-09T10:49:39-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-investing-to-improve-ontario-farmland.html"/>
+</entry>
+<entry>
+<title>Governments investing in initiatives to attract and retain agri-food labour</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-investing-in-initiatives-to-attract-and-retain-agri-food-labour.html</id>
+<summary type="html">The governments of Canada and Ontario are creating the Labour Force Management Strategies Initiative to attract and retain Ontario agri-food workers. Funded through the Sustainable Canadian Agricultural Partnership (Sustainable CAP), this $4 million investment will strengthen Ontario’s agri-food workforce for years to come.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-08T12:09:57-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/governments-investing-in-initiatives-to-attract-and-retain-agri-food-labour.html"/>
+</entry>
+<entry>
+<title>Government of Canada announces funding to improve animal health and welfare</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/government-of-canada-announces-funding-to-improve-animal-health-and-welfare.html</id>
+<summary type="html">Government of Canada announces funding to improve animal health and welfare</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-08T11:48:11-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/government-of-canada-announces-funding-to-improve-animal-health-and-welfare.html"/>
+</entry>
+<entry>
+<title>Government of Canada announces funding to advance sustainable farming practices in the organic sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/government-of-canada-announces-funding-to-advance-sustainable-farming-practices-in-the-organic-sector.html</id>
+<summary type="html">Investing in organic farming research is essential for advancing sustainable practices, addressing the sector’s unique challenges, and supporting the continued growth and competitiveness of Canadian organic products.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-04T10:09:14-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/government-of-canada-announces-funding-to-advance-sustainable-farming-practices-in-the-organic-sector.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces investment to improve the long-term sustainability of Eastern Canadian oilseeds</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/minister-macaulay-announces-investment-to-improve-the-long-term-sustainability-of-eastern-canadian-oilseeds.html</id>
+<summary type="html">Today, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, announced up to $4,348,090 over 5 years to the Eastern Canada Oilseed Development Alliance (ECODA) through the AgriScience Program – Projects Component, an initiative under the Sustainable Canadian Agricultural Partnership. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-10-04T10:01:42-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/minister-macaulay-announces-investment-to-improve-the-long-term-sustainability-of-eastern-canadian-oilseeds.html"/>
+</entry>
+<entry>
+<title>MP Blois to announce investments to support the organic sector</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/mp-blois-to-announce-investments-to-support-the-organic-sector.html</id>
+<summary type="html">Kody Blois, Member of Parliament for Kings-Hants and Chair of the House of Commons Agriculture and Agri-Food Committee, will be in Port Williams, Nova Scotia to announce federal investments on behalf of the Honourable Lawrence MacAulay, to support sustainable practices in the Canadian organic sector.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2024-10-03T10:21:16-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/mp-blois-to-announce-investments-to-support-the-organic-sector.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay to announce investments to improve the long-term sustainability of Eastern Canadian oilseeds industry</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/10/minister-macaulay-to-announce-investments-to-improve-the-long-term-sustainability-of-eastern-canadian-oilseeds-industry.html</id>
+<summary type="html">The Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, will announce investments to support the long-term security and sustainability of the Eastern Canadian oilseed industry. He will be joined by Heath MacDonald, Member of Parliament for Malpeque.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="media advisories"/>
+<updated>2024-10-03T10:17:21-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/10/minister-macaulay-to-announce-investments-to-improve-the-long-term-sustainability-of-eastern-canadian-oilseeds-industry.html"/>
+</entry>
+<entry>
+<title>Ontario Investing to Attract and Retain International Agri-Food Workers</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/09/ontario-investing-to-attract-and-retain-international-agri-food-workers.html</id>
+<summary type="html">The governments of Canada and Ontario are investing up to $1.5 million over four years to create a more welcoming environment for international agri-food workers (IAWs) who work in Ontario's $51 billion agri-food sector and provide them with stronger supports during their stay here.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-09-27T15:09:15-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/09/ontario-investing-to-attract-and-retain-international-agri-food-workers.html"/>
+</entry>
+<entry>
+<title>Governments Investing to Increase Workforce Diversity in Agriculture</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/09/governments-investing-to-increase-workforce-diversity-in-agriculture.html</id>
+<summary type="html">The governments of Canada and Ontario are investing up to $1.5 million in the new Agricultural Workforce Equity and Diversity Initiative (AWEDI) to help minority groups start and build businesses in the agri-food sector.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-09-24T11:10:15-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/09/governments-investing-to-increase-workforce-diversity-in-agriculture.html"/>
+</entry>
+<entry>
+<title>British Columbia farmers get help building more resilient, sustainable practices</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/09/british-columbia-farmers-get-help-building-more-resilient-sustainable-practices.html</id>
+<summary type="html">Farmers and ranchers are receiving additional assistance to prepare for, adapt to and lessen the impacts of climate change so they can better protect their farms and livestock and continue growing food for people in British Columbia.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-09-18T14:04:05-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/09/british-columbia-farmers-get-help-building-more-resilient-sustainable-practices.html"/>
+</entry>
+<entry>
+<title>Governments Strengthening the Sustainability and Productivity of Ontario Farms</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/09/governments-strengthening-the-sustainability-and-productivity-of-ontario-farms.html</id>
+<summary type="html">The governments of Canada and Ontario are investing an additional $9 million in the Ontario Agricultural Sustainability Initiative through the Sustainable Canadian Agricultural Partnership to help farmers enhance the sustainability and competitiveness of their farms.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-09-16T13:46:09-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/09/governments-strengthening-the-sustainability-and-productivity-of-ontario-farms.html"/>
+</entry>
+<entry>
+<title>Manitoba Celebrates 10 years of Farm and Food Awareness Week with Support to Agriculture in the Classroom Manitoba</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/09/manitoba-celebrates-10-years-of-farm-and-food-awareness-week-with-support-to-agriculture-in-the-classroom-manitoba.html</id>
+<summary type="html">The governments of Canada and Manitoba are encouraging all Manitobans to learn more about the important role that agriculture producers play in ensuring that our agri-food system remains diverse, safe and sustainable by attending at least one of the many events around the province celebrating the 10th annual Farm and Food Awareness Week, September 16th-20th, federal Minister of Agriculture and Agri-Food, the Honourable Lawrence MacAulay, and Manitoba Agriculture Minister Ron Kostyshyn announced today.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-09-13T13:02:51-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/09/manitoba-celebrates-10-years-of-farm-and-food-awareness-week-with-support-to-agriculture-in-the-classroom-manitoba.html"/>
+</entry>
+<entry>
+<title>New funding to support potato growers</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/09/new-funding-to-support-potato-growers.html</id>
+<summary type="html">New Brunswick potato producers who endured extraordinary costs resulting from excessive moisture during last year's growing season will have access to financial assistance starting this November.</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-09-13T09:25:23-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/09/new-funding-to-support-potato-growers.html"/>
+</entry>
+<entry>
+<title>Minister MacAulay announces new members of the Canadian Agricultural Youth Council</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/09/minister-macaulay-announces-new-members-of-the-canadian-agricultural-youth-council.html</id>
+<summary type="html">Today, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, announced the members of the third cohort of the Canadian Agricultural Youth Council (CAYC). Nine new faces and 13 returning youth from the second cohort will make up the new Council, all serving terms of 18 months. </summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="news releases"/>
+<updated>2024-09-10T09:56:12-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/09/minister-macaulay-announces-new-members-of-the-canadian-agricultural-youth-council.html"/>
+</entry>
+<entry>
+<title>Statement from Minister MacAulay on China’s anti-dumping investigation</title>
+<id>https://www.canada.ca/en/agriculture-agri-food/news/2024/09/statement-from-minister-macaulay-on-chinas-anti-dumping-investigation.html</id>
+<summary type="html">Today, the Honourable Lawrence MacAulay, Minister of Agriculture and Agri-Food, issued the following statement in response to China’s anti-dumping investigation into Canadian canola seed exports:</summary>
+<author>
+<name>Agriculture and Agri-Food Canada</name>
+</author>
+<category term="statements"/>
+<updated>2024-09-09T19:12:51-04:00</updated>
+<link href="https://www.canada.ca/en/agriculture-agri-food/news/2024/09/statement-from-minister-macaulay-on-chinas-anti-dumping-investigation.html"/>
+</entry>
+</feed>
