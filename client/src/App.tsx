@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,87 +14,59 @@ import SubmissionPack from "@/components/SubmissionPack";
 import DeadlineCalendar from "@/components/DeadlineCalendar";
 import AIAssistant from "@/components/AIAssistant";
 
-function App() {
+function AppContent() {
   const [currentPage, setCurrentPage] = useState("home");
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [userData, setUserData] = useState<any>(null);
 
-  //todo: remove mock functionality
-  const mockPractices = [
-    {
-      title: "Rotational Grazing Water Points",
-      category: "Rotational grazing & water",
-      costShare: "50-75%",
-      capRange: "$8,000-$25,000",
-      payoffPeriod: "1-2 seasons",
-      benefits: [
-        "Reduce feed costs through better pasture utilization",
-        "Improve water quality and soil health",
-        "Increase stocking capacity by 20-30%"
-      ],
-      verificationNotes: [
-        "Before photos of existing water setup",
-        "After photos showing installed system",
-        "Receipts for all materials and labor"
-      ]
-    },
-    {
-      title: "Cross Fencing System",
-      category: "Rotational grazing & water", 
-      costShare: "60-80%",
-      capRange: "$5,000-$15,000",
-      payoffPeriod: "1 season",
-      benefits: [
-        "Better pasture management and rotation",
-        "Reduced overgrazing in sensitive areas",
-        "Improved livestock distribution"
-      ],
-      verificationNotes: [
-        "Before and after photos of fencing installation",
-        "Map showing fence line locations",
-        "Material purchase receipts"
-      ]
-    },
-    {
-      title: "IPM Monitoring System", 
-      category: "Specialty crop IPM/exclusion",
-      costShare: "75%",
-      capRange: "$3,000-$12,000",
-      payoffPeriod: "1-2 seasons",
-      benefits: [
-        "Reduced pesticide costs through targeted application",
-        "Early pest detection and prevention",
-        "Compliance with organic certification requirements"
-      ],
-      verificationNotes: [
-        "Installation photos of monitoring equipment",
-        "Pest monitoring logs and data",
-        "Equipment purchase documentation"
-      ]
-    }
-  ];
+  // Fetch live programs from RSS feed
+  const { data: allPrograms = [], isLoading: programsLoading, error: programsError } = useQuery({
+    queryKey: ['/api/programs'],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+  
+  const { data: upcomingDeadlines = [], isLoading: deadlinesLoading, error: deadlinesError } = useQuery({
+    queryKey: ['/api/programs/deadlines'],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
 
-  //todo: remove mock functionality
-  const mockDeadlines = [
-    {
-      id: "eqip-1",
-      program: "Environmental Quality Incentives Program (EQIP)",
-      type: "ranking" as const,
-      date: "November 15, 2024",
-      daysUntil: 8,
-      location: "Iowa County, IA",
-      status: "open" as const
-    },
-    {
-      id: "csp-1", 
-      program: "Conservation Stewardship Program (CSP)",
-      type: "signup" as const,
-      date: "December 1, 2024",
-      daysUntil: 24,
-      location: "Statewide",
-      status: "open" as const
-    }
-  ];
+  // Transform RSS programs into practice cards format
+  const practicePrograms = allPrograms.slice(0, 6).map((program: any) => ({
+    title: program.title,
+    category: program.program || program.category,
+    costShare: program.fundingAmount || "Varies",
+    capRange: program.fundingAmount || "Contact local office",
+    payoffPeriod: "Varies by program",
+    benefits: [
+      "Government cost-share funding available",
+      "Support for sustainable agricultural practices",
+      "Professional technical assistance included"
+    ],
+    verificationNotes: [
+      "Application through local office",
+      "Eligibility requirements verification",
+      "Program-specific documentation"
+    ],
+    url: program.url,
+    publishedDate: program.publishedDate
+  }));
+  
+  // Transform deadlines data
+  const transformedDeadlines = upcomingDeadlines.map((program: any) => {
+    const deadline = program.deadline ? new Date(program.deadline) : null;
+    const now = new Date();
+    const daysUntil = deadline ? Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
+    
+    return {
+      id: program.id,
+      program: program.title,
+      type: program.category === 'news releases' ? 'signup' as const : 'ranking' as const,
+      date: deadline ? deadline.toLocaleDateString() : 'Contact local office',
+      daysUntil: daysUntil || 0,
+      location: program.location || 'Multiple locations',
+      status: (daysUntil && daysUntil > 0) ? 'open' as const : 'unknown' as const
+    };
+  });
 
   const handleEligibilityComplete = (data: any, result: any) => {
     setUserData({ ...data, result });
@@ -116,7 +89,7 @@ function App() {
               <p className="text-muted-foreground">Browse conservation practices and their funding opportunities</p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mockPractices.map((practice, index) => (
+              {practicePrograms.map((practice, index) => (
                 <PracticeCard
                   key={index}
                   {...practice}
@@ -194,7 +167,7 @@ function App() {
       case "deadlines":
         return (
           <DeadlineCalendar 
-            deadlines={mockDeadlines}
+            deadlines={transformedDeadlines}
             onSetReminder={(id) => console.log('Reminder set for:', id)} 
           />
         );
@@ -267,24 +240,30 @@ function App() {
   };
 
   return (
+    <div className="min-h-screen bg-background">
+      <Navigation 
+        currentPage={currentPage}
+        onNavigate={setCurrentPage}
+        hasUnsavedProgress={!!userData}
+      />
+      
+      <main className="pb-20">
+        {renderCurrentPage()}
+      </main>
+      
+      <AIAssistant 
+        isOpen={assistantOpen}
+        onClose={() => setAssistantOpen(!assistantOpen)}
+      />
+    </div>
+  );
+}
+
+function App() {
+  return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen bg-background">
-          <Navigation 
-            currentPage={currentPage}
-            onNavigate={setCurrentPage}
-            hasUnsavedProgress={!!userData}
-          />
-          
-          <main className="pb-20">
-            {renderCurrentPage()}
-          </main>
-          
-          <AIAssistant 
-            isOpen={assistantOpen}
-            onClose={() => setAssistantOpen(!assistantOpen)}
-          />
-        </div>
+        <AppContent />
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
