@@ -189,6 +189,29 @@ export default function EligibilityScreen({ onNext }: EligibilityScreenProps) {
                 </div>
               </RadioGroup>
             </div>
+
+            <Button 
+              className="w-full mt-6" 
+              disabled={!(formData.operation && formData.scale && formData.location && formData.practice)}
+              onClick={() => {
+                // Auto-calculate result when button is clicked
+                if (formData.operation && formData.scale && formData.location && formData.practice) {
+                  const mockResult: EligibilityResult = {
+                    eligible: "likely",
+                    program: "Environmental Quality Incentives Program (EQIP)",
+                    costShare: "50-75%",
+                    cap: "$15,000-$40,000",
+                    ruleType: "Ranking cutoff",
+                    nextDate: "November 15, 2024",
+                    checklist: ["Land control proof", "Compliance ID verification", "Dated quote/practice sketch"]
+                  };
+                  setResult(mockResult);
+                }
+              }}
+              data-testid="button-check-eligibility"
+            >
+              Check Eligibility
+            </Button>
           </CardContent>
         </Card>
 
