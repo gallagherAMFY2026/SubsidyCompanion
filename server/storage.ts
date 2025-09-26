@@ -8,7 +8,7 @@ import {
   type DataFetchLog,
   type InsertDataFetchLog
 } from "@shared/schema";
-import { randomUUID } from "crypto";
+import { randomUUID, createHash } from "crypto";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -58,11 +58,10 @@ export class MemStorage implements IStorage {
 
   // Utility function to compute deduplication key
   private computeDedupeKey(program: InsertSubsidyProgram): string {
-    const crypto = require('crypto');
     const normalizedTitle = program.title.toLowerCase().trim();
     const normalizedUrl = program.url.toLowerCase().trim();
     const keyData = `${normalizedTitle}|${normalizedUrl}|${program.dataSource}`;
-    return crypto.createHash('sha256').update(keyData).digest('hex').substring(0, 32);
+    return createHash('sha256').update(keyData).digest('hex').substring(0, 32);
   }
 
   // Utility function to compute days until deadline

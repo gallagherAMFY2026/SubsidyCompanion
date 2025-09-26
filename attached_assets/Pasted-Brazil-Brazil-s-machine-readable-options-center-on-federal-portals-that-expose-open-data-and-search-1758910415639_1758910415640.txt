@@ -1,0 +1,228 @@
+Brazil
+Brazil’s machine-readable options center on federal portals that expose open data and searchable program transfers rather than program-specific RSS; the most practical stack is MAPA news on Gov.br for agriculture updates, the federal transparency API for transfer programs (including Garantia-Safra and other benefits), and financing institutions like BNDES for rural credit announcements, all of which can be polled or queried programmatically.
+Federal agriculture channels
+•	MAPA news on Gov.br: the Ministry of Agriculture and Livestock (MAPA) publishes announcements and sector updates via its Gov.br news pages, which can be polled to detect Plano Safra measures and market openings relevant to producers.
+•	Institutional role: MAPA defines and executes agribusiness policy, working with EMBRAPA and state superintendencies; monitoring MAPA’s channel is essential for program timing but formal benefits often route through finance or transfer systems.
+Programmatic data access
+•	Portal da Transparência API: official REST API with token support and rate limits, offering endpoints for federal transfers such as Garantia Safra, Seguro Defeso, Convênios, and Despesas; this is the primary machine interface to track disbursements and beneficiary level program flows.
+•	API usage and limits: requires email registration to obtain a token; daytime limit of 90 requests/min and nighttime 300 requests/min; for large extracts, the portal recommends open data spreadsheets instead of high volume API pulls.
+Financing and credit instruments
+•	BNDES rural credit programs: BNDES communicates rural credit lines and approvals via its newsroom; while not an RSS, these can be polled for updates on investment credit and sector specific lines supporting agribusiness.
+•	New/targeted lines: news about special lines launched to support farmers during market or climate stress appears via releases and sector publications; these are complementary to Plano Safra credit equalization.
+{
+  "meta": {
+    "owner": "Brazil ag funding monitor",
+    "version": "2025-09-26",
+    "notes": [
+      "Gov.br news pages may not expose RSS; use respectful HTML polling.",
+      "Portal da Transparência provides REST APIs for federal transfer programs (requires token)."
+    ]
+  },
+  "sources": {
+    "mapa_news": {
+      "base": "https://www.gov.br/agricultura/en/news",
+      "type": "http_poll"
+    },
+    "portal_transparencia_api": {
+      "base": "https://api.portaldatransparencia.gov.br",
+      "auth_header": "chave-api-dados: {{PT_TOKEN}}",
+      "rate_limits": {
+        "day": "90 rpm (06:00–23:59)",
+        "night": "300 rpm (00:00–05:59)"
+      }
+    },
+    "bndes_news": {
+      "base": "https://www.bndes.gov.br",
+      "paths": [
+        "/SiteBNDES/bndes/bndes_en/conteudos/noticia/"
+      ],
+      "type": "http_poll"
+    }
+  },
+  "jobs": [
+    {
+      "name": "MAPA_news_poll",
+      "type": "http_scrape",
+      "cadence": "0 */1 * * *",
+      "request": {
+        "url": "https://www.gov.br/agricultura/en/news",
+        "headers": { "User-Agent": "AgFundingMonitor/1.0 (+alerts@example.com)" }
+      },
+      "parse": {
+        "item": "article",
+        "fields": {
+          "title": "a::text",
+          "href": "a[href]",
+          "summary": "p::text",
+          "pubDate": "time[datetime]::attr(datetime)"
+        }
+      },
+      "output": { "format": "jsonl", "path": "out/br_mapa_news.jsonl" }
+    },
+    {
+      "name": "PT_garantia_safra_transfers",
+      "type": "http_api",
+      "cadence": "*/30 * * * *",
+      "request": {
+        "url": "https://api.portaldatransparencia.gov.br/transferencias?programa=Garantia-Safra&pagina={{page}}",
+        "headers": { "chave-api-dados": "{{PT_TOKEN}}" }
+      },
+      "paginate": { "start": 1, "max_pages": 20 },
+      "output": { "format": "jsonl", "path": "out/br_garantia_safra.jsonl" }
+    },
+    {
+      "name": "PT_seguro_defeso_transfers",
+      "type": "http_api",
+      "cadence": "*/30 * * * *",
+      "request": {
+        "url": "https://api.portaldatransparencia.gov.br/beneficios/seguro-defeso?pagina={{page}}",
+        "headers": { "chave-api-dados": "{{PT_TOKEN}}" }
+      },
+      "paginate": { "start": 1, "max_pages": 20 },
+      "output": { "format": "jsonl", "path": "out/br_seguro_defeso.jsonl" }
+    },
+    {
+      "name": "PT_convenios_agriculture",
+      "type": "http_api",
+      "cadence": "0 */2 * * *",
+      "request": {
+        "url": "https://api.portaldatransparencia.gov.br/convenios?orgao=MAPA&palavraChave=agricultura&pagina={{page}}",
+        "headers": { "chave-api-dados": "{{PT_TOKEN}}" }
+      },
+      "paginate": { "start": 1, "max_pages": 50 },
+      "output": { "format": "jsonl", "path": "out/br_convenios_mapa.jsonl" }
+    },
+    {
+      "name": "BNDES_rural_credit_news",
+      "type": "http_scrape",
+      "cadence": "0 */3 * * *",
+      "request": {
+        "url": "https://www.bndes.gov.br/SiteBNDES/bndes/bndes_en/conteudos/noticia/",
+        "headers": { "User-Agent": "AgFundingMonitor/1.0 (+alerts@example.com)" }
+      },
+      "parse": {
+        "item": ".noticias-lista .noticia",
+        "fields": {
+          "title": "a::text",
+          "href": "a[href]",
+          "pubDate": ".data::text"
+        }
+      },
+      "output": { "format": "jsonl", "path": "out/br_bndes_news.jsonl" }
+    }
+  ],
+  "deduplication": {
+    "keys": {
+      "mapa_news": ["sha1(normalize_url(href))"],
+      "portal_transparencia": ["id || sha1(codigo+data+valor)"],
+      "bndes": ["sha1(normalize_url(href))"]
+    }
+  },
+  "conflicts": {
+    "precedence": ["portal_transparencia", "mapa_news", "bndes"],
+    "fields": {
+      "published_at": "earliest_by_precedence",
+      "amount": "max_by_precedence",
+      "status": "latest_by_precedence"
+    }
+  },
+  "alerts": {
+    "keywords": [
+      "Plano Safra",
+      "Pronaf",
+      "Pronamp",
+      "Garantia-Safra",
+      "Seguro-Defeso",
+      "Subvenção",
+      "Crédito Rural",
+      "BNDES",
+      "Cooperativa"
+    ],
+    "thresholds": {
+      "transfer_min_value_brl": 1000000,
+      "close_to_deadline_days": 21
+    }
+  }
+}
+
+Below is a focused, runnable policy block for deduplication and conflict resolution tailored to Brazil sources (MAPA Gov.br news, Portal da Transparência API, and BNDES newsroom), with precedence, key construction, field merge logic, and audit traces.
+Brazil dedupe and conflict policy (JSON)
+json
+{
+  "policy": {
+    "sources": ["portal_transparencia", "mapa_news", "bndes_news"],
+    "precedence": [
+      "portal_transparencia",
+      "mapa_news",
+      "bndes_news"
+    ],
+    "deduplication": {
+      "rules": {
+        "portal_transparencia": {
+          "primary_key": ["id || sha1(normalize(programa) + '|' + normalize(codigo) + '|' + normalize(data) + '|' + toString(valor))"],
+          "secondary": ["sha1(normalize(orgao) + '|' + normalize(municipio) + '|' + normalize(data))"]
+        },
+        "mapa_news": {
+          "primary_key": ["guid || sha1(normalize_url(link) + '|' + normalize(title))"],
+          "time_bucket": "day"
+        },
+        "bndes_news": {
+          "primary_key": ["sha1(normalize_url(link))"],
+          "secondary": ["sha1(normalize(title))"]
+        },
+        "cross_source": {
+          "merge_key": ["fuzzy(title)", "host(primary_url)", "jurisdiction || 'federal'"],
+          "similarity_threshold": 0.86
+        }
+      }
+    },
+    "conflicts": {
+      "fields": {
+        "published_at": "earliest_by_precedence",
+        "seen_at": "latest_crawl",
+        "program_name": "longest_by_precedence",
+        "program_url": "prefer_deepest_path",
+        "description": "richest_html_by_precedence",
+        "status": "latest_by_precedence",
+        "deadline": "earliest_non_null",
+        "funding_amount_brl": "max_by_precedence",
+        "beneficiary_count": "max_by_precedence",
+        "jurisdiction": "first_non_null_by_precedence",
+        "contact": "first_non_null_by_precedence",
+        "document_refs": "union_unique"
+      },
+      "url_canonicalization": {
+        "prefer_https": true,
+        "strip_tracking_params": true,
+        "keep_alternates": true,
+        "alts_field": "urls_alt"
+      },
+      "audit": {
+        "keep_source_snapshots": true,
+        "store_diff": true,
+        "diff_fields": ["title", "description", "status", "funding_amount_brl", "deadline"]
+      }
+    },
+    "normalization": {
+      "date_format": "YYYY-MM-DD",
+      "money_fields_brl": ["funding_amount_brl", "valor", "valorEmprestimo"],
+      "locale": "pt-BR",
+      "rounding": {"funding_amount_brl": 2}
+    },
+    "alerts": {
+      "priority_rules": [
+        {"if": "source == 'portal_transparencia' && funding_amount_brl >= 1000000", "priority": "high"},
+        {"if": "status == 'modified' && days_to(deadline) <= 21", "priority": "high"},
+        {"if": "title ~ /(Plano Safra|Pronaf|Pronamp|Garantia-Safra|Cr[eé]dito Rural|BNDES)/i", "priority": "high"},
+        {"if": "source == 'mapa_news'", "priority": "medium"},
+        {"if": "source == 'bndes_news'", "priority": "medium"}
+      ]
+    }
+  }
+}
+Rationale and source specifics
+•	Portal da Transparência items have stable identifiers and program fields, so IDs and program/date/value combinations make reliable primary keys for dedupe and precedence.
+•	MAPA Gov.br news often lacks a formal RSS on sections; dedupe relies on canonical link plus title hashing with day bucket tolerance for headline edits.
+•	BNDES newsroom items are canonicalized by URL, with title as a secondary key in case of URL parameters or language variants on the same release.
+This policy can be dropped into the existing pipeline to ensure consistent merges and predictable alerting across Brazil’s heterogeneous sources.
+ 

@@ -1,0 +1,335 @@
+Chile
+Chile’s main government sources to monitor farmer subsidies, grants, credit, and innovation calls are the Ministry of Agriculture (MINAGRI) and its agencies INDAP, FIA, SAG, plus financing/insurance channels and international program support; machine access is strongest via Gov.cl/Gov.br-style news pages, FIA call pages, and the national transparency/open-data interfaces where available.
+Core ministries and agencies
+•	Ministerio de Agricultura (MINAGRI): central policy and news hub; monitor press and “Noticias Minagri” for program announcements, credit measures under Plano-style campaigns, and emergency responses.
+•	INDAP (Instituto de Desarrollo Agropecuario): smallholder support including subsidized credit, training, and emergency bonos; OECD/FAO documentation confirms INDAP credit and subsidy roles.
+•	SAG (Servicio Agrícola y Ganadero): plant/animal health programs and regulatory measures impacting producers; official ministry documentation outlines SAG’s scope across sanitary and quality programs.
+•	FIA (Fundación para la Innovación Agraria): frequent national calls for innovation projects and complementary instruments; page lists open calls with deadlines suitable for polling.
+Financing and insurance
+•	Agricultural credit and subsidies: OECD/FAO note preferential INDAP credit and insurance subsidies (Agroseguros); these mechanisms often underpin producer support rather than direct cash grants.
+•	International support: IDB loan to strengthen agricultural services and INDAP capacity enhances program delivery; good signal for upcoming service improvements and calls.
+Practical endpoints and polling targets
+•	MINAGRI press/news: crawl MINAGRI’s news pages for program/tender/benefit announcements and regional measures.
+•	FIA calls: poll the FIA homepage and calls section; current open calls with explicit close dates are visible for direct intake tracking.
+•	INDAP programs/credit: use agency pages where available and validate with OECD references for structure of support; scrape news if calls/windows are posted there.
+•	Regulatory signals: SAG publications and MINAGRI regulatory notes can indicate subsidy/insurance adjustments; use agency pages and ministry news as proxies.
+JSON blueprint (Chile monitoring)
+json
+{
+  "meta": {
+    "owner": "Chile ag funding monitor",
+    "version": "2025-09-26",
+    "notes": [
+      "Chile relies on agency programs (INDAP, FIA) and insurance/credit; formal RSS is limited, so respectful HTML polling is used.",
+      "OECD/FAO references confirm support instruments (credit subsidies, insurance, emergency bonos)."
+    ]
+  },
+  "sources": {
+    "minagri_news": {
+      "base": "https://minagri.gob.cl/noticias-minagri/",
+      "type": "http_poll"
+    },
+    "minagri_portal": {
+      "base": "https://minagri.gob.cl",
+      "type": "http_poll"
+    },
+    "fia_calls": {
+      "base": "https://www.fia.cl",
+      "type": "http_poll"
+    },
+    "sag": {
+      "base": "http://www.dipres.cl/597/articles-88150_doc_pdf.pdf",
+      "type": "reference_pdf"
+    }
+  },
+  "jobs": [
+    {
+      "name": "MINAGRI_news",
+      "type": "http_scrape",
+      "cadence": "0 */1 * * *",
+      "request": {
+        "url": "https://minagri.gob.cl/noticias-minagri/",
+        "headers": { "User-Agent": "AgFundingMonitor/1.0 (+alerts@example.com)" }
+      },
+      "parse": {
+        "item": "article, .post, .noticia",
+        "fields": {
+          "title": "a::text",
+          "href": "a[href]",
+          "summary": "p::text",
+          "pubDate": "time[datetime]::attr(datetime)"
+        }
+      },
+      "output": { "format": "jsonl", "path": "out/cl_minagri_news.jsonl" }
+    },
+    {
+      "name": "FIA_calls_monitor",
+      "type": "http_scrape",
+      "cadence": "0 */1 * * *",
+      "request": {
+        "url": "https://www.fia.cl",
+        "headers": { "User-Agent": "AgFundingMonitor/1.0 (+alerts@example.com)" }
+      },
+      "parse": {
+        "item": ".convocatorias, .home, .card, article",
+        "fields": {
+          "title": ".card-title, h3, h2::text",
+          "href": "a[href]",
+          "status": ".estado::text",
+          "deadline": ".fecha, .cierre::text"
+        }
+      },
+      "output": { "format": "jsonl", "path": "out/cl_fia_calls.jsonl" }
+    }
+  ],
+  "deduplication": {
+    "minagri_news": ["sha1(normalize_url(href))"],
+    "fia_calls": ["sha1(normalize_url(href))"]
+  },
+  "conflicts": {
+    "precedence": ["fia_calls", "minagri_news"],
+    "fields": {
+      "published_at": "earliest_by_precedence",
+      "deadline": "earliest_non_null",
+      "status": "latest_by_precedence",
+      "description": "richest_html_by_precedence"
+    }
+  },
+  "alerts": {
+    "keywords": [
+      "INDAP",
+      "bono",
+      "subsidio",
+      "crédito",
+      "aseguro|Agroseguros",
+      "convocatoria",
+      "FIA",
+      "pequeña agricultura",
+      "agricultura familiar"
+    ],
+    "thresholds": {
+      "close_to_deadline_days": 21
+    }
+  }
+}
+Why these sources
+•	MINAGRI is the government’s official agriculture channel; announcements there precede or accompany agency actions and emergency supports.
+•	INDAP is the dedicated smallholder vehicle for credit/subsidies; OECD and FAO confirm its role and the insurance subsidy architecture, making INDAP mentions in MINAGRI/FIA posts a key filter.
+•	FIA routinely runs nationally scoped calls with clear deadlines suitable for machine monitoring; current examples show multiple open calls with 30 September deadlines.
+ Here is a concrete Chile stack for open data/API monitoring that complements MINAGRI/FIA news scraping, centered on ChileCompra’s public procurement API, the open data portal for ChileCompra, and fiscal/budget APIs (Presupuesto Abierto) that reflect financial execution; agriculture specific grant APIs are limited, so these sources provide procurement and expenditure traces tied to agricultural agencies and projects.
+What to monitor
+•	ChileCompra Mercado Público API: REST interface exposing tenders, awards, and purchase orders; requires a “ticket” key and supports queries by buyer entity or keywords like “agricultura,” “INDAP,” or “FIA.”
+•	ChileCompra open data portal: bulk downloads and tools section for programmatic access, plus OCDS publication referenced by the Open Contracting data registry; helpful to reduce API load.
+•	Presupuesto Abierto API: government budget/execution API delivering institutional and transactional execution data; can be filtered by MINAGRI/INDAP to trace spending flows.
+•	Policy context: Chile’s OGP commitment documents the open data policy for procurement and notes integration work with SIGFE, the state financial system, which improves traceability between budget and procurement.
+Runnable JSON blueprint (APIs + scraping)
+json
+{
+  "meta": {
+    "owner": "Chile ag open-data monitor",
+    "version": "2025-09-26",
+    "notes": [
+      "Use APIs for procurement/budget, and scrape MINAGRI/FIA for calls.",
+      "Limit ChileCompra API calls; prefer bulk/open-data when feasible."
+    ]
+  },
+  "sources": {
+    "chilecompra_api": {
+      "base": "https://api.mercadopublico.cl",
+      "ticket_env": "CHILECOMPRA_TICKET"
+    },
+    "chilecompra_open": {
+      "catalog": "https://datos-abiertos.chilecompra.cl"
+    },
+    "presupuesto_abierto": {
+      "base": "https://api.presupuestoabierto.gob.cl"
+    },
+    "minagri_news": {
+      "base": "https://minagri.gob.cl/noticias-minagri/"
+    },
+    "fia": {
+      "base": "https://www.fia.cl"
+    }
+  },
+  "jobs": [
+    {
+      "name": "ChileCompra_agriculture_tenders",
+      "type": "http_api",
+      "cadence": "0 */1 * * *",
+      "request": {
+        "url": "https://api.mercadopublico.cl/servicios/v1/publico/licitaciones/search?ticket={{CHILECOMPRA_TICKET}}&estado=Publicada&texto=agricultura|INDAP|FIA|MINAGRI",
+        "headers": { "User-Agent": "AgFundingMonitor/1.0 (+alerts@example.com)" }
+      },
+      "output": { "format": "jsonl", "path": "out/cl_chilecompra_tenders.jsonl" }
+    },
+    {
+      "name": "ChileCompra_orders_INDAP",
+      "type": "http_api",
+      "cadence": "15 */2 * * *",
+      "request": {
+        "url": "https://api.mercadopublico.cl/servicios/v1/publico/ordenesdecompra.json?ticket={{CHILECOMPRA_TICKET}}&rutUnidad=INDAP",
+        "headers": { "User-Agent": "AgFundingMonitor/1.0 (+alerts@example.com)" }
+      },
+      "output": { "format": "jsonl", "path": "out/cl_chilecompra_orders_indap.jsonl" }
+    },
+    {
+      "name": "PresupuestoAbierto_MINAGRI_execution",
+      "type": "http_api",
+      "cadence": "0 6 * * *",
+      "request": {
+        "url": "https://api.presupuestoaberto.gob.cl/institutions?search=agricultura",
+        "headers": { "User-Agent": "AgFundingMonitor/1.0 (+alerts@example.com)" }
+      },
+      "output": { "format": "jsonl", "path": "out/cl_presupuesto_minagri.jsonl" }
+    },
+    {
+      "name": "MINAGRI_news_poll",
+      "type": "http_scrape",
+      "cadence": "0 */1 * * *",
+      "request": { "url": "https://minagri.gob.cl/noticias-minagri/" },
+      "parse": {
+        "item": "article, .post",
+        "fields": {
+          "title": "a::text",
+          "href": "a[href]",
+          "pubDate": "time[datetime]::attr(datetime)"
+        }
+      },
+      "output": { "format": "jsonl", "path": "out/cl_minagri_news.jsonl" }
+    },
+    {
+      "name": "FIA_calls_poll",
+      "type": "http_scrape",
+      "cadence": "0 */1 * * *",
+      "request": { "url": "https://www.fia.cl" },
+      "parse": {
+        "item": ".convocatorias, article, .card",
+        "fields": {
+          "title": ".card-title, h2, h3::text",
+          "href": "a[href]",
+          "deadline": ".fecha, .cierre::text",
+          "status": ".estado::text"
+        }
+      },
+      "output": { "format": "jsonl", "path": "out/cl_fia_calls.jsonl" }
+    }
+  ],
+  "deduplication": {
+    "chilecompra": ["sha1(toString(CodigoExterno) || toString(Numero))"],
+    "presupuesto": ["sha1(normalize(nombre) + '|' + toString(id))"],
+    "news_calls": ["sha1(normalize_url(href))"]
+  },
+  "conflicts": {
+    "precedence": ["chilecompra", "presupuesto", "news_calls"],
+    "fields": {
+      "published_at": "earliest_by_precedence",
+      "amount_local": "max_by_precedence",
+      "deadline": "earliest_non_null",
+      "status": "latest_by_precedence"
+    }
+  }
+}
+Why these APIs
+•	Mercado Público is Chile’s official procurement platform with a documented public API and open data portal; it is the best machine source for tenders and orders related to agricultural agencies and services.
+•	Open Contracting notes OCDS publication for ChileCompra and summarizes API scope and coverage over time; this helps scope historical backfills.
+•	Presupuesto Abierto exposes monthly, transactional budget execution, enabling cross checks between planned/committed/agreed spending and procurement events for MINAGRI/INDAP.
+This open data layer, combined with the earlier MINAGRI and FIA scraping plan, yields reliable discovery plus financial traceability for Chile’s agriculture support ecosystem.
+Below is a concise, runnable deduplication schema for Chile that unifies items from ChileCompra (procurement API), Presupuesto Abierto (budget/execution API), and MINAGRI/FIA news/calls, with deterministic keys per source, cross source merge keys, and canonicalization rules.
+Dedupe schema (JSON)
+json
+{
+  "schema": {
+    "sources": {
+      "chilecompra": {
+        "id_fields": [
+          "CodigoExterno",
+          "Numero",
+          "CodigoLicitacion",
+          "CodigoOrdenCompra"
+        ],
+        "primary_key": "first_non_null(CodigoExterno, Numero, CodigoLicitacion, CodigoOrdenCompra)",
+        "secondary_key": "sha1(normalize(RutUnidadCompradora) + '|' + normalize(Descripcion) + '|' + normalize(Estado) + '|' + normalize(FechaCreacion))",
+        "canonical_url": "normalize_url(Link || URL)"
+      },
+      "presupuesto_abierto": {
+        "id_fields": [
+          "id",
+          "codigo_institucion",
+          "codigo_programa",
+          "id_transaccion"
+        ],
+        "primary_key": "first_non_null(id, sha1(toString(codigo_institucion) + '|' + toString(codigo_programa) + '|' + toString(id_transaccion)))",
+        "secondary_key": "sha1(normalize(nombre_institucion) + '|' + normalize(nombre_programa) + '|' + toString(mes) + '|' + toString(anio))",
+        "canonical_url": "normalize_url(html_url || api_url)"
+      },
+      "minagri_news": {
+        "primary_key": "guid || sha1(normalize_url(link) + '|' + normalize(title))",
+        "time_bucket": "day",
+        "canonical_url": "normalize_url(link)"
+      },
+      "fia_calls": {
+        "primary_key": "sha1(normalize_url(link))",
+        "secondary_key": "sha1(normalize(title))",
+        "canonical_url": "normalize_url(link)"
+      }
+    },
+    "cross_source": {
+      "merge_key": [
+        "fuzzy(title)",
+        "host(canonical_url)",
+        "jurisdiction || 'Chile'"
+      ],
+      "similarity_threshold": 0.86,
+      "disjoint_types": [
+        "procurement:tender/award/order",
+        "budget:execution",
+        "news:announcement",
+        "call:convocatoria"
+      ]
+    },
+    "canonicalization": {
+      "prefer_https": true,
+      "strip_query_params": [
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_term",
+        "utm_content",
+        "gclid",
+        "fbclid"
+      ],
+      "normalize_host_aliases": [
+        ["www.fia.cl", "fia.cl"],
+        ["minagri.gob.cl", "www.minagri.gob.cl"]
+      ]
+    },
+    "collision_resolution": {
+      "tie_breaker": [
+        "source_weight(chilecompra=4, presupuesto_abierto=3, fia_calls=2, minagri_news=1)",
+        "earliest(published_at)"
+      ],
+      "field_precedence": {
+        "published_at": ["chilecompra", "presupuesto_abierto", "fia_calls", "minagri_news"],
+        "deadline": ["fia_calls", "minagri_news", "chilecompra"],
+        "amount_local": ["presupuesto_abierto", "chilecompra"],
+        "status": ["chilecompra", "fia_calls", "minagri_news"],
+        "description": ["fia_calls", "minagri_news", "chilecompra"]
+      }
+    },
+    "normalization": {
+      "date_format": "YYYY-MM-DD",
+      "money_fields_clp": ["MontoEstimado", "MontoTotal", "monto", "monto_devengado", "monto_pagado"],
+      "rounding": {"money_fields_clp": 0},
+      "text_cleanup": ["trim", "collapse_whitespace", "strip_html"]
+    },
+    "audit": {
+      "store_source_payload": true,
+      "diff_fields": ["title", "status", "deadline", "amount_local", "description"],
+      "keep_history_days": 365
+    }
+  }
+}
+Notes on field choices
+•	ChileCompra: public API responses include stable identifiers like “CodigoExterno,” “Numero,” or order/award codes, which serve as deterministic primary keys; canonical links are provided in payloads for URL normalization.
+•	Presupuesto Abierto: the API exposes institution/program IDs and transactional IDs; using the explicit “id” or a composite of institution/program/transaction ensures stable deduplication across monthly updates.
+•	MINAGRI/FIA: news and calls often vary titles and formatting; combining canonical link with title hashing and a day bucket mitigates minor headline edits while keeping separate articles distinct.
