@@ -1,0 +1,185 @@
+{
+  "sources": {
+    "grants_gov": {
+      "api_base": "https://api.grants.gov/v1/api",
+      "endpoints": {
+        "search": "/search2",
+        "detail": "/fetchOpportunity"
+      },
+      "notes": [
+        "REST endpoints are public for find/detail and do not require auth; see API Guide.", 
+        "Use search2 for discovery and fetchOpportunity to hydrate full records."
+      ]
+    },
+    "rss": {
+      "usda_hq": ["https://www.usda.gov/media/press-releases/rss.xml"],
+      "ams": [],
+      "fns": [
+        "https://www.fns.usda.gov/newsroom/rss.xml",
+        "https://www.fns.usda.gov/blogs/rss.xml",
+        "https://www.fns.usda.gov/subscriber-updates/rss.xml",
+        "https://www.fns.usda.gov/federal-register/rss.xml",
+        "https://www.fns.usda.gov/snap/policy-memos/rss.xml",
+        "https://www.fns.usda.gov/wic/policy-memos/rss.xml",
+        "https://www.fns.usda.gov/cnp/policy-memos/rss.xml",
+        "https://www.fns.usda.gov/fdp/policy-memos/rss.xml",
+        "https://www.fns.usda.gov/fmnp/policy-memos/rss.xml",
+        "https://www.fns.usda.gov/sfmnp/policy-memos/rss.xml"
+      ],
+      "rd": [
+        "https://www.rd.usda.gov/newsroom/rss"
+      ],
+      "ars": [
+        "https://www.ars.usda.gov/oc/rssfeeds/usda-ars-news.xml"
+      ],
+      "nass": [
+        "https://www.nass.usda.gov/rss/Newsreleases.xml"
+      ],
+      "forest_service": [
+        "https://www.fs.usda.gov/rss/planningrule"
+      ]
+    }
+  },
+  "jobs": [
+    {
+      "name": "USDA_all_agriculture_new_and_modified",
+      "type": "grants_gov_search2",
+      "cadence": "hourly",
+      "request": {
+        "rows": 100,
+        "startRecordNum": 0,
+        "oppStatuses": "forecasted|posted|modified",
+        "fundingCategories": "AG", 
+        "agencies": "USDA"
+      },
+      "enrich": {
+        "hydrate_detail": true
+      }
+    },
+    {
+      "name": "AMS_keyword_and_ALN_capture",
+      "type": "grants_gov_search2",
+      "cadence": "hourly",
+      "request": {
+        "rows": 100,
+        "oppStatuses": "forecasted|posted|modified",
+        "agencies": "USDA-AMS|USDA-AMS-TM|USDA-AMS-SC", 
+        "keyword": "LAMP|Local Food|Farmers Market|FMPP|LFPP|SCBGP|Specialty Crop|Dairy Business Innovation|DBI|Meat and Poultry|MPPEP|Commodity Procurement|Organic Transition"
+      }
+    },
+    {
+      "name": "FNS_grants_and_farm_to_school",
+      "type": "grants_gov_search2",
+      "cadence": "hourly",
+      "request": {
+        "rows": 100,
+        "oppStatuses": "forecasted|posted|modified",
+        "agencies": "USDA-FNS",
+        "keyword": "Farm to School|Patrick Leahy|Farmers' Market Nutrition|FMNP|SFMNP|WIC Farmers|Local Food Purchase|LFPA"
+      }
+    },
+    {
+      "name": "RD_value_added_and_rural_producer",
+      "type": "grants_gov_search2",
+      "cadence": "hourly",
+      "request": {
+        "rows": 100,
+        "oppStatuses": "forecasted|posted|modified",
+        "agencies": "USDA-RD|USDA-RBS|USDA-RUS|USDA-RD-RBCS",
+        "keyword": "Value-Added Producer Grant|VAPG|Rural Business|Rural Energy|REAP|Meat and Poultry|MPPEP"
+      }
+    },
+    {
+      "name": "ALN_filter_examples",
+      "type": "grants_gov_search2",
+      "cadence": "daily",
+      "request": {
+        "rows": 100,
+        "oppStatuses": "forecasted|posted|modified",
+        "aln": "10.170|10.351|10.868|10.769",
+        "agencies": "USDA"
+      },
+      "notes": [
+        "Examples: 10.170 Specialty Crop Block Grant; 10.351 RD Value-Added Producer Grants; 10.868 AMS LAMP components; 10.769 Farm to School (verify ALNs per current RFA)."
+      ]
+    },
+    {
+      "name": "Detailed_hydration",
+      "type": "grants_gov_fetchOpportunity",
+      "cadence": "on_discovery",
+      "request": {
+        "opportunityNumber": "{{number}}"
+      }
+    },
+    {
+      "name": "RSS_polling_USDA_HQ",
+      "type": "rss_poll",
+      "cadence": "hourly",
+      "urls": ["{{sources.rss.usda_hq[0]}}"]
+    },
+    {
+      "name": "RSS_polling_FNS_family",
+      "type": "rss_poll",
+      "cadence": "hourly",
+      "urls": "{{sources.rss.fns}}"
+    },
+    {
+      "name": "RSS_polling_RD",
+      "type": "rss_poll",
+      "cadence": "hourly",
+      "urls": "{{sources.rss.rd}}"
+    },
+    {
+      "name": "RSS_polling_ARS",
+      "type": "rss_poll",
+      "cadence": "hourly",
+      "urls": "{{sources.rss.ars}}"
+    },
+    {
+      "name": "RSS_polling_NASS",
+      "type": "rss_poll",
+      "cadence": "hourly",
+      "urls": "{{sources.rss.nass}}"
+    },
+    {
+      "name": "RSS_polling_Forest_Service",
+      "type": "rss_poll",
+      "cadence": "daily",
+      "urls": "{{sources.rss.forest_service}}"
+    }
+  ],
+  "parsing": {
+    "grants_gov_fields": [
+      "id", "number", "title", "agencyName", "agencyCode", "openDate", "closeDate",
+      "oppStatus", "docType", "alnist", "cfdaList", "category", "agencyContact",
+      "postDate", "archiveDate", "estimatedFunding", "expectedNumberOfAwards",
+      "eligibilities", "applicantTypes", "description", "opportunityCategory"
+    ],
+    "rss_fields": ["title", "link", "pubDate", "category", "guid", "summary"]
+  },
+  "routing": {
+    "rules": [
+      {
+        "match": {"agencyCode": "USDA-AMS"},
+        "destinations": ["queue_ams", "index_grants"]
+      },
+      {
+        "match": {"agencyCode": "USDA-FNS"},
+        "destinations": ["queue_fns", "index_grants"]
+      },
+      {
+        "match": {"agencyCode": "USDA-RD"},
+        "destinations": ["queue_rd", "index_grants"]
+      },
+      {
+        "match": {"oppStatus": "modified"},
+        "destinations": ["alerts_updates"]
+      }
+    ]
+  },
+  "normalization": {
+    "date_format": "YYYY-MM-DD",
+    "money_fields": ["estimatedFunding"],
+    "list_fields": ["alnist", "eligibilities", "cfdaList", "applicantTypes"]
+  }
+}

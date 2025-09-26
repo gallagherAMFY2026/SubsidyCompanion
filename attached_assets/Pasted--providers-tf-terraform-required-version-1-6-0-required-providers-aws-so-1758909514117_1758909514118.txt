@@ -1,0 +1,123 @@
+# providers.tf
+terraform {
+  required_version = ">= 1.6.0"
+  required_providers {
+    aws = { source = "hashicorp/aws", version = ">= 5.0" }
+  }
+}
+provider "aws" {
+  region = var.region
+}
+
+# variables.tf
+variable "region" { default = "us-east-1" }
+variable "target_arn" { description = "ARN of Lambda or SQS handling fetch" }
+variable "env" { default = "prod" }
+
+# Grants.gov search2 – USDA agriculture every 15 minutes
+resource "aws_cloudwatch_event_rule" "grants_gov_usda_ag" {
+  name                = "grants-gov-usda-ag-${var.env}"
+  description         = "Search USDA agriculture opportunities"
+  schedule_expression = "cron(0/15 * * * ? *)" # every 15 min
+}
+
+resource "aws_cloudwatch_event_target" "grants_gov_usda_ag" {
+  rule      = aws_cloudwatch_event_rule.grants_gov_usda_ag.name
+  target_id = "fetcher"
+  arn       = var.target_arn
+  input     = jsonencode({
+    type    = "grants_gov_search2"
+    payload = {
+      rows             = 100,
+      startRecordNum   = 0,
+      oppStatuses      = "forecasted|posted|modified",
+      fundingCategories= "AG",
+      agencies         = "USDA"
+    }
+  })
+}
+
+# AMS keyword job hourly
+resource "aws_cloudwatch_event_rule" "grants_gov_ams" {
+  name                = "grants-gov-ams-${var.env}"
+  schedule_expression = "cron(0 0/1 * * ? *)" # hourly
+}
+
+resource "aws_cloudwatch_event_target" "grants_gov_ams" {
+  rule      = aws_cloudwatch_event_rule.grants_gov_ams.name
+  target_id = "fetcher"
+  arn       = var.target_arn
+  input     = jsonencode({
+    type    = "grants_gov_search2"
+    payload = {
+      rows        = 100,
+      oppStatuses = "forecasted|posted|modified",
+      agencies    = "USDA-AMS|USDA-AMS-SC|USDA-AMS-TM",
+      keyword     = "Specialty Crop|SCBGP|Local Food|LAMP|LFPP|FMPP|DBI|Dairy Business Innovation|MPPEP|Meat and Poultry|Organic Transition"
+    }
+  })
+}
+
+# FNS hourly
+resource "aws_cloudwatch_event_rule" "grants_gov_fns" {
+  name                = "grants-gov-fns-${var.env}"
+  schedule_expression = "cron(5 0/1 * * ? *)"
+}
+resource "aws_cloudwatch_event_target" "grants_gov_fns" {
+  rule      = aws_cloudwatch_event_rule.grants_gov_fns.name
+  target_id = "fetcher"
+  arn       = var.target_arn
+  input     = jsonencode({
+    type    = "grants_gov_search2"
+    payload = {
+      rows        = 100,
+      oppStatuses = "forecasted|posted|modified",
+      agencies    = "USDA-FNS",
+      keyword     = "Farm to School|Patrick Leahy|FMNP|SFMNP|WIC Farmers|LFPA"
+    }
+  })
+}
+
+# RD hourly
+resource "aws_cloudwatch_event_rule" "grants_gov_rd" {
+  name                = "grants-gov-rd-${var.env}"
+  schedule_expression = "cron(10 0/1 * * ? *)"
+}
+resource "aws_cloudwatch_event_target" "grants_gov_rd" {
+  rule      = aws_cloudwatch_event_rule.grants_gov_rd.name
+  target_id = "fetcher"
+  arn       = var.target_arn
+  input     = jsonencode({
+    type    = "grants_gov_search2"
+    payload = {
+      rows        = 100,
+      oppStatuses = "forecasted|posted|modified",
+      agencies    = "USDA-RD|USDA-RBS|USDA-RUS|USDA-RD-RBCS",
+      keyword     = "Value-Added Producer Grant|VAPG|REAP|Rural Energy|MPPEP|Rural Business"
+    }
+  })
+}
+
+# USDA HQ and agency RSS pollers via canaries/worker
+resource "aws_cloudwatch_event_rule" "usda_rss" {
+  name                = "usda-rss-${var.env}"
+  schedule_expression = "cron(0/30 * * * ? *)" # every 30 min
+}
+resource "aws_cloudwatch_event_target" "usda_rss" {
+  rule      = aws_cloudwatch_event_rule.usda_rss.name
+  target_id = "fetcher"
+  arn       = var.target_arn
+  input     = jsonencode({
+    type = "rss_poll",
+    urls = [
+      "https://www.usda.gov/media/press-releases/rss.xml",
+      "https://www.fns.usda.gov/newsroom/rss.xml",
+      "https://www.fns.usda.gov/federal-register/rss.xml",
+      "https://www.rd.usda.gov/newsroom/rss",
+      "https://www.ars.usda.gov/oc/rssfeeds/usda-ars-news.xml",
+      "https://www.nass.usda.gov/rss/Newsreleases.xml"
+    ],
+    headers = { "User-Agent": "AgFundingMonitor/1.0 (+alerts@example.com)" },
+    conditional_get = true
+  })
+}

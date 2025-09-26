@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "owner": "AgPal unified crawler",
+    "version": "2025-09-26",
+    "notes": [
+      "AgPal is AAFC’s one‑stop discovery tool aggregating federal, provincial, and territorial programs; use keyword search + filters instead of an API.",
+      "Respect AgPal Terms of Use; throttle requests and avoid aggressive scraping."
+    ]
+  },
+  "source": {
+    "base": "https://agpal.ca",
+    "search_template": "https://agpal.ca/en/programs?keywords={{urlencode(keyword)}}&region={{region}}",
+    "regions": [
+      "Alberta",
+      "British%20Columbia",
+      "Manitoba",
+      "New%20Brunswick",
+      "Newfoundland%20%26%20Labrador",
+      "Northwest%20Territories",
+      "Nova%20Scotia",
+      "Nunavut",
+      "Ontario",
+      "Prince%20Edward%20Island",
+      "Quebec",
+      "Saskatchewan",
+      "Yukon"
+    ],
+    "keywords": [
+      "AgriInvest",
+      "AgriStability",
+      "AgriInsurance",
+      "AgriRecovery",
+      "AgriInnovation Program",
+      "AgriMarketing Program",
+      "Sustainable Canadian Agricultural Partnership",
+      "Species at Risk Partnerships on Agricultural Lands",
+      "Resilient Agricultural Landscape",
+      "OFCAP",
+      "Traceability Adoption",
+      "Future Farmer",
+      "Beef Cattle Biosecurity",
+      "Honey Bee Compensation"
+    ]
+  },
+  "jobs": [
+    {
+      "name": "AgPal_cross_province_keyword_matrix",
+      "type": "http_scrape_matrix",
+      "cadence": "0 */2 * * *",
+      "requests": {
+        "method": "GET",
+        "headers": {
+          "User-Agent": "AgFundingMonitor/1.0 (+contact@example.com)"
+        }
+      },
+      "matrix": {
+        "expand": ["keywords", "regions"],
+        "url_from": "search_template"
+      },
+      "throttle": {
+        "concurrency": 2,
+        "delay_ms_between_requests": 2000
+      },
+      "parse": {
+        "selector_card": ".program-card",
+        "fields": {
+          "title": ".program-card__title",
+          "href": ".program-card__title a[href]",
+          "summary": ".program-card__summary",
+          "jurisdiction": ".program-card__jurisdiction",
+          "last_updated": ".program-card__date"
+        }
+      },
+      "dedupe": {
+        "key": ["title", "href", "jurisdiction"]
+      },
+      "output": {
+        "format": "jsonl",
+        "path": "out/agpal_programs.jsonl"
+      },
+      "tags": ["agpal", "scap", "agri", "provincial"]
+    }
+  ],
+  "post_processing": {
+    "normalize": {
+      "map_fields": {
+        "program_title": "title",
+        "program_url": "href",
+        "program_summary": "summary",
+        "program_jurisdiction": "jurisdiction",
+        "program_last_updated": "last_updated",
+        "search_keyword": "keyword",
+        "search_region": "region"
+      },
+      "date_format": "YYYY-MM-DD"
+    },
+    "filter_examples": [
+      {
+        "rule": "include if title or summary contains any of",
+        "terms": [
+          "grant",
+          "funding",
+          "rebate",
+          "cost-share",
+          "loan",
+          "contribution",
+          "insurance",
+          "stability",
+          "recovery"
+        ]
+      }
+    ]
+  }
+}

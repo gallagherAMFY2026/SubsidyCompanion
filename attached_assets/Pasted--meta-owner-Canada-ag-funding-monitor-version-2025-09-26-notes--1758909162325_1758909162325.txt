@@ -1,0 +1,150 @@
+{
+  "meta": {
+    "owner": "Canada ag funding monitor",
+    "version": "2025-09-26",
+    "notes": [
+      "AAFC provides an official RSS option via its Stay Connected page.",
+      "Canada Gazette offers Part I and Part II RSS XML for notices/regulations impacting SCAP and Agri programs.",
+      "AgPal is the federal aggregator for federal/provincial programs; no public API is documented, so use parameterized queries and change detection."
+    ]
+  },
+  "sources": {
+    "aafc": {
+      "rss": [
+        "https://agriculture.canada.ca/en/news-media/news-releases/rss.xml"
+      ],
+      "docs": [
+        "https://agriculture.canada.ca/en/contact/stay-connected"
+      ]
+    },
+    "canada_gazette": {
+      "rss": [
+        "https://www.gazette.gc.ca/rss/p1-eng.xml",
+        "https://www.gazette.gc.ca/rss/p2-eng.xml"
+      ],
+      "docs": [
+        "https://gazette.gc.ca/rss/sc-rb-eng.html"
+      ]
+    },
+    "agpal": {
+      "base": "https://agpal.ca",
+      "search_examples": [
+        "/en/programs?keywords=AgriInvest",
+        "/en/programs?keywords=AgriStability",
+        "/en/programs?keywords=AgriInsurance",
+        "/en/programs?keywords=AgriRecovery",
+        "/en/programs?keywords=Sustainable%20Canadian%20Agricultural%20Partnership",
+        "/en/programs?keywords=AgriMarketing",
+        "/en/programs?keywords=AgriInnovation",
+        "/en/programs?keywords=SARPAL",
+        "/en/programs?keywords=Resilient%20Agricultural%20Landscape",
+        "/en/programs?keywords=OFCAP",
+        "/en/programs?keywords=Traceability%20Adoption",
+        "/en/programs?keywords=Future%20Farmer",
+        "/en/programs?keywords=Biosecurity",
+        "/en/programs?keywords=Honey%20Bee%20Compensation"
+      ],
+      "notes": [
+        "No public API is documented; monitor HTML for result counts and program cards.",
+        "Use conservative crawl intervals and respect robots.txt."
+      ]
+    },
+    "provincial_examples": {
+      "new_brunswick": {
+        "rss": [
+          "https://www2.gnb.ca/content/gnb/en/news/rss.html"
+        ],
+        "notes": [
+          "Department news feeds cover Agriculture, Aquaculture and Fisheries program bulletins."
+        ]
+      }
+    }
+  },
+  "jobs": [
+    {
+      "name": "AAFC_news_and_notices",
+      "type": "rss_poll",
+      "cadence": "*/30 * * * *",
+      "urls": [
+        "https://agriculture.canada.ca/en/news-media/news-releases/rss.xml"
+      ],
+      "tags": ["federal", "aafc", "scap", "agri-programs"]
+    },
+    {
+      "name": "Canada_Gazette_part_I_II",
+      "type": "rss_poll",
+      "cadence": "0 * * * *",
+      "urls": [
+        "https://www.gazette.gc.ca/rss/p1-eng.xml",
+        "https://www.gazette.gc.ca/rss/p2-eng.xml"
+      ],
+      "tags": ["regulatory", "notices", "emergency", "agri-recovery"]
+    },
+    {
+      "name": "AgPal_keyword_queries",
+      "type": "http_scrape",
+      "cadence": "0 */2 * * *",
+      "requests": [
+        {"url": "https://agpal.ca/en/programs?keywords=AgriInvest"},
+        {"url": "https://agpal.ca/en/programs?keywords=AgriStability"},
+        {"url": "https://agpal.ca/en/programs?keywords=AgriInsurance"},
+        {"url": "https://agpal.ca/en/programs?keywords=AgriRecovery"},
+        {"url": "https://agpal.ca/en/programs?keywords=Sustainable%20Canadian%20Agricultural%20Partnership"},
+        {"url": "https://agpal.ca/en/programs?keywords=AgriMarketing"},
+        {"url": "https://agpal.ca/en/programs?keywords=AgriInnovation"},
+        {"url": "https://agpal.ca/en/programs?keywords=SARPAL"},
+        {"url": "https://agpal.ca/en/programs?keywords=Resilient%20Agricultural%20Landscape"},
+        {"url": "https://agpal.ca/en/programs?keywords=OFCAP"},
+        {"url": "https://agpal.ca/en/programs?keywords=Traceability%20Adoption"},
+        {"url": "https://agpal.ca/en/programs?keywords=Future%20Farmer"},
+        {"url": "https://agpal.ca/en/programs?keywords=Biosecurity"},
+        {"url": "https://agpal.ca/en/programs?keywords=Honey%20Bee%20Compensation"}
+      ],
+      "parse": {
+        "selector_cards": ".program-card",
+        "fields": {
+          "title": ".program-card__title",
+          "link": ".program-card__title a[href]",
+          "summary": ".program-card__summary",
+          "jurisdiction": ".program-card__jurisdiction",
+          "last_updated": ".program-card__date"
+        }
+      },
+      "tags": ["agpal", "discovery"]
+    },
+    {
+      "name": "Province_NB_department_news",
+      "type": "rss_poll",
+      "cadence": "*/60 * * * *",
+      "urls": [
+        "https://www2.gnb.ca/content/gnb/en/news/rss.html"
+      ],
+      "tags": ["provincial", "new_brunswick"]
+    }
+  ],
+  "parsing": {
+    "rss_fields": ["title", "link", "pubDate", "category", "guid", "summary"],
+    "gazette_tags": ["Part I", "Part II", "Regulations", "Notices"],
+    "normalize_dates": "YYYY-MM-DD"
+  },
+  "routing": {
+    "rules": [
+      {
+        "match": {"source": "aafc"},
+        "destinations": ["queue_federal_updates", "index_news"]
+      },
+      {
+        "match": {"source": "canada_gazette"},
+        "destinations": ["queue_regulatory", "index_gazette"]
+      },
+      {
+        "match": {"source": "agpal"},
+        "destinations": ["queue_program_discovery", "index_programs"]
+      },
+      {
+        "match": {"source": "provincial"},
+        "destinations": ["queue_provincial_updates", "index_news"]
+      }
+    ]
+  }
+}

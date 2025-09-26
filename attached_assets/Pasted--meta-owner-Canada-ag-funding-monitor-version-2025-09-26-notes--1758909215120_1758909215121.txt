@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "owner": "Canada ag funding monitor",
+    "version": "2025-09-26",
+    "notes": [
+      "AAFC and Canada Gazette feeds remain the federal backbone.",
+      "Provincial RSS endpoints are appended for agriculture/department news where available.",
+      "AgPal keyword queries cover federal and provincial programs from one maintained directory."
+    ]
+  },
+  "federal": {
+    "aafc_rss": ["https://agriculture.canada.ca/en/news-media/news-releases/rss.xml"],
+    "gazette_rss": [
+      "https://www.gazette.gc.ca/rss/p1-eng.xml",
+      "https://www.gazette.gc.ca/rss/p2-eng.xml"
+    ],
+    "docs": [
+      "https://agriculture.canada.ca/en/contact/stay-connected",
+      "https://gazette.gc.ca/rss/sc-rb-eng.html"
+    ]
+  },
+  "agpal": {
+    "base": "https://agpal.ca",
+    "keywords": [
+      "AgriInvest",
+      "AgriStability",
+      "AgriInsurance",
+      "AgriRecovery",
+      "Sustainable Canadian Agricultural Partnership",
+      "AgriMarketing",
+      "AgriInnovation",
+      "SARPAL",
+      "Resilient Agricultural Landscape",
+      "OFCAP",
+      "Traceability Adoption",
+      "Future Farmer",
+      "Biosecurity",
+      "Honey Bee Compensation"
+    ],
+    "request_template": "https://agpal.ca/en/programs?keywords={{urlencode(keyword)}}",
+    "notes": [
+      "AgPal is the official program/service finder; no public API is documented—use HTML change detection.",
+      "Align crawl intervals with robots.txt and avoid aggressive scraping."
+    ]
+  },
+  "provinces": {
+    "alberta": {
+      "rss": [
+        "https://cap.alberta.ca/app21/rss/feeds"
+      ],
+      "notes": [
+        "Government of Alberta agriculture feeds include Agri‑News and other publications."
+      ]
+    },
+    "british_columbia": {
+      "rss": [
+        "https://news.gov.bc.ca/ministries/agriculture-and-food/rss"
+      ],
+      "notes": [
+        "BC Gov News provides ministry‑scoped RSS including Agriculture and Food."
+      ]
+    },
+    "saskatchewan": {
+      "rss": [
+        "https://www.saskatchewan.ca/government/government-structure/ministries/agriculture/rss"
+      ],
+      "notes": [
+        "Ministry of Agriculture site exposes a subscribable RSS stream for news items."
+      ]
+    },
+    "manitoba": {
+      "rss": [
+        "https://www.gov.mb.ca/agriculture/news/index.xml"
+      ],
+      "notes": [
+        "Use provincial agriculture news RSS where available; if unavailable, fall back to department news pages."
+      ]
+    },
+    "ontario": {
+      "rss": [
+        "https://news.ontario.ca/en/rss/category/agriculture-food-and-rural-affairs"
+      ],
+      "notes": [
+        "Ontario Newsroom offers category RSS for OMAFRA announcements."
+      ]
+    },
+    "quebec": {
+      "rss": [
+        "https://www.quebec.ca/nouvelles/flux-rss" 
+      ],
+      "notes": [
+        "Use the province’s RSS hub and filter for MAPAQ (Ministère de l’Agriculture) items in downstream processing."
+      ]
+    },
+    "new_brunswick": {
+      "rss": [
+        "https://www2.gnb.ca/content/gnb/en/news/rss.html"
+      ],
+      "notes": [
+        "Department news feeds cover Agriculture, Aquaculture and Fisheries."
+      ]
+    },
+    "nova_scotia": {
+      "rss": [
+        "https://novascotia.ca/news/rss.asp?dept=agri"
+      ],
+      "notes": [
+        "Nova Scotia maintains department‑filtered RSS streams including Agriculture."
+      ]
+    },
+    "prince_edward_island": {
+      "rss": [
+        "https://www.princeedwardisland.ca/en/rss/subject/agriculture"
+      ],
+      "notes": [
+        "PEI subject RSS feed includes agriculture program updates."
+      ]
+    },
+    "newfoundland_labrador": {
+      "rss": [
+        "https://www.gov.nl.ca/releases/rss/news_releases.xml"
+      ],
+      "notes": [
+        "Use provincial releases RSS and filter for Fisheries, Forestry and Agriculture."
+      ]
+    },
+    "yukon": {
+      "rss": [
+        "https://yukon.ca/en/news/feed"
+      ],
+      "notes": [
+        "Filter for Agriculture/EMR items in processing."
+      ]
+    },
+    "northwest_territories": {
+      "rss": [
+        "https://www.gov.nt.ca/en/newsroom/rss.xml"
+      ],
+      "notes": [
+        "Filter for ENR/ITI agriculture‑related items as needed."
+      ]
+    },
+    "nunavut": {
+      "rss": [
+        "https://gov.nu.ca/news/rss"
+      ],
+      "notes": [
+        "Territorial RSS feed; agriculture‑relevant items are rare but included for completeness."
+      ]
+    }
+  },
+  "jobs": [
+    {
+      "name": "Poll_AAFC",
+      "type": "rss_poll",
+      "cadence": "*/30 * * * *",
+      "urls": ["https://agriculture.canada.ca/en/news-media/news-releases/rss.xml"]
+    },
+    {
+      "name": "Poll_Canada_Gazette",
+      "type": "rss_poll",
+      "cadence": "0 * * * *",
+      "urls": [
+        "https://www.gazette.gc.ca/rss/p1-eng.xml",
+        "https://www.gazette.gc.ca/rss/p2-eng.xml"
+      ]
+    },
+    {
+      "name": "Poll_Provincial_Ag",
+      "type": "rss_poll",
+      "cadence": "*/60 * * * *",
+      "urls": [
+        "https://cap.alberta.ca/app21/rss/feeds",
+        "https://news.gov.bc.ca/ministries/agriculture-and-food/rss",
+        "https://www.saskatchewan.ca/government/government-structure/ministries/agriculture/rss",
+        "https://www.gov.mb.ca/agriculture/news/index.xml",
+        "https://news.ontario.ca/en/rss/category/agriculture-food-and-rural-affairs",
+        "https://www2.gnb.ca/content/gnb/en/news/rss.html",
+        "https://novascotia.ca/news/rss.asp?dept=agri",
+        "https://www.princeedwardisland.ca/en/rss/subject/agriculture",
+        "https://www.gov.nl.ca/releases/rss/news_releases.xml",
+        "https://yukon.ca/en/news/feed",
+        "https://www.gov.nt.ca/en/newsroom/rss.xml",
+        "https://gov.nu.ca/news/rss"
+      ]
+    },
+    {
+      "name": "AgPal_keyword_monitor",
+      "type": "http_scrape",
+      "cadence": "0 */2 * * *",
+      "requests_from_keywords": true
+    }
+  ],
+  "parsing": {
+    "rss_fields": ["title", "link", "pubDate", "category", "guid", "summary"],
+    "agpal_selectors": {
+      "card": ".program-card",
+      "title": ".program-card__title",
+      "href": ".program-card__title a[href]",
+      "summary": ".program-card__summary",
+      "jurisdiction": ".program-card__jurisdiction",
+      "last_updated": ".program-card__date"
+    },
+    "normalize_dates": "YYYY-MM-DD"
+  }
+}
