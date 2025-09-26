@@ -24,6 +24,15 @@ export class RssParser {
    */
   async parseRssXml(xmlContent: string): Promise<RssFeed> {
     try {
+      // Debug: log XML structure
+      console.log('XML content length:', xmlContent.length);
+      console.log('XML start:', xmlContent.substring(0, 200));
+      
+      // Write XML to file for debugging
+      const fs = await import('fs/promises');
+      await fs.writeFile('/tmp/debug_rss.xml', xmlContent);
+      console.log('XML written to /tmp/debug_rss.xml for debugging');
+      
       // Sanitize XML by fixing common issues with entity encoding
       const sanitizedXml = this.sanitizeXml(xmlContent);
       
@@ -31,14 +40,23 @@ export class RssParser {
         ignoreAttributes: false,
         attributeNamePrefix: '',
         allowBooleanAttributes: true,
-        parseAttributeValue: true,
+        parseAttributeValue: false, // Don't parse values, keep as strings
         trimValues: true,
+        preserveOrder: false,       // Use object mode, not array mode
+        stopNodes: ['content', 'summary'], // Don't parse HTML content deeply
       });
       
       const result = parser.parse(sanitizedXml);
+      console.log('Parsed XML keys:', Object.keys(result));
+      if (result.feed) {
+        console.log('Feed keys:', Object.keys(result.feed));
+        console.log('Has entries:', !!result.feed.entry, 'Entry count:', Array.isArray(result.feed.entry) ? result.feed.entry.length : (result.feed.entry ? 1 : 0));
+      }
+      
       return result as RssFeed;
     } catch (error) {
       console.error('Error parsing RSS XML:', error);
+      console.error('Parser error details:', (error as Error).message);
       throw new Error('Failed to parse RSS feed');
     }
   }
@@ -216,10 +234,26 @@ export class RssParser {
       category: entry.category?.term || 'uncategorized',
       publishedDate: new Date(entry.updated),
       url: entry.link?.href || entry.id,
+      dataSource: 'rss_aafc',
+      sourceUrl: entry.link?.href || entry.id,
+      sourceAgency: entry.author?.name || 'Agriculture and Agri-Food Canada',
+      country: 'CA',
+      region: this.extractLocation(fullText),
       fundingAmount: this.extractFundingAmount(fullText),
       deadline: this.extractDeadline(fullText),
       location: this.extractLocation(fullText),
       program: this.extractProgram(entry),
+      opportunityNumber: null,
+      awardNumber: null,
+      eligibilityTypes: ['farm', 'producer', 'organization'],
+      fundingTypes: ['grant', 'support', 'program'],
+      isHighPriority: null,
+      alertReason: null,
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: ['rss_aafc'],
+      conflictResolution: null,
+      dedupeKey: '' // Will be computed by deduplication service
     };
   }
 
@@ -229,12 +263,36 @@ export class RssParser {
   async processRssFeed(xmlContent: string): Promise<InsertSubsidyProgram[]> {
     const feed = await this.parseRssXml(xmlContent);
     
-    if (!feed.feed?.entry) {
-      console.warn('No entries found in RSS feed');
+    let entries: any[] = [];
+    
+    // Handle both Atom feeds (feed.entry) and RSS 2.0 feeds (rss.channel.item)
+    if (feed.feed?.entry) {
+      // Atom feed format
+      entries = Array.isArray(feed.feed.entry) ? feed.feed.entry : [feed.feed.entry];
+      console.log('Processing Atom feed with', entries.length, 'entries');
+    } else if (feed.rss?.channel?.item) {
+      // RSS 2.0 feed format
+      entries = Array.isArray(feed.rss.channel.item) ? feed.rss.channel.item : [feed.rss.channel.item];
+      console.log('Processing RSS 2.0 feed with', entries.length, 'items');
+      
+      // Convert RSS 2.0 format to Atom-like format for consistent processing
+      entries = entries.map(item => ({
+        id: item.link || item.guid || `item-${Date.now()}`,
+        title: item.title,
+        summary: item.description,
+        updated: item.pubDate,
+        link: { href: item.link },
+        category: { term: item.category || 'news' },
+        author: { name: 'Ministry for Primary Industries' }
+      }));
+    } else {
+      console.warn('No entries found in RSS feed - unsupported format');
+      console.log('Available feed keys:', Object.keys(feed));
+      if (feed.rss) {
+        console.log('RSS channel keys:', Object.keys(feed.rss.channel || {}));
+      }
       return [];
     }
-
-    const entries = Array.isArray(feed.feed.entry) ? feed.feed.entry : [feed.feed.entry];
     
     return entries
       .filter(entry => this.isSubsidyRelated(entry))

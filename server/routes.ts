@@ -6,6 +6,7 @@ import { grantsGovService } from "./services/grantsGovService";
 import { brazilService } from "./services/brazilService";
 import { chileService } from "./services/chileService";
 import { newZealandService } from "./services/newZealandService";
+import { australiaService } from "./services/australiaService";
 import { 
   validateBody, 
   validateQuery, 
@@ -438,6 +439,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error fetching Chile programs:', error);
       res.status(500).json({ error: 'Failed to fetch Chile programs' });
+    }
+  });
+
+  // Australia sync endpoints
+  app.post('/api/sync/australia/all',
+    requireAdminAuth,
+    rateLimit(3, 10 * 60 * 1000), // 3 requests per 10 minutes  
+    validateBody(generalSyncSchema),
+    async (req, res) => {
+    try {
+      const { maxPages } = req.body;
+      const result = await australiaService.syncAllSources(maxPages);
+      res.json({ 
+        success: true, 
+        message: 'Australia comprehensive sync completed successfully',
+        ...result
+      });
+    } catch (error) {
+      console.error('Australia comprehensive sync error:', error);
+      res.status(500).json({ error: 'Australia comprehensive sync failed' });
+    }
+  });
+
+  app.post('/api/sync/australia/daff-rss',
+    requireAdminAuth,
+    rateLimit(5, 10 * 60 * 1000), // 5 requests per 10 minutes  
+    async (req, res) => {
+    try {
+      const result = await australiaService.syncDaffRss();
+      res.json({ 
+        success: true, 
+        message: 'Australia DAFF RSS sync completed successfully',
+        processed: result
+      });
+    } catch (error) {
+      console.error('Australia DAFF RSS sync error:', error);
+      res.status(500).json({ error: 'Australia DAFF RSS sync failed' });
     }
   });
 

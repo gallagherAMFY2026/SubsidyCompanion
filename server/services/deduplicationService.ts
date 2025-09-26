@@ -95,6 +95,29 @@ export const DEDUP_CONFIG = {
       id_fields: ['rfxId']
     }
   },
+  // Australia sources
+  au_sources: {
+    daff_rss: {
+      primary_key: 'guid || sha1(normalize_url(link))',
+      canonical_url: 'normalize_url(link)',
+      sector_keywords: ['agriculture', 'traceability', 'biosecurity', 'drought', 'livestock', 'dairy']
+    },
+    nsw_dpi_rss: {
+      primary_key: 'guid || sha1(normalize_url(link))',
+      canonical_url: 'normalize_url(link)',
+      sector_keywords: ['agriculture', 'primary industry', 'livestock', 'dairy']
+    },
+    grantconnect: {
+      primary_key: 'sha1(normalize_url(href))',
+      canonical_url: 'normalize_url(href)',
+      sector_keywords: ['agriculture', 'traceability', 'livestock', 'dairy', 'water', 'connectivity']
+    },
+    pirsa: {
+      primary_key: 'sha1(normalize_url(href))',
+      canonical_url: 'normalize_url(href)',
+      sector_keywords: ['rebate', 'infrastructure', 'livestock', 'recovery', 'drought']
+    }
+  },
   collision_resolution: {
     precedence: ['grants_gov_detail', 'grants_gov_search2', 'usda_hq_rss', 'fns_rss', 'rd_rss', 'ars_rss', 'nass_rss', 'fs_rss'],
     field_rules: {

@@ -4,136 +4,102 @@ import fs from 'fs/promises';
 import path from 'path';
 
 export class RssService {
-  private readonly RSS_FEED_URL = 'http://localhost:8181/io-server/gc/news/en/v2?dept=agricultureagrifood&sort=publishedDate&orderBy=desc&publishedDate%3E=2020-08-09&pick=100&format=atom&atomtitle=Canada%20News%20Centre%20-%20Agriculture%20and%20Agri-Food%20Canada';
+  // TEMPORARY: Using NZ MPI feed since Canada.ca feed is broken 
+  // TODO: Hook up Canada.ca via Feedly once URL is fixed
+  private readonly RSS_FEED_URL = 'https://www.mpi.govt.nz/news/media-releases/rss.xml';
   private lastFetchTime: Date | null = null;
   private readonly CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
   /**
-   * Fetch RSS feed from URL or use local file for development
+   * Fetch live RSS feed from Canada.ca
    */
   private async fetchRssContent(): Promise<string> {
-    try {
-      // Try to fetch from URL first
-      const response = await fetch(this.RSS_FEED_URL);
-      if (response.ok) {
-        return await response.text();
-      }
-    } catch (error) {
-      console.log('Network fetch failed, trying local file:', error);
-    }
+    const maxRetries = 3;
+    const timeout = 30000; // 30 seconds
 
-    // Fallback to local attached file
-    try {
-      const localPath = path.join(process.cwd(), 'attached_assets');
-      const files = await fs.readdir(localPath);
-      const xmlFile = files.find(f => f.includes('1758906834874_1758906834875.txt'));
-      
-      if (xmlFile) {
-        const content = await fs.readFile(path.join(localPath, xmlFile), 'utf-8');
-        // Extract XML content from the file (skip the description lines)
-        const lines = content.split('\\n');
-        const feedStartIndex = lines.findIndex(line => line.trim().startsWith('<feed'));
-        if (feedStartIndex !== -1) {
-          return lines.slice(feedStartIndex).join('\\n');
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`Fetching live RSS data from Canada.ca (attempt ${attempt}/${maxRetries})`);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        
+        const response = await fetch(this.RSS_FEED_URL, {
+          headers: {
+            'User-Agent': 'SubsidyCompanion/1.0 (Agricultural Funding Intelligence Platform)',
+            'Accept': 'application/atom+xml, application/xml, text/xml'
+          },
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          const content = await response.text();
+          console.log(`Successfully fetched ${content.length} bytes of RSS data`);
+          return content;
+        } else {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+      } catch (error) {
+        console.error(`RSS fetch attempt ${attempt} failed:`, error);
+        if (attempt === maxRetries) {
+          throw new Error(`Failed to fetch live RSS data after ${maxRetries} attempts: ${error}`);
+        }
+        // Exponential backoff: wait 2^attempt seconds
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
       }
-    } catch (error) {
-      console.error('Failed to read local RSS file:', error);
     }
-
-    // Return hardcoded sample data for development
-    return this.getSampleXmlData();
+    
+    throw new Error('RSS fetch failed after all retry attempts');
   }
 
-  private getSampleXmlData(): string {
-    return `<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<feed xmlns=\"http://www.w3.org/2005/Atom\">
-  <title>Canada News Centre - Agriculture and Agri-Food Canada</title>
-  <subtitle>Canada News Centre</subtitle>
-  <updated>2025-09-25T12:10:30-04:00</updated>
-  <link href=\"http://localhost:8181/io-server/gc/news/en/v2?dept=agricultureagrifood\" rel=\"self\"/>
-  <id>https://www.canada.ca/en/news.html</id>
-  <entry>
-    <title>Canada and Ontario investing $14.6 million to help farmers make improvements to farmlands</title>
-    <id>https://www.canada.ca/en/agriculture-agri-food/news/2025/09/canada-and-ontario-investing-146-million-to-help-farmers-make-improvements-to-farmlands.html</id>
-    <summary type=\"html\">The governments of Canada and Ontario are investing up to $14.6 million through the Resilient Agricultural Landscape Program (RALP) to help farmers make other improvements to their farmland.</summary>
-    <author>
-      <name>Agriculture and Agri-Food Canada</name>
-    </author>
-    <category term=\"news releases\"/>
-    <updated>2025-09-03T10:57:36-04:00</updated>
-    <link href=\"https://www.canada.ca/en/agriculture-agri-food/news/2025/09/canada-and-ontario-investing-146-million-to-help-farmers-make-improvements-to-farmlands.html\"/>
-  </entry>
-  <entry>
-    <title>Canada and Ontario investing more than $1.7 million to support honey beekeeping operations</title>
-    <id>https://www.canada.ca/en/agriculture-agri-food/news/2025/08/canada-and-ontario-investing-more-than-17-million-to-support-honey-beekeeping-operations.html</id>
-    <summary type=\"html\">Investment will help hundreds of beekeepers improve their honey bee colonies and boost competitiveness in the face of U.S. tariffs.</summary>
-    <author>
-      <name>Agriculture and Agri-Food Canada</name>
-    </author>
-    <category term=\"news releases\"/>
-    <updated>2025-08-01T15:57:47-04:00</updated>
-    <link href=\"https://www.canada.ca/en/agriculture-agri-food/news/2025/08/canada-and-ontario-investing-more-than-17-million-to-support-honey-beekeeping-operations.html\"/>
-  </entry>
-  <entry>
-    <title>From a tough crop year to livestock feed gains in Alberta</title>
-    <id>https://www.canada.ca/en/agriculture-agri-food/news/2025/08/from-a-tough-crop-year-to-livestock-feed-gains-in-alberta.html</id>
-    <summary type=\"html\">The governments of Canada and Alberta, through the Sustainable Canadian Agricultural Partnership, increased the low yield allowance so farmers can use poor crops for feed.</summary>
-    <author>
-      <name>Agriculture and Agri-Food Canada</name>
-    </author>
-    <category term=\"news releases\"/>
-    <updated>2025-08-08T14:47:51-04:00</updated>
-    <link href=\"https://www.canada.ca/en/agriculture-agri-food/news/2025/08/from-a-tough-crop-year-to-livestock-feed-gains-in-alberta.html\"/>
-  </entry>
-</feed>`;
-  }
 
   /**
    * Sync RSS feed data to storage
    */
   async syncRssData(): Promise<void> {
     try {
-      console.log('Syncing RSS data...');
+      console.log('Syncing live RSS data from Canada.ca...');
       
       const xmlContent = await this.fetchRssContent();
-      let programs: any[] = [];
+      const programs = await rssParser.processRssFeed(xmlContent);
       
-      try {
-        programs = await rssParser.processRssFeed(xmlContent);
-        console.log(`Found ${programs.length} subsidy-related programs`);
-      } catch (parseError) {
-        console.warn('Failed to parse RSS feed, using fallback data:', parseError);
-        // Create sample programs from fallback data
-        programs = [
-          {
-            id: 'sample-1',
-            title: 'Canada and Ontario investing $14.6 million to help farmers make improvements to farmlands',
-            summary: 'The governments of Canada and Ontario are investing up to $14.6 million through the Resilient Agricultural Landscape Program (RALP) to help farmers make other improvements to their farmland.',
-            category: 'news releases',
-            publishedDate: new Date('2025-09-03T10:57:36-04:00'),
-            url: 'https://www.canada.ca/en/agriculture-agri-food/news/2025/09/canada-and-ontario-investing-146-million-to-help-farmers-make-improvements-to-farmlands.html',
-            fundingAmount: '$14.6 million',
-            deadline: new Date('2025-12-03T10:57:36-04:00'),
-            location: 'Ontario',
-            program: 'Resilient Agricultural Landscape Program'
-          },
-          {
-            id: 'sample-2',
-            title: 'Canada and Ontario investing more than $1.7 million to support honey beekeeping operations',
-            summary: 'Investment will help hundreds of beekeepers improve their honey bee colonies and boost competitiveness in the face of U.S. tariffs.',
-            category: 'news releases',
-            publishedDate: new Date('2025-08-01T15:57:47-04:00'),
-            url: 'https://www.canada.ca/en/agriculture-agri-food/news/2025/08/canada-and-ontario-investing-more-than-17-million-to-support-honey-beekeeping-operations.html',
-            fundingAmount: '$1.7 million',
-            deadline: new Date('2025-11-01T15:57:47-04:00'),
-            location: 'Ontario',
-            program: 'Beekeeping Support Program'
-          }
-        ];
-      }
+      console.log(`Parsed ${programs.length} entries from live RSS feed`);
+      
+      // Enrich programs with required metadata and filter to active programs only
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      
+      const enrichedPrograms = programs.map(program => ({
+        ...program,
+        dataSource: 'nz_mpi_rss', // Updated to reflect actual source
+        sourceUrl: program.url || program.id,
+        sourceAgency: 'Ministry for Primary Industries (NZ)', // Updated to reflect actual source
+        country: 'NZ', // Updated to reflect actual source
+        region: program.location || null,
+        eligibilityTypes: ['farm', 'producer', 'organization'],
+        fundingTypes: ['grant', 'support', 'program'],
+        mergedFromSources: ['nz_mpi_rss'] // Updated to reflect actual source
+      })).filter(program => {
+        // Only include programs that:
+        // 1. Have a deadline set AND deadline is in the future
+        // 2. OR are recently published (within last 90 days) for ongoing programs
+        
+        if (program.deadline) {
+          const deadlineYear = new Date(program.deadline).getFullYear();
+          return new Date(program.deadline) > currentDate && deadlineYear >= currentYear;
+        }
+        
+        // For programs without deadlines, only include recent ones (last 90 days)
+        const ninetyDaysAgo = new Date(currentDate.getTime() - 90 * 24 * 60 * 60 * 1000);
+        const publishedYear = new Date(program.publishedDate).getFullYear();
+        return new Date(program.publishedDate) > ninetyDaysAgo && publishedYear >= currentYear;
+      });
+      
+      console.log(`After filtering for active programs: ${enrichedPrograms.length} remain`);
 
-      // Clear existing programs and add new ones
+      // Clear existing programs and add new ones  
       const existingPrograms = await storage.getSubsidyPrograms();
       
       // Delete existing programs
@@ -141,18 +107,17 @@ export class RssService {
         existingPrograms.map(program => storage.deleteSubsidyProgram(program.id))
       );
 
-      // Add new programs
+      // Add new active programs
       await Promise.all(
-        programs.map(program => storage.createSubsidyProgram(program))
+        enrichedPrograms.map(program => storage.createSubsidyProgram(program))
       );
 
       this.lastFetchTime = new Date();
-      console.log('RSS sync completed successfully');
+      console.log(`Live RSS sync completed successfully - ${enrichedPrograms.length} active programs stored`);
       
     } catch (error) {
-      console.error('Failed to sync RSS data:', error);
-      // Don't re-throw, allow degraded service with empty data
-      console.warn('RSS service operating in degraded mode');
+      console.error('Failed to sync live RSS data:', error);
+      throw error; // Re-throw to surface the issue - we want live data, not degraded mode
     }
   }
 
@@ -187,15 +152,42 @@ export class RssService {
     }
 
     return allPrograms.filter(program => {
+      // Safely handle summary field that might be an object
+      const summaryText = this.normalizeSummary(program.summary);
+      
       const matchesQuery = !query || 
         program.title.toLowerCase().includes(query.toLowerCase()) ||
-        program.summary.toLowerCase().includes(query.toLowerCase());
+        summaryText.toLowerCase().includes(query.toLowerCase());
         
       const matchesCategory = !category || 
         program.category.toLowerCase() === category.toLowerCase();
         
       return matchesQuery && matchesCategory;
     });
+  }
+
+  /**
+   * Normalize summary field to string (handles RSS objects)
+   */
+  private normalizeSummary(summary: any): string {
+    if (typeof summary === 'string') {
+      return summary;
+    }
+    
+    if (summary && typeof summary === 'object') {
+      // Handle RSS parsing objects like { '#text': '...', type: 'html' }
+      if (summary['#text']) {
+        return summary['#text'];
+      }
+      // Handle other object formats
+      if (summary.text) {
+        return summary.text;
+      }
+      // Fallback to stringified version
+      return JSON.stringify(summary);
+    }
+    
+    return summary ? String(summary) : '';
   }
 
   /**
