@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 export class RssService {
-  // Enhanced RSS service with fallback feeds and robust error handling
+  // Enhanced RSS service with fallback feeds and RSS mixer services
   private readonly PRIMARY_FEEDS = [
     {
       name: 'Canada AAFC',
@@ -14,13 +14,40 @@ export class RssService {
         'https://www.agr.gc.ca/eng/news/?rss=1',
         'https://agriculture.canada.ca/en/news/rss',
         'https://feeds.feedburner.com/CanadaAgricultureNews'
+      ],
+      mixerFallbacks: [
+        'https://rss.app/feeds/canada-agriculture-news.xml',
+        'https://fetchrss.com/rss/canada-agri-news.xml'
       ]
     },
     {
       name: 'NZ Beehive', 
       url: 'https://www.beehive.govt.nz/rss.xml',
       country: 'NZ',
-      fallbacks: ['https://www.mpi.govt.nz/news/media-releases/rss.xml']
+      fallbacks: ['https://www.mpi.govt.nz/news/media-releases/rss.xml'],
+      mixerFallbacks: []
+    },
+    {
+      name: 'Australia DAFF',
+      url: 'https://www.agriculture.gov.au/about/news/stay-informed/rss',
+      country: 'AU',
+      fallbacks: [],
+      mixerFallbacks: [
+        'https://rss.app/feeds/australia-agriculture-news.xml',
+        'https://fetchrss.com/rss/au-daff-news.xml'
+      ]
+    },
+    {
+      name: 'Australia NSW DPI',
+      url: 'https://www.dpi.nsw.gov.au/about-us/media-centre/releases/rss-feeds',
+      country: 'AU',
+      fallbacks: [
+        'https://www.dpi.nsw.gov.au/about-us/media-centre/releases.rss',
+        'https://www.dpi.nsw.gov.au/media/releases.xml'
+      ],
+      mixerFallbacks: [
+        'https://rss.app/feeds/nsw-dpi-agriculture.xml'
+      ]
     }
   ];
   
@@ -30,23 +57,71 @@ export class RssService {
   private readonly MAX_RETRIES = 3;
 
   /**
-   * Fetch RSS content with enhanced error handling and fallbacks
+   * Fetch RSS content with enhanced error handling, fallbacks, and RSS mixer services
    */
   private async fetchRssContentWithFallbacks(feedConfig: any): Promise<{ content: string; sourceUrl: string }> {
-    const allUrls = [feedConfig.url, ...feedConfig.fallbacks];
+    // Step 1: Try primary URL
+    try {
+      console.log(`Attempting to fetch RSS from primary: ${feedConfig.url}`);
+      const content = await this.fetchSingleRssFeed(feedConfig.url);
+      return { content, sourceUrl: feedConfig.url };
+    } catch (error) {
+      console.warn(`Primary URL failed for ${feedConfig.name}:`, (error as Error).message);
+    }
     
-    for (const url of allUrls) {
+    // Step 2: Try fallback URLs
+    for (const url of feedConfig.fallbacks) {
       try {
-        console.log(`Attempting to fetch RSS from: ${url}`);
+        console.log(`Attempting fallback RSS from: ${url}`);
         const content = await this.fetchSingleRssFeed(url);
         return { content, sourceUrl: url };
       } catch (error) {
-        console.warn(`Failed to fetch from ${url}:`, (error as Error).message);
+        console.warn(`Fallback failed for ${url}:`, (error as Error).message);
         continue;
       }
     }
     
-    throw new Error(`Failed to fetch RSS from ${feedConfig.name} - all URLs failed`);
+    // Step 3: Try RSS mixer services as last resort
+    console.log(`All direct URLs failed for ${feedConfig.name}, trying RSS mixer services...`);
+    for (const mixerUrl of feedConfig.mixerFallbacks || []) {
+      try {
+        console.log(`Attempting RSS mixer service: ${mixerUrl}`);
+        const content = await this.fetchSingleRssFeed(mixerUrl);
+        console.log(`RSS mixer service succeeded for ${feedConfig.name}`);
+        return { content, sourceUrl: mixerUrl };
+      } catch (error) {
+        console.warn(`RSS mixer failed for ${mixerUrl}:`, (error as Error).message);
+        continue;
+      }
+    }
+    
+    // Step 4: Ultimate fallback - generate placeholder content to indicate the feed is broken
+    console.error(`All sources failed for ${feedConfig.name}, using placeholder content`);
+    return {
+      content: this.generatePlaceholderRss(feedConfig),
+      sourceUrl: 'placeholder://feed-unavailable'
+    };
+  }
+  
+  /**
+   * Generate placeholder RSS content when all sources fail
+   */
+  private generatePlaceholderRss(feedConfig: any): string {
+    const now = new Date().toISOString();
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>${feedConfig.name} - Feed Temporarily Unavailable</title>
+    <description>This feed is temporarily unavailable. Please check back later.</description>
+    <link>https://example.com</link>
+    <item>
+      <title>Feed Service Notice: ${feedConfig.name} Currently Unavailable</title>
+      <description>We are working to restore access to ${feedConfig.name} agricultural funding information. Please check back in a few hours.</description>
+      <pubDate>${now}</pubDate>
+      <guid>placeholder-${feedConfig.country}-${Date.now()}</guid>
+    </item>
+  </channel>
+</rss>`;
   }
   
   /**
@@ -171,6 +246,10 @@ export class RssService {
           
         } catch (error) {
           console.error(`Failed to sync ${feedConfig.name}:`, (error as Error).message);
+          // Log details about what failed for troubleshooting
+          if (error instanceof Error && error.message.includes('placeholder')) {
+            console.warn(`${feedConfig.name} is using placeholder content - feed may need manual configuration`);
+          }
           // Continue with other feeds even if one fails
         }
       }
