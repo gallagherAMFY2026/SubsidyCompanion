@@ -4,102 +4,179 @@ import fs from 'fs/promises';
 import path from 'path';
 
 export class RssService {
-  // TEMPORARY: Using NZ MPI feed since Canada.ca feed is broken 
-  // TODO: Hook up Canada.ca via Feedly once URL is fixed
-  private readonly RSS_FEED_URL = 'https://www.mpi.govt.nz/news/media-releases/rss.xml';
+  // Enhanced RSS service with fallback feeds and robust error handling
+  private readonly PRIMARY_FEEDS = [
+    {
+      name: 'Canada AAFC',
+      url: 'https://www.canada.ca/en/agriculture-agri-food/news.rss.xml',
+      country: 'CA',
+      fallbacks: [
+        'https://www.agr.gc.ca/eng/news/?rss=1',
+        'https://agriculture.canada.ca/en/news/rss',
+        'https://feeds.feedburner.com/CanadaAgricultureNews'
+      ]
+    },
+    {
+      name: 'NZ Beehive', 
+      url: 'https://www.beehive.govt.nz/rss.xml',
+      country: 'NZ',
+      fallbacks: ['https://www.mpi.govt.nz/news/media-releases/rss.xml']
+    }
+  ];
+  
   private lastFetchTime: Date | null = null;
   private readonly CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+  private readonly REQUEST_TIMEOUT = 30000; // 30 seconds
+  private readonly MAX_RETRIES = 3;
 
   /**
-   * Fetch live RSS feed from Canada.ca
+   * Fetch RSS content with enhanced error handling and fallbacks
    */
-  private async fetchRssContent(): Promise<string> {
-    const maxRetries = 3;
-    const timeout = 30000; // 30 seconds
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+  private async fetchRssContentWithFallbacks(feedConfig: any): Promise<{ content: string; sourceUrl: string }> {
+    const allUrls = [feedConfig.url, ...feedConfig.fallbacks];
+    
+    for (const url of allUrls) {
       try {
-        console.log(`Fetching live RSS data from Canada.ca (attempt ${attempt}/${maxRetries})`);
-        
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
-        
-        const response = await fetch(this.RSS_FEED_URL, {
-          headers: {
-            'User-Agent': 'SubsidyCompanion/1.0 (Agricultural Funding Intelligence Platform)',
-            'Accept': 'application/atom+xml, application/xml, text/xml'
-          },
-          signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (response.ok) {
-          const content = await response.text();
-          console.log(`Successfully fetched ${content.length} bytes of RSS data`);
-          return content;
-        } else {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        console.log(`Attempting to fetch RSS from: ${url}`);
+        const content = await this.fetchSingleRssFeed(url);
+        return { content, sourceUrl: url };
       } catch (error) {
-        console.error(`RSS fetch attempt ${attempt} failed:`, error);
-        if (attempt === maxRetries) {
-          throw new Error(`Failed to fetch live RSS data after ${maxRetries} attempts: ${error}`);
-        }
-        // Exponential backoff: wait 2^attempt seconds
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+        console.warn(`Failed to fetch from ${url}:`, (error as Error).message);
+        continue;
       }
     }
     
-    throw new Error('RSS fetch failed after all retry attempts');
+    throw new Error(`Failed to fetch RSS from ${feedConfig.name} - all URLs failed`);
+  }
+  
+  /**
+   * Fetch a single RSS feed with robust error handling
+   */
+  private async fetchSingleRssFeed(url: string): Promise<string> {
+    for (let attempt = 1; attempt <= this.MAX_RETRIES; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.REQUEST_TIMEOUT);
+        
+        // Enhanced headers for better compatibility
+        const fetchOptions: RequestInit = {
+          headers: {
+            'User-Agent': 'SubsidyCompanion/1.0 (Agricultural Funding Intelligence Platform)',
+            'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml, */*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive'
+          },
+          signal: controller.signal
+        };
+        
+        const response = await fetch(url, fetchOptions);
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('xml') && !contentType.includes('rss') && !contentType.includes('atom')) {
+          console.warn(`Unexpected content type: ${contentType}`);
+        }
+        
+        const content = await response.text();
+        
+        if (content.length < 100) {
+          throw new Error(`Content too short: ${content.length} bytes`);
+        }
+        
+        if (!content.includes('<rss') && !content.includes('<feed') && !content.includes('<?xml')) {
+          throw new Error('Content does not appear to be valid XML/RSS/Atom');
+        }
+        
+        console.log(`Successfully fetched ${content.length} bytes from ${url}`);
+        return content;
+        
+      } catch (error) {
+        console.error(`Attempt ${attempt}/${this.MAX_RETRIES} failed for ${url}:`, (error as Error).message);
+        
+        if (attempt === this.MAX_RETRIES) {
+          throw error;
+        }
+        
+        // Exponential backoff with jitter
+        const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    
+    throw new Error(`Failed to fetch RSS after ${this.MAX_RETRIES} attempts`);
   }
 
 
   /**
-   * Sync RSS feed data to storage
+   * Sync RSS feed data from multiple sources to storage
    */
-  async syncRssData(): Promise<void> {
+  async syncRssData(forceRefresh: boolean = false): Promise<void> {
     try {
-      console.log('Syncing live RSS data from Canada.ca...');
+      console.log('Starting enhanced RSS sync with fallback support...');
       
-      const xmlContent = await this.fetchRssContent();
-      const programs = await rssParser.processRssFeed(xmlContent);
+      let totalPrograms = 0;
+      const allPrograms: any[] = [];
       
-      console.log(`Parsed ${programs.length} entries from live RSS feed`);
-      
-      // Enrich programs with required metadata and filter to active programs only
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      
-      const enrichedPrograms = programs.map(program => ({
-        ...program,
-        dataSource: 'nz_mpi_rss', // Updated to reflect actual source
-        sourceUrl: program.url || program.id,
-        sourceAgency: 'Ministry for Primary Industries (NZ)', // Updated to reflect actual source
-        country: 'NZ', // Updated to reflect actual source
-        region: program.location || null,
-        eligibilityTypes: ['farm', 'producer', 'organization'],
-        fundingTypes: ['grant', 'support', 'program'],
-        mergedFromSources: ['nz_mpi_rss'] // Updated to reflect actual source
-      })).filter(program => {
-        // Only include programs that:
-        // 1. Have a deadline set AND deadline is in the future
-        // 2. OR are recently published (within last 90 days) for ongoing programs
-        
-        if (program.deadline) {
-          const deadlineYear = new Date(program.deadline).getFullYear();
-          return new Date(program.deadline) > currentDate && deadlineYear >= currentYear;
+      for (const feedConfig of this.PRIMARY_FEEDS) {
+        try {
+          console.log(`\nSyncing ${feedConfig.name}...`);
+          
+          const { content, sourceUrl } = await this.fetchRssContentWithFallbacks(feedConfig);
+          const programs = await rssParser.processRssFeed(content);
+          
+          console.log(`Parsed ${programs.length} entries from ${feedConfig.name}`);
+          
+          // Enrich programs with required metadata and filter to active programs only
+          const currentDate = new Date();
+          const currentYear = currentDate.getFullYear();
+          
+          const enrichedPrograms = programs.map(program => ({
+            ...program,
+            dataSource: `${feedConfig.country.toLowerCase()}_rss`,
+            sourceUrl,
+            sourceAgency: this.getAgencyName(feedConfig.country),
+            country: feedConfig.country,
+            region: program.location || null,
+            eligibilityTypes: ['farm', 'producer', 'organization'],
+            fundingTypes: ['grant', 'support', 'program'],
+            mergedFromSources: [`${feedConfig.country.toLowerCase()}_rss`]
+          })).filter(program => {
+            // Only include programs that:
+            // 1. Have a deadline set AND deadline is in the future
+            // 2. OR are recently published (within last 90 days) for ongoing programs
+            
+            if (program.deadline) {
+              const deadlineYear = new Date(program.deadline).getFullYear();
+              return new Date(program.deadline) > currentDate && deadlineYear >= currentYear;
+            }
+            
+            // For programs without deadlines, only include recent ones (last 90 days)
+            const ninetyDaysAgo = new Date(currentDate.getTime() - 90 * 24 * 60 * 60 * 1000);
+            const publishedYear = new Date(program.publishedDate).getFullYear();
+            return new Date(program.publishedDate) > ninetyDaysAgo && publishedYear >= currentYear;
+          });
+          
+          console.log(`After filtering for active programs: ${enrichedPrograms.length} remain`);
+          
+          allPrograms.push(...enrichedPrograms);
+          totalPrograms += enrichedPrograms.length;
+          console.log(`${feedConfig.name}: ${enrichedPrograms.length} active programs added`);
+          
+        } catch (error) {
+          console.error(`Failed to sync ${feedConfig.name}:`, (error as Error).message);
+          // Continue with other feeds even if one fails
         }
-        
-        // For programs without deadlines, only include recent ones (last 90 days)
-        const ninetyDaysAgo = new Date(currentDate.getTime() - 90 * 24 * 60 * 60 * 1000);
-        const publishedYear = new Date(program.publishedDate).getFullYear();
-        return new Date(program.publishedDate) > ninetyDaysAgo && publishedYear >= currentYear;
-      });
+      }
       
-      console.log(`After filtering for active programs: ${enrichedPrograms.length} remain`);
-
-      // Clear existing programs and add new ones  
+      // Clear existing programs and add new ones
+      console.log('\nUpdating storage with new programs...');
       const existingPrograms = await storage.getSubsidyPrograms();
       
       // Delete existing programs
@@ -109,15 +186,26 @@ export class RssService {
 
       // Add new active programs
       await Promise.all(
-        enrichedPrograms.map(program => storage.createSubsidyProgram(program))
+        allPrograms.map(program => storage.createSubsidyProgram(program))
       );
-
+      
       this.lastFetchTime = new Date();
-      console.log(`Live RSS sync completed successfully - ${enrichedPrograms.length} active programs stored`);
+      console.log(`\nEnhanced RSS sync completed - ${totalPrograms} total active programs stored`);
       
     } catch (error) {
-      console.error('Failed to sync live RSS data:', error);
-      throw error; // Re-throw to surface the issue - we want live data, not degraded mode
+      console.error('Error in enhanced RSS sync:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Get agency name for country
+   */
+  private getAgencyName(country: string): string {
+    switch (country) {
+      case 'CA': return 'Agriculture and Agri-Food Canada';
+      case 'NZ': return 'New Zealand Government';
+      default: return 'Unknown Agency';
     }
   }
 
@@ -130,7 +218,7 @@ export class RssService {
       (Date.now() - this.lastFetchTime.getTime() > this.CACHE_DURATION);
 
     if (shouldRefresh) {
-      await this.syncRssData();
+      await this.syncRssData(forceRefresh);
     }
 
     try {

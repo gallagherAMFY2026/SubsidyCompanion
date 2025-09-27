@@ -20,7 +20,7 @@ export interface RssFeed {
 
 export class RssParser {
   /**
-   * Parse XML RSS feed content into structured data
+   * Parse XML RSS feed content into structured data with robust error handling
    */
   async parseRssXml(xmlContent: string): Promise<RssFeed> {
     try {
@@ -36,6 +36,7 @@ export class RssParser {
       // Sanitize XML by fixing common issues with entity encoding
       const sanitizedXml = this.sanitizeXml(xmlContent);
       
+      // Enhanced parser configuration for better RSS/Atom compatibility
       const parser = new XMLParser({
         ignoreAttributes: false,
         attributeNamePrefix: '',
@@ -43,13 +44,31 @@ export class RssParser {
         parseAttributeValue: false, // Don't parse values, keep as strings
         trimValues: true,
         preserveOrder: false,       // Use object mode, not array mode
-        stopNodes: ['content', 'summary'], // Don't parse HTML content deeply
+        stopNodes: ['content', 'summary', 'description'], // Don't parse HTML content deeply
+        parseTrueNumberOnly: false, // Prevent date parsing issues
+        parseTagValue: true,        // Parse text content
+        textNodeName: '#text',     // Handle mixed content
+        ignoreNameSpace: false,     // Preserve namespaces
+        removeNSPrefix: false       // Keep namespace prefixes
       });
       
       const result = parser.parse(sanitizedXml);
       console.log('Parsed XML keys:', Object.keys(result));
+      
+      // Debug RSS 2.0 structure
+      if (result.rss) {
+        console.log('RSS version:', result.rss?.version);
+        console.log('Channel keys:', Object.keys(result.rss?.channel || {}));
+        const items = result.rss?.channel?.item;
+        if (items) {
+          const itemCount = Array.isArray(items) ? items.length : 1;
+          console.log('RSS 2.0 items found:', itemCount);
+        }
+      }
+      
+      // Debug Atom structure  
       if (result.feed) {
-        console.log('Feed keys:', Object.keys(result.feed));
+        console.log('Atom feed keys:', Object.keys(result.feed));
         console.log('Has entries:', !!result.feed.entry, 'Entry count:', Array.isArray(result.feed.entry) ? result.feed.entry.length : (result.feed.entry ? 1 : 0));
       }
       
@@ -57,7 +76,8 @@ export class RssParser {
     } catch (error) {
       console.error('Error parsing RSS XML:', error);
       console.error('Parser error details:', (error as Error).message);
-      throw new Error('Failed to parse RSS feed');
+      console.error('XML snippet that failed:', xmlContent.substring(0, 500));
+      throw new Error(`Failed to parse RSS feed: ${(error as Error).message}`);
     }
   }
   
@@ -66,10 +86,24 @@ export class RssParser {
    */
   private sanitizeXml(xmlContent: string): string {
     return xmlContent
-      // Fix unescaped ampersands in URLs
-      .replace(/&(?!(?:amp|lt|gt|quot|apos);)/g, '&amp;')
-      // Ensure proper XML declaration
+      // Fix unescaped ampersands in URLs (but not already escaped ones)
+      .replace(/&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/g, '&amp;')
+      // Fix malformed CDATA sections
+      .replace(/<\!\[CDATA\[([^\]]*?)\]\]>/g, (match, content) => {
+        // Escape any XML special characters in CDATA content
+        return content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      })
+      // Remove any null bytes that can break parsing
+      .replace(/\x00/g, '')
+      // Fix broken XML declarations
       .replace(/^[^<]*/, '')
+      // Ensure UTF-8 encoding declaration if missing
+      .replace(/^(<\?xml[^>]*?)\?>/, (match, xmlDecl) => {
+        if (!xmlDecl.includes('encoding')) {
+          return xmlDecl + ' encoding="UTF-8"?>';
+        }
+        return match;
+      })
       .trim();
   }
 
