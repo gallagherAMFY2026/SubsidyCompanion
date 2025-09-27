@@ -299,7 +299,7 @@ export class ComprehensiveUsdaService {
         const relativeUrl = titleEl.attr('href');
         
         if (title && relativeUrl && this.isRelevantProgram(title)) {
-          const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : `${baseUrl.split('/news')[0]}${relativeUrl}`;
+          const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : new URL(relativeUrl, baseUrl).toString();
           const pubDate = $item.find('.date, .datetime, .views-field-created').text().trim();
           const summary = $item.find('.summary, .teaser, .views-field-body').text().trim();
           
@@ -320,7 +320,7 @@ export class ComprehensiveUsdaService {
           const relativeUrl = $link.attr('href');
           
           if (title && relativeUrl && this.isRelevantProgram(title)) {
-            const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : `${baseUrl.split('/news')[0]}${relativeUrl}`;
+            const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : new URL(relativeUrl, baseUrl).toString();
             listings.push({
               title,
               url: fullUrl
@@ -348,11 +348,38 @@ export class ComprehensiveUsdaService {
     try {
       console.log(`📄 Processing: ${announcement.title}`);
       
+      // Validate URL before processing
+      if (!this.isValidUrl(announcement.url)) {
+        console.warn(`⚠️  Invalid URL skipped: ${announcement.url}`);
+        return null;
+      }
+      
       const content = await this.fetchWithRetry(announcement.url);
       const $ = cheerio.load(content);
       
-      // Extract program details
-      const fullContent = $('.field-body, .content, .main-content, article').text();
+      // Enhanced content extraction with multiple selectors and validation
+      const contentSelectors = [
+        '.field-body, .content, .main-content, article',
+        '.node-content, .page-content, .entry-content',
+        '.body, .text, .description, .announcement-content',
+        '.views-field-body, .field-item, .field-content'
+      ];
+      
+      let fullContent = '';
+      for (const selector of contentSelectors) {
+        const extractedContent = $(selector).text().trim();
+        if (extractedContent.length > fullContent.length) {
+          fullContent = extractedContent;
+        }
+      }
+      
+      // Validate extracted content
+      if (!fullContent || fullContent.length < 100) {
+        console.warn(`⚠️  Insufficient content extracted from ${announcement.url} (${fullContent.length} chars)`);
+        // Fall back to page title and summary if available
+        const pageTitle = $('title').text() || $('h1').first().text();
+        fullContent = `${pageTitle}\n${announcement.summary || ''}\n${fullContent}`.trim();
+      }
       const deadline = this.extractDeadline(fullContent);
       const fundingAmount = this.extractFundingAmount(fullContent);
       const programs = this.extractProgramTypes(fullContent);
@@ -445,7 +472,7 @@ export class ComprehensiveUsdaService {
         const relativeUrl = titleEl.attr('href');
         
         if (title && relativeUrl && this.isRelevantToAgriculture(title, agency.keywords)) {
-          const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : `${agency.baseUrl}${relativeUrl}`;
+          const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : new URL(relativeUrl, agency.baseUrl).toString();
           const pubDate = $item.find('.date, .datetime, .published').text().trim();
           
           announcements.push({
@@ -693,6 +720,18 @@ export class ComprehensiveUsdaService {
   private generateDedupeKey(title: string, location: string, deadline: Date | null): string {
     const key = `${title.toLowerCase().replace(/[^a-z0-9]/g, '')}-${location.toLowerCase().replace(/[^a-z0-9]/g, '')}-${deadline ? deadline.toISOString().split('T')[0] : 'no-deadline'}`;
     return key.substring(0, 100); // Limit length
+  }
+
+  /**
+   * Validate URL format and accessibility
+   */
+  private isValidUrl(url: string): boolean {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+    } catch {
+      return false;
+    }
   }
 
   private async fetchWithRetry(url: string): Promise<string> {
