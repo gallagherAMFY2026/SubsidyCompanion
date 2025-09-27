@@ -570,14 +570,162 @@ export class StateSpecificScraperService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // Placeholder helper methods (would be fully implemented)
-  private extractDeadline(content: string): Date | null { return null; }
-  private extractFundingAmount(content: string): string | null { return null; }
-  private extractProgramTypes(content: string): string[] { return []; }
-  private extractSummary(content: string): string { return content.substring(0, 200) + '...'; }
-  private categorizeProgram(title: string, content: string): string { return 'State Agricultural Program'; }
-  private extractOpportunityNumber(content: string): string | null { return null; }
-  private determineFundingTypes(content: string): string[] { return ['grant']; }
+  /**
+   * Extract deadline dates from content using multiple patterns
+   */
+  private extractDeadline(content: string): Date | null {
+    const deadlinePatterns = [
+      /deadline[:\s]+([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /due[:\s]+([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /applications must be received by[:\s]+([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /submit by[:\s]+([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /(\d{1,2}\/\d{1,2}\/\d{4})/g,
+      /(\d{4}-\d{2}-\d{2})/g
+    ];
+    
+    for (const pattern of deadlinePatterns) {
+      const match = content.match(pattern);
+      if (match && match[1]) {
+        const date = new Date(match[1]);
+        if (!isNaN(date.getTime()) && date > new Date()) {
+          return date;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Extract funding amounts from content
+   */
+  private extractFundingAmount(content: string): string | null {
+    const fundingPatterns = [
+      /\$[\d,]+(?:\.\d{2})?\s*(?:million|M|k|thousand)?/gi,
+      /up to \$[\d,]+/gi,
+      /maximum of \$[\d,]+/gi,
+      /funding[:\s]+\$[\d,]+/gi,
+      /award[:\s]+\$[\d,]+/gi,
+      /grant[:\s]+\$[\d,]+/gi
+    ];
+    
+    for (const pattern of fundingPatterns) {
+      const match = content.match(pattern);
+      if (match && match[0]) {
+        return match[0].trim();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Extract program types/keywords from content
+   */
+  private extractProgramTypes(content: string): string[] {
+    const types: string[] = [];
+    const programKeywords = [
+      'conservation', 'environmental', 'sustainable', 'organic', 'renewable',
+      'research', 'development', 'innovation', 'technology', 'infrastructure',
+      'education', 'training', 'outreach', 'marketing', 'export', 'trade',
+      'livestock', 'crop', 'dairy', 'specialty', 'commodity', 'rural'
+    ];
+    
+    const lowerContent = content.toLowerCase();
+    for (const keyword of programKeywords) {
+      if (lowerContent.includes(keyword)) {
+        types.push(keyword);
+      }
+    }
+    
+    return types.slice(0, 5); // Limit to top 5 most relevant
+  }
+
+  /**
+   * Extract meaningful summary from content
+   */
+  private extractSummary(content: string): string {
+    const cleanContent = content
+      .replace(/<[^>]*>/g, ' ') // Remove HTML tags
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+    
+    const sentences = cleanContent.split(/[.!?]+/);
+    let summary = '';
+    
+    for (const sentence of sentences) {
+      const trimmed = sentence.trim();
+      if (trimmed.length > 20 && !trimmed.match(/^(home|news|contact|about|menu)/i)) {
+        summary += trimmed + '. ';
+        if (summary.length > 150) break;
+      }
+    }
+    
+    return summary.trim() || cleanContent.substring(0, 200) + '...';
+  }
+
+  /**
+   * Categorize program based on title and content
+   */
+  private categorizeProgram(title: string, content: string): string {
+    const titleLower = title.toLowerCase();
+    const contentLower = content.toLowerCase();
+    
+    if (titleLower.includes('conservation') || contentLower.includes('conservation')) {
+      return 'Conservation Program';
+    }
+    if (titleLower.includes('research') || contentLower.includes('research')) {
+      return 'Research & Development';
+    }
+    if (titleLower.includes('export') || titleLower.includes('trade') || contentLower.includes('export')) {
+      return 'Trade & Export';
+    }
+    if (titleLower.includes('beginning') || titleLower.includes('new farmer')) {
+      return 'Beginning Farmer Program';
+    }
+    if (titleLower.includes('small farm') || contentLower.includes('small farm')) {
+      return 'Small Farm Program';
+    }
+    
+    return 'State Agricultural Program';
+  }
+
+  /**
+   * Extract opportunity/program numbers
+   */
+  private extractOpportunityNumber(content: string): string | null {
+    const idPatterns = [
+      /opportunity[:\s#]+([A-Z0-9-]+)/i,
+      /program[:\s#]+([A-Z0-9-]+)/i,
+      /grant[:\s#]+([A-Z0-9-]+)/i,
+      /funding[:\s#]+([A-Z0-9-]+)/i,
+      /(?:ID|identifier)[:\s#]+([A-Z0-9-]+)/i,
+      /(?:CFDA|ALN)[:\s#]+(\d{2}\.\d{3})/i
+    ];
+    
+    for (const pattern of idPatterns) {
+      const match = content.match(pattern);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Determine funding types from content
+   */
+  private determineFundingTypes(content: string): string[] {
+    const types: string[] = [];
+    const lowerContent = content.toLowerCase();
+    
+    if (lowerContent.includes('grant')) types.push('grant');
+    if (lowerContent.includes('loan')) types.push('loan');
+    if (lowerContent.includes('cost share') || lowerContent.includes('cost-share')) types.push('cost_share');
+    if (lowerContent.includes('insurance')) types.push('insurance');
+    if (lowerContent.includes('rebate')) types.push('rebate');
+    if (lowerContent.includes('tax credit')) types.push('tax_credit');
+    
+    return types.length > 0 ? types : ['grant'];
+  }
   private parseDate(dateStr?: string): Date | null { 
     if (!dateStr) return null;
     const parsed = new Date(dateStr);

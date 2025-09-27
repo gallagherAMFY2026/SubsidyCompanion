@@ -29,6 +29,44 @@ export interface IStorage {
   getSubsidyProgramsBySource(dataSource: string): Promise<SubsidyProgram[]>;
   getHighPriorityPrograms(): Promise<SubsidyProgram[]>;
   
+  // Enhanced geographical and category filtering
+  getSubsidyProgramsByCountry(country: string): Promise<SubsidyProgram[]>;
+  getSubsidyProgramsByRegion(region: string): Promise<SubsidyProgram[]>;
+  getSubsidyProgramsByCategory(category: string): Promise<SubsidyProgram[]>;
+  getSubsidyProgramsByLocation(country?: string, region?: string): Promise<SubsidyProgram[]>;
+  
+  // Enhanced deadline tracking and filtering
+  getSubsidyProgramsByDeadlineRange(startDate: Date, endDate: Date): Promise<SubsidyProgram[]>;
+  getSubsidyProgramsDeadlinesSoon(days: number): Promise<SubsidyProgram[]>;
+  getSubsidyProgramsWithoutDeadlines(): Promise<SubsidyProgram[]>;
+  getExpiredPrograms(): Promise<SubsidyProgram[]>;
+  
+  // Advanced search and filtering combinations
+  searchSubsidyPrograms(filters: {
+    query?: string;
+    country?: string;
+    region?: string;
+    category?: string;
+    dataSource?: string;
+    hasDeadline?: boolean;
+    isHighPriority?: boolean;
+    fundingTypes?: string[];
+    eligibilityTypes?: string[];
+    deadlineWithinDays?: number;
+  }): Promise<SubsidyProgram[]>;
+  
+  // Statistics and analytics
+  getSubsidyProgramStats(): Promise<{
+    total: number;
+    active: number;
+    expired: number;
+    highPriority: number;
+    byCountry: Record<string, number>;
+    bySource: Record<string, number>;
+    byCategory: Record<string, number>;
+    upcomingDeadlines: number;
+  }>;
+  
   // Data source operations
   getDataSources(): Promise<DataSource[]>;
   getDataSourceById(id: string): Promise<DataSource | undefined>;
@@ -171,6 +209,205 @@ export class MemStorage implements IStorage {
 
   async getHighPriorityPrograms(): Promise<SubsidyProgram[]> {
     return Array.from(this.subsidyPrograms.values()).filter(program => program.isHighPriority === 'true');
+  }
+
+  // Enhanced geographical and category filtering methods
+  async getSubsidyProgramsByCountry(country: string): Promise<SubsidyProgram[]> {
+    return Array.from(this.subsidyPrograms.values()).filter(program => 
+      (program.country || "").toLowerCase() === country.toLowerCase()
+    );
+  }
+
+  async getSubsidyProgramsByRegion(region: string): Promise<SubsidyProgram[]> {
+    return Array.from(this.subsidyPrograms.values()).filter(program => 
+      (program.region || "").toLowerCase().includes(region.toLowerCase())
+    );
+  }
+
+  async getSubsidyProgramsByCategory(category: string): Promise<SubsidyProgram[]> {
+    return Array.from(this.subsidyPrograms.values()).filter(program => 
+      (program.category || "").toLowerCase().includes(category.toLowerCase())
+    );
+  }
+
+  async getSubsidyProgramsByLocation(country?: string, region?: string): Promise<SubsidyProgram[]> {
+    return Array.from(this.subsidyPrograms.values()).filter(program => {
+      const countryMatch = !country || program.country.toLowerCase() === country.toLowerCase();
+      const regionMatch = !region || program.region?.toLowerCase().includes(region.toLowerCase());
+      return countryMatch && regionMatch;
+    });
+  }
+
+  // Enhanced deadline tracking and filtering methods
+  async getSubsidyProgramsByDeadlineRange(startDate: Date, endDate: Date): Promise<SubsidyProgram[]> {
+    return Array.from(this.subsidyPrograms.values()).filter(program => {
+      if (!program.deadline) return false;
+      return program.deadline >= startDate && program.deadline <= endDate;
+    });
+  }
+
+  async getSubsidyProgramsDeadlinesSoon(days: number): Promise<SubsidyProgram[]> {
+    const now = new Date();
+    const futureDate = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+    return Array.from(this.subsidyPrograms.values())
+      .filter(program => program.deadline && program.deadline >= now && program.deadline <= futureDate)
+      .sort((a, b) => (a.deadline!.getTime() - b.deadline!.getTime()));
+  }
+
+  async getSubsidyProgramsWithoutDeadlines(): Promise<SubsidyProgram[]> {
+    return Array.from(this.subsidyPrograms.values()).filter(program => !program.deadline);
+  }
+
+  async getExpiredPrograms(): Promise<SubsidyProgram[]> {
+    const now = new Date();
+    return Array.from(this.subsidyPrograms.values()).filter(program => 
+      program.deadline && program.deadline < now
+    );
+  }
+
+  // Advanced search and filtering combinations
+  async searchSubsidyPrograms(filters: {
+    query?: string;
+    country?: string;
+    region?: string;
+    category?: string;
+    dataSource?: string;
+    hasDeadline?: boolean;
+    isHighPriority?: boolean;
+    fundingTypes?: string[];
+    eligibilityTypes?: string[];
+    deadlineWithinDays?: number;
+  }): Promise<SubsidyProgram[]> {
+    let results = Array.from(this.subsidyPrograms.values());
+
+    // Text search across title and summary
+    if (filters.query) {
+      const queryLower = filters.query.toLowerCase();
+      results = results.filter(program => 
+        (program.title || "").toLowerCase().includes(queryLower) ||
+        (program.summary || "").toLowerCase().includes(queryLower)
+      );
+    }
+
+    // Geographic filters
+    if (filters.country) {
+      results = results.filter(program => 
+        program.country.toLowerCase() === filters.country!.toLowerCase()
+      );
+    }
+
+    if (filters.region) {
+      results = results.filter(program => 
+        program.region?.toLowerCase().includes(filters.region!.toLowerCase())
+      );
+    }
+
+    // Category filter
+    if (filters.category) {
+      results = results.filter(program => 
+        program.category.toLowerCase().includes(filters.category!.toLowerCase())
+      );
+    }
+
+    // Data source filter
+    if (filters.dataSource) {
+      results = results.filter(program => program.dataSource === filters.dataSource);
+    }
+
+    // Deadline filter
+    if (filters.hasDeadline !== undefined) {
+      results = results.filter(program => 
+        filters.hasDeadline ? !!program.deadline : !program.deadline
+      );
+    }
+
+    // Priority filter
+    if (filters.isHighPriority !== undefined) {
+      results = results.filter(program => 
+        filters.isHighPriority ? program.isHighPriority === 'true' : program.isHighPriority !== 'true'
+      );
+    }
+
+    // Funding types filter (case-insensitive)
+    if (filters.fundingTypes && filters.fundingTypes.length > 0) {
+      const normalizedFilters = filters.fundingTypes.map(t => t.toLowerCase());
+      results = results.filter(program => 
+        (program.fundingTypes || []).some(type => normalizedFilters.includes((type || "").toLowerCase()))
+      );
+    }
+
+    // Eligibility types filter (case-insensitive)
+    if (filters.eligibilityTypes && filters.eligibilityTypes.length > 0) {
+      const normalizedFilters = filters.eligibilityTypes.map(t => t.toLowerCase());
+      results = results.filter(program => 
+        (program.eligibilityTypes || []).some(type => normalizedFilters.includes((type || "").toLowerCase()))
+      );
+    }
+
+    // Deadline within days filter
+    if (filters.deadlineWithinDays !== undefined) {
+      const now = new Date();
+      const futureDate = new Date(now.getTime() + filters.deadlineWithinDays * 24 * 60 * 60 * 1000);
+      results = results.filter(program => 
+        program.deadline && program.deadline >= now && program.deadline <= futureDate
+      );
+    }
+
+    return results;
+  }
+
+  // Statistics and analytics
+  async getSubsidyProgramStats(): Promise<{
+    total: number;
+    active: number;
+    expired: number;
+    highPriority: number;
+    byCountry: Record<string, number>;
+    bySource: Record<string, number>;
+    byCategory: Record<string, number>;
+    upcomingDeadlines: number;
+  }> {
+    const allPrograms = Array.from(this.subsidyPrograms.values());
+    const now = new Date();
+    const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    // Basic counts
+    const total = allPrograms.length;
+    const active = allPrograms.filter(p => !p.deadline || p.deadline > now).length;
+    const expired = allPrograms.filter(p => p.deadline && p.deadline < now).length;
+    const highPriority = allPrograms.filter(p => p.isHighPriority === 'true').length;
+    const upcomingDeadlines = allPrograms.filter(p => 
+      p.deadline && p.deadline >= now && p.deadline <= oneWeekFromNow
+    ).length;
+
+    // Group by country
+    const byCountry: Record<string, number> = {};
+    allPrograms.forEach(program => {
+      byCountry[program.country] = (byCountry[program.country] || 0) + 1;
+    });
+
+    // Group by source
+    const bySource: Record<string, number> = {};
+    allPrograms.forEach(program => {
+      bySource[program.dataSource] = (bySource[program.dataSource] || 0) + 1;
+    });
+
+    // Group by category
+    const byCategory: Record<string, number> = {};
+    allPrograms.forEach(program => {
+      byCategory[program.category] = (byCategory[program.category] || 0) + 1;
+    });
+
+    return {
+      total,
+      active,
+      expired,
+      highPriority,
+      byCountry,
+      bySource,
+      byCategory,
+      upcomingDeadlines
+    };
   }
 
   // Data source operations
