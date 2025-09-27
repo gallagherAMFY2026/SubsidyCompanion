@@ -8,7 +8,7 @@ interface StateConfig {
   code: string;
   name: string;
   priority: 'high' | 'medium' | 'low';
-  nrcsUrl: string;
+  nrcsUrls: string[]; // Multiple URL patterns to try
   fcsUrl?: string;
 }
 
@@ -29,31 +29,91 @@ export class ComprehensiveUsdaService {
   // Top agricultural states for comprehensive coverage
   private readonly STATE_CONFIGS: StateConfig[] = [
     // Tier 1 - High Priority States
-    { code: 'ia', name: 'Iowa', priority: 'high', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/iowa/news-releases' },
-    { code: 'il', name: 'Illinois', priority: 'high', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/illinois/news-releases' },
-    { code: 'ne', name: 'Nebraska', priority: 'high', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/nebraska/news-releases' },
-    { code: 'mn', name: 'Minnesota', priority: 'high', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/minnesota/news-releases' },
-    { code: 'ks', name: 'Kansas', priority: 'high', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/kansas/news-releases' },
-    { code: 'wi', name: 'Wisconsin', priority: 'high', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/wisconsin/news-releases' },
-    { code: 'ca', name: 'California', priority: 'high', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/california/news-releases' },
-    { code: 'tx', name: 'Texas', priority: 'high', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/texas/news-releases' },
-    { code: 'mo', name: 'Missouri', priority: 'high', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/missouri/news-releases' },
+    { code: 'ia', name: 'Iowa', priority: 'high', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/iowa/news/',
+      'https://www.nrcs.usda.gov/conservation-basics/conservation-by-state/iowa/news/',
+      'https://www.nrcs.usda.gov/ia/newsroom'
+    ]},
+    { code: 'il', name: 'Illinois', priority: 'high', nrcsUrls: [
+      'https://www.nrcs.usda.gov/conservation-basics/conservation-by-state/illinois/news-and-publications-illinois',
+      'https://www.nrcs.usda.gov/state-offices/illinois/news/',
+      'https://www.nrcs.usda.gov/il/newsroom'
+    ]},
+    { code: 'ne', name: 'Nebraska', priority: 'high', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/nebraska/news/',
+      'https://www.nrcs.usda.gov/ne/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/nebraska/news-releases'
+    ]},
+    { code: 'mn', name: 'Minnesota', priority: 'high', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/minnesota/news/',
+      'https://www.nrcs.usda.gov/mn/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/minnesota/news-releases'
+    ]},
+    { code: 'ks', name: 'Kansas', priority: 'high', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/kansas/news/',
+      'https://www.nrcs.usda.gov/ks/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/kansas/news-releases'
+    ]},
+    { code: 'wi', name: 'Wisconsin', priority: 'high', nrcsUrls: [
+      'https://www.nrcs.usda.gov/wi/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/wisconsin/news/',
+      'https://www.nrcs.usda.gov/state-offices/wisconsin/news-releases'
+    ]},
+    { code: 'ca', name: 'California', priority: 'high', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/california/news-releases',
+      'https://www.nrcs.usda.gov/ca/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/california/news/'
+    ]},
+    { code: 'tx', name: 'Texas', priority: 'high', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/texas/news/',
+      'https://www.nrcs.usda.gov/tx/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/texas/news-releases'
+    ]},
+    { code: 'mo', name: 'Missouri', priority: 'high', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/missouri/news/',
+      'https://www.nrcs.usda.gov/mo/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/missouri/news-releases'
+    ]},
     
     // Tier 2 - Medium Priority States 
-    { code: 'in', name: 'Indiana', priority: 'medium', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/indiana/news-releases' },
-    { code: 'oh', name: 'Ohio', priority: 'medium', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/ohio/news-releases' },
-    { code: 'nd', name: 'North Dakota', priority: 'medium', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/north-dakota/news-releases' },
-    { code: 'sd', name: 'South Dakota', priority: 'medium', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/south-dakota/news-releases' },
-    { code: 'nc', name: 'North Carolina', priority: 'medium', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/north-carolina/news-releases' },
-    { code: 'ga', name: 'Georgia', priority: 'medium', nrcsUrl: 'https://www.nrcs.usda.gov/state-offices/georgia/news-releases' }
+    { code: 'in', name: 'Indiana', priority: 'medium', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/indiana/news/',
+      'https://www.nrcs.usda.gov/in/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/indiana/news-releases'
+    ]},
+    { code: 'oh', name: 'Ohio', priority: 'medium', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/ohio/news/',
+      'https://www.nrcs.usda.gov/oh/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/ohio/news-releases'
+    ]},
+    { code: 'nd', name: 'North Dakota', priority: 'medium', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/north-dakota/news/',
+      'https://www.nrcs.usda.gov/nd/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/north-dakota/news-releases'
+    ]},
+    { code: 'sd', name: 'South Dakota', priority: 'medium', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/south-dakota/news/',
+      'https://www.nrcs.usda.gov/sd/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/south-dakota/news-releases'
+    ]},
+    { code: 'nc', name: 'North Carolina', priority: 'medium', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/north-carolina/news/',
+      'https://www.nrcs.usda.gov/nc/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/north-carolina/news-releases'
+    ]},
+    { code: 'ga', name: 'Georgia', priority: 'medium', nrcsUrls: [
+      'https://www.nrcs.usda.gov/state-offices/georgia/news/',
+      'https://www.nrcs.usda.gov/ga/newsroom',
+      'https://www.nrcs.usda.gov/state-offices/georgia/news-releases'
+    ]}
   ];
 
-  // USDA Agency configurations
+  // USDA Agency configurations  
   private readonly AGENCY_CONFIGS: AgencyConfig[] = [
     {
       name: 'AMS',
       baseUrl: 'https://www.ams.usda.gov',
-      newsPath: '/about-ams/newsroom/news-releases',
+      newsPath: '/news',
       keywords: ['grant', 'funding', 'assistance', 'program', 'specialty crop', 'organic', 'marketing']
     },
     {
@@ -65,7 +125,7 @@ export class ComprehensiveUsdaService {
     {
       name: 'FSA',
       baseUrl: 'https://www.fsa.usda.gov',
-      newsPath: '/news-room/news-releases',
+      newsPath: '/news-events/news',
       keywords: ['disaster', 'assistance', 'loan', 'conservation', 'signup', 'deadline']
     }
   ];
@@ -165,7 +225,26 @@ export class ComprehensiveUsdaService {
     try {
       console.log(`🏛️  Syncing ${state.name} NRCS programs...`);
       
-      const newsListings = await this.fetchNrcsNewsListings(state.nrcsUrl);
+      // Try multiple URL patterns for the state
+      let newsListings: Array<any> = [];
+      for (const url of state.nrcsUrls) {
+        try {
+          newsListings = await this.fetchNrcsNewsListings(url);
+          if (newsListings.length > 0) {
+            console.log(`✅ ${state.name} successful with: ${url}`);
+            break; // Success! Use this URL pattern
+          }
+        } catch (error) {
+          console.log(`⚠️  ${state.name} failed with ${url}, trying next pattern...`);
+          continue; // Try next URL pattern
+        }
+      }
+      
+      if (newsListings.length === 0) {
+        console.log(`📭 ${state.name}: No announcements found with any URL pattern`);
+        return 0;
+      }
+      
       const programs: InsertSubsidyProgram[] = [];
       
       // Process up to 10 most recent announcements per state
@@ -178,7 +257,8 @@ export class ComprehensiveUsdaService {
             programs.push(program);
           }
         } catch (error) {
-          console.warn(`⚠️  Failed to process ${state.name} announcement:`, error);
+          console.warn(`❌ Failed to process announcement ${announcement.title}
+            ${announcement.summary || announcement.url}: ${error}`);
         }
       }
       
