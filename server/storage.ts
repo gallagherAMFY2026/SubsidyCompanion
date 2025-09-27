@@ -186,6 +186,12 @@ export class MemStorage implements IStorage {
     return this.subsidyPrograms.delete(id);
   }
 
+  async deleteAllSubsidyPrograms(): Promise<number> {
+    const count = this.subsidyPrograms.size;
+    this.subsidyPrograms.clear();
+    return count;
+  }
+
   async getActiveSubsidyPrograms(): Promise<SubsidyProgram[]> {
     const now = new Date();
     return Array.from(this.subsidyPrograms.values()).filter(program => {
@@ -208,7 +214,7 @@ export class MemStorage implements IStorage {
   }
 
   async getHighPriorityPrograms(): Promise<SubsidyProgram[]> {
-    return Array.from(this.subsidyPrograms.values()).filter(program => program.isHighPriority === 'true');
+    return Array.from(this.subsidyPrograms.values()).filter(program => program.isHighPriority === true);
   }
 
   // Enhanced geographical and category filtering methods

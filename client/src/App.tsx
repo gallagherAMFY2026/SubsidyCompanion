@@ -4,6 +4,34 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+interface SubsidyProgram {
+  id: string;
+  title: string;
+  summary: string;
+  category: string;
+  publishedDate: Date;
+  url: string;
+  fundingAmount?: string | null;
+  deadline?: Date | null;
+  location?: string | null;
+  dataSource: string;
+  sourceAgency?: string | null;
+  country: string;
+  region?: string | null;
+  opportunityNumber?: string | null;
+  isHighPriority?: boolean | null;
+}
+
+interface ProgramStats {
+  total: number;
+  active: number;
+  expired: number;
+  highPriority: number;
+  byCountry: Record<string, number>;
+  bySource: Record<string, number>;
+  byCategory: Record<string, number>;
+  upcomingDeadlines: number;
+}
 
 // Import all components
 import Navigation from "@/components/Navigation";
@@ -19,40 +47,53 @@ function AppContent() {
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [userData, setUserData] = useState<any>(null);
 
-  // Fetch live programs from RSS feed
-  const { data: allPrograms = [], isLoading: programsLoading, error: programsError } = useQuery({
-    queryKey: ['/api/programs'],
+  // Fetch live programs using enhanced endpoints
+  const { data: allPrograms = [], isLoading: programsLoading, error: programsError } = useQuery<SubsidyProgram[]>({
+    queryKey: ['/api/programs/enhanced'],
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
   
-  const { data: upcomingDeadlines = [], isLoading: deadlinesLoading, error: deadlinesError } = useQuery({
-    queryKey: ['/api/programs/deadlines'],
+  const { data: upcomingDeadlines = [], isLoading: deadlinesLoading, error: deadlinesError } = useQuery<SubsidyProgram[]>({
+    queryKey: ['/api/programs/deadlines-soon?days=90'],
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
+  
+  // Fetch program statistics for analytics
+  const { data: programStats } = useQuery<ProgramStats>({
+    queryKey: ['/api/programs/stats'],
+    staleTime: 30 * 60 * 1000, // 30 minutes
+  });
+  
+  // Fetch high priority programs
+  const { data: highPriorityPrograms = [] } = useQuery<SubsidyProgram[]>({
+    queryKey: ['/api/programs/high-priority'],
+    staleTime: 15 * 60 * 1000, // 15 minutes
+  });
 
-  // Transform RSS programs into practice cards format
-  const practicePrograms = allPrograms.slice(0, 6).map((program: any) => ({
+  // Transform enhanced programs into practice cards format
+  const practicePrograms = allPrograms.slice(0, 6).map((program: SubsidyProgram) => ({
     title: program.title,
-    category: program.program || program.category,
-    costShare: program.fundingAmount || "Varies",
+    category: program.category,
+    costShare: program.fundingAmount || "Varies by program",
     capRange: program.fundingAmount || "Contact local office",
-    payoffPeriod: "Varies by program",
+    payoffPeriod: program.deadline ? `Deadline: ${new Date(program.deadline).toLocaleDateString()}` : "Ongoing",
     benefits: [
       "Government cost-share funding available",
-      "Support for sustainable agricultural practices",
-      "Professional technical assistance included"
+      program.isHighPriority ? "High priority program" : "Support for agricultural practices",
+      `Source: ${program.sourceAgency || program.dataSource}`,
+      program.region ? `Available in: ${program.region}` : "Multiple locations available"
     ],
     verificationNotes: [
       "Application through local office",
       "Eligibility requirements verification",
-      "Program-specific documentation"
+      program.opportunityNumber ? `Opportunity #: ${program.opportunityNumber}` : "Program-specific documentation"
     ],
     url: program.url,
     publishedDate: program.publishedDate
   }));
   
-  // Transform deadlines data
-  const transformedDeadlines = upcomingDeadlines.map((program: any) => {
+  // Transform enhanced deadlines data
+  const transformedDeadlines = upcomingDeadlines.map((program: SubsidyProgram) => {
     const deadline = program.deadline ? new Date(program.deadline) : null;
     const now = new Date();
     const daysUntil = deadline ? Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
@@ -60,11 +101,13 @@ function AppContent() {
     return {
       id: program.id,
       program: program.title,
-      type: program.category === 'news releases' ? 'signup' as const : 'ranking' as const,
+      type: program.isHighPriority ? 'ranking' as const : 'signup' as const,
       date: deadline ? deadline.toLocaleDateString() : 'Contact local office',
       daysUntil: daysUntil || 0,
-      location: program.location || 'Multiple locations',
-      status: (daysUntil && daysUntil > 0) ? 'open' as const : 'unknown' as const
+      location: program.region || program.location || program.country || 'Multiple locations',
+      status: (daysUntil && daysUntil > 0) ? 
+        (daysUntil <= 14 ? 'closing-soon' as const : 'open' as const) : 
+        'unknown' as const
     };
   });
 
@@ -89,7 +132,7 @@ function AppContent() {
               <p className="text-muted-foreground">Browse conservation practices and their funding opportunities</p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {practicePrograms.map((practice, index) => (
+              {practicePrograms.map((practice: any, index: number) => (
                 <PracticeCard
                   key={index}
                   {...practice}
@@ -100,6 +143,28 @@ function AppContent() {
                 />
               ))}
             </div>
+            
+            {/* Enhanced program statistics display */}
+            {programStats && (
+              <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-muted/20 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-primary">{programStats.total}</div>
+                  <div className="text-sm text-muted-foreground">Total Programs</div>
+                </div>
+                <div className="bg-muted/20 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-green-600">{programStats.active}</div>
+                  <div className="text-sm text-muted-foreground">Active Programs</div>
+                </div>
+                <div className="bg-muted/20 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-orange-600">{programStats.highPriority}</div>
+                  <div className="text-sm text-muted-foreground">High Priority</div>
+                </div>
+                <div className="bg-muted/20 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-blue-600">{programStats.upcomingDeadlines}</div>
+                  <div className="text-sm text-muted-foreground">Deadlines This Week</div>
+                </div>
+              </div>
+            )}
           </div>
         );
       

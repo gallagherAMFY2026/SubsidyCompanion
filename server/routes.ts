@@ -20,6 +20,7 @@ import {
   programsSearchSchema,
   generalSyncSchema
 } from "./middleware/validation";
+import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // RSS and subsidy program endpoints
@@ -72,11 +73,167 @@ export async function registerRoutes(app: Express): Promise<Server> {
     async (req, res) => {
     try {
       const { maxPages, forceRefresh } = req.body;
+      console.log('🔄 Starting comprehensive sync operation...');
+      
+      // RSS sync
+      console.log('📡 Syncing RSS data...');
       await rssService.syncRssData(forceRefresh);
-      res.json({ success: true, message: 'RSS data synced successfully' });
+      
+      // Enhanced storage stats
+      const stats = await storage.getSubsidyProgramStats();
+      console.log('📊 Post-sync stats:', stats);
+      
+      res.json({ 
+        success: true, 
+        message: 'RSS data synced successfully',
+        stats 
+      });
     } catch (error) {
       console.error('Error syncing RSS data:', error);
       res.status(500).json({ error: 'Failed to sync RSS data' });
+    }
+  });
+
+  // Add a development-only sync endpoint (secured for development)
+  app.post("/api/programs/force-sync", 
+    rateLimit(5, 10 * 60 * 1000), // 5 requests per 10 minutes
+    async (req, res) => {
+    // Security: Only allow in development mode
+    if (process.env.NODE_ENV !== 'development') {
+      return res.status(403).json({ error: 'Development endpoint not available in production' });
+    }
+    try {
+      console.log('🔄 Starting development sync operation...');
+      
+      // RSS sync
+      console.log('📡 Syncing RSS data...');
+      await rssService.syncRssData(true);
+      
+      // Enhanced storage stats
+      const stats = await storage.getSubsidyProgramStats();
+      console.log('📊 Post-sync stats:', stats);
+      
+      res.json({ 
+        success: true, 
+        message: 'Development sync completed',
+        stats 
+      });
+    } catch (error) {
+      console.error('Error in development sync:', error);
+      res.status(500).json({ error: 'Failed to sync data' });
+    }
+  });
+
+  // Demo data seeding endpoint for press coverage
+  app.post("/api/programs/seed-demo", 
+    rateLimit(2, 30 * 60 * 1000), // 2 requests per 30 minutes
+    async (req, res) => {
+    try {
+      console.log('🌱 Seeding demo data for press coverage...');
+      
+      // Clear existing data first
+      const deletedCount = await storage.deleteAllSubsidyPrograms();
+      console.log(`🧹 Cleared ${deletedCount} existing programs`);
+      
+      // Representative agricultural funding programs
+      const demoPrograms = [
+        {
+          title: "Environmental Quality Incentives Program (EQIP)",
+          description: "Financial and technical assistance for implementing conservation practices on agricultural land",
+          deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), // 45 days from now
+          publishedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+          url: "https://www.nrcs.usda.gov/programs-initiatives/eqip-environmental-quality-incentives-program",
+          dataSource: "usda_nrcs",
+          sourceAgency: "Natural Resources Conservation Service",
+          country: "United States",
+          region: "California",
+          category: "Conservation",
+          fundingAmount: "Up to $200,000 per contract",
+          eligibilityTypes: ["farm", "producer", "organization"],
+          fundingTypes: ["grant", "cost-share"],
+          location: "California",
+          isHighPriority: true,
+          opportunityNumber: "EQIP-2024-CA-001"
+        },
+        {
+          title: "Conservation Stewardship Program",
+          description: "Payments for maintaining and improving existing conservation activities",
+          deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+          publishedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+          url: "https://www.nrcs.usda.gov/programs-initiatives/csp-conservation-stewardship-program",
+          dataSource: "usda_nrcs",
+          sourceAgency: "Natural Resources Conservation Service", 
+          country: "United States",
+          region: "Iowa",
+          category: "Stewardship",
+          fundingAmount: "$40-200 per acre annually",
+          eligibilityTypes: ["farm", "producer"],
+          fundingTypes: ["payment", "incentive"],
+          location: "Iowa",
+          isHighPriority: false,
+          opportunityNumber: "CSP-2024-IA-002"
+        },
+        {
+          title: "Agricultural Clean Technology Program",
+          description: "Support for farmers adopting clean technology and sustainable practices",
+          deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days from now
+          publishedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+          url: "https://agriculture.canada.ca/programs/agricultural-clean-technology",
+          dataSource: "canada_agriculture",
+          sourceAgency: "Agriculture and Agri-Food Canada",
+          country: "Canada",
+          region: "Ontario",
+          category: "Technology",
+          fundingAmount: "Up to $100,000 CAD",
+          eligibilityTypes: ["farm", "producer", "cooperative"],
+          fundingTypes: ["grant", "support"],
+          location: "Ontario",
+          isHighPriority: true,
+          opportunityNumber: "ACT-2024-ON-003"
+        },
+        {
+          title: "Beginning Farmer and Rancher Development Program",
+          description: "Education, training, and technical assistance for new agricultural producers",
+          deadline: new Date(Date.now() + 75 * 24 * 60 * 60 * 1000), // 75 days from now
+          publishedDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+          url: "https://www.nifa.usda.gov/beginning-farmer-rancher-development-program",
+          dataSource: "usda_nifa",
+          sourceAgency: "National Institute of Food and Agriculture",
+          country: "United States",
+          region: "Texas",
+          category: "Education",
+          fundingAmount: "$25,000-$750,000",
+          eligibilityTypes: ["beginning_farmer", "organization", "education"],
+          fundingTypes: ["grant", "training"],
+          location: "Texas",
+          isHighPriority: false,
+          opportunityNumber: "BFRDP-2024-TX-004"
+        }
+      ];
+      
+      // Insert demo programs
+      let insertedCount = 0;
+      for (const program of demoPrograms) {
+        try {
+          await storage.createSubsidyProgram(program);
+          insertedCount++;
+        } catch (error) {
+          console.error('Error inserting demo program:', program.title, error);
+        }
+      }
+      
+      const stats = await storage.getSubsidyProgramStats();
+      console.log('🌱 Demo seeding complete:', stats);
+      
+      res.json({ 
+        success: true, 
+        message: 'Demo data seeded successfully',
+        insertedCount,
+        stats 
+      });
+    } catch (error) {
+      console.error('Error seeding demo data:', error);
+      res.status(500).json({ error: 'Failed to seed demo data' });
     }
   });
 
@@ -237,6 +394,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Test endpoint for state-specific agricultural funding scraper
   app.post("/api/states/test-sync", 
+    requireAdminAuth,
     rateLimit(2, 30 * 60 * 1000), // 2 requests per 30 minutes
     async (req, res) => {
     try {
@@ -257,6 +415,144 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error in test state-specific sync:', error);
       res.status(500).json({ error: `State sync failed: ${(error as Error).message}` });
+    }
+  });
+
+  // Validation schemas for enhanced endpoints
+  const enhancedSearchSchema = z.object({
+    query: z.string().optional(),
+    country: z.string().optional(),
+    region: z.string().optional(),
+    category: z.string().optional(),
+    dataSource: z.string().optional(),
+    hasDeadline: z.enum(['true', 'false']).optional(),
+    isHighPriority: z.enum(['true', 'false']).optional(),
+    deadlineWithinDays: z.string().regex(/^\d+$/).optional(),
+    fundingTypes: z.array(z.string()).optional(),
+    eligibilityTypes: z.array(z.string()).optional(),
+  });
+
+  // Enhanced subsidy programs endpoints (using new storage system)
+  app.get("/api/programs/enhanced", 
+    rateLimit(20, 5 * 60 * 1000), // 20 requests per 5 minutes
+    validateQuery(enhancedSearchSchema),
+    async (req, res) => {
+    try {
+      const {
+        query,
+        country,
+        region,
+        category,
+        dataSource,
+        hasDeadline,
+        isHighPriority,
+        deadlineWithinDays,
+        fundingTypes,
+        eligibilityTypes
+      } = req.query;
+
+      // Parse array parameters
+      const fundingTypesArray = fundingTypes ? 
+        (Array.isArray(fundingTypes) ? fundingTypes : [fundingTypes]) : undefined;
+      const eligibilityTypesArray = eligibilityTypes ? 
+        (Array.isArray(eligibilityTypes) ? eligibilityTypes : [eligibilityTypes]) : undefined;
+
+      const programs = await storage.searchSubsidyPrograms({
+        query: query as string,
+        country: country as string,
+        region: region as string,
+        category: category as string,
+        dataSource: dataSource as string,
+        hasDeadline: hasDeadline === 'true' ? true : hasDeadline === 'false' ? false : undefined,
+        isHighPriority: isHighPriority === 'true' ? true : isHighPriority === 'false' ? false : undefined,
+        deadlineWithinDays: deadlineWithinDays ? parseInt(deadlineWithinDays as string) : undefined,
+        fundingTypes: fundingTypesArray as string[],
+        eligibilityTypes: eligibilityTypesArray as string[]
+      });
+
+      res.json(programs);
+    } catch (error) {
+      console.error('Error searching enhanced programs:', error);
+      res.status(500).json({ error: 'Failed to search programs' });
+    }
+  });
+
+  // Geographic filtering endpoints
+  app.get("/api/programs/by-country/:country", 
+    rateLimit(20, 5 * 60 * 1000),
+    async (req, res) => {
+    try {
+      const { country } = req.params;
+      const programs = await storage.getSubsidyProgramsByCountry(country);
+      res.json(programs);
+    } catch (error) {
+      console.error('Error fetching programs by country:', error);
+      res.status(500).json({ error: 'Failed to fetch programs by country' });
+    }
+  });
+
+  app.get("/api/programs/by-region/:region", 
+    rateLimit(20, 5 * 60 * 1000),
+    async (req, res) => {
+    try {
+      const { region } = req.params;
+      const programs = await storage.getSubsidyProgramsByRegion(region);
+      res.json(programs);
+    } catch (error) {
+      console.error('Error fetching programs by region:', error);
+      res.status(500).json({ error: 'Failed to fetch programs by region' });
+    }
+  });
+
+  // Deadline-focused endpoints
+  app.get("/api/programs/deadlines-soon", 
+    rateLimit(20, 5 * 60 * 1000),
+    async (req, res) => {
+    try {
+      const { days = 30 } = req.query;
+      const programs = await storage.getSubsidyProgramsDeadlinesSoon(parseInt(days as string));
+      res.json(programs);
+    } catch (error) {
+      console.error('Error fetching upcoming deadlines:', error);
+      res.status(500).json({ error: 'Failed to fetch upcoming deadlines' });
+    }
+  });
+
+  app.get("/api/programs/no-deadlines", 
+    rateLimit(20, 5 * 60 * 1000),
+    async (req, res) => {
+    try {
+      const programs = await storage.getSubsidyProgramsWithoutDeadlines();
+      res.json(programs);
+    } catch (error) {
+      console.error('Error fetching programs without deadlines:', error);
+      res.status(500).json({ error: 'Failed to fetch programs without deadlines' });
+    }
+  });
+
+  // Analytics and statistics endpoint
+  app.get("/api/programs/stats", 
+    rateLimit(10, 5 * 60 * 1000),
+    async (req, res) => {
+    try {
+      const stats = await storage.getSubsidyProgramStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Error fetching program statistics:', error);
+      res.status(500).json({ error: 'Failed to fetch program statistics' });
+    }
+  });
+
+  // High priority programs endpoint
+  app.get("/api/programs/high-priority", 
+    rateLimit(20, 5 * 60 * 1000),
+    async (req, res) => {
+    try {
+      const programs = await storage.getHighPriorityPrograms();
+      res.json(programs);
+    } catch (error) {
+      console.error('Error fetching high priority programs:', error);
+      res.status(500).json({ error: 'Failed to fetch high priority programs' });
     }
   });
 
