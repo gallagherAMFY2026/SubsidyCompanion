@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { rssService } from "./services/rssService";
 import { grantsGovService } from "./services/grantsGovService";
 import { comprehensiveUsdaService } from "./services/comprehensiveUsdaService";
+import { StateSpecificScraperService } from "./services/stateSpecificScraperService";
 import { brazilService } from "./services/brazilService";
 import { chileService } from "./services/chileService";
 import { newZealandService } from "./services/newZealandService";
@@ -204,6 +205,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Initialize state-specific scraper service
+  const stateSpecificScraperService = new StateSpecificScraperService();
+
   // Test endpoint for comprehensive USDA sync (no auth required)
   app.post("/api/usda/test-sync", 
     rateLimit(2, 30 * 60 * 1000), // 2 requests per 30 minutes
@@ -228,6 +232,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error in test USDA sync:', error);
       res.status(500).json({ error: `Test sync failed: ${error}` });
+    }
+  });
+
+  // Test endpoint for state-specific agricultural funding scraper
+  app.post("/api/states/test-sync", 
+    rateLimit(2, 30 * 60 * 1000), // 2 requests per 30 minutes
+    async (req, res) => {
+    try {
+      console.log('🏛️  Starting test state-specific agricultural funding sync...');
+      
+      const totalPrograms = await stateSpecificScraperService.syncAllStates();
+      
+      res.json({ 
+        success: true, 
+        message: `State-specific sync completed: ${totalPrograms} programs from top 8 agricultural states`,
+        states: [
+          'California', 'Iowa', 'Nebraska', 'Texas', 
+          'Kansas', 'Illinois', 'Minnesota', 'Wisconsin'
+        ],
+        totalPrograms: totalPrograms,
+        sources: ['State Agriculture Departments', 'Extension Services']
+      });
+    } catch (error) {
+      console.error('Error in test state-specific sync:', error);
+      res.status(500).json({ error: `State sync failed: ${(error as Error).message}` });
     }
   });
 
