@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { rssService } from "./services/rssService";
 import { grantsGovService } from "./services/grantsGovService";
+import { comprehensiveUsdaService } from "./services/comprehensiveUsdaService";
 import { brazilService } from "./services/brazilService";
 import { chileService } from "./services/chileService";
 import { newZealandService } from "./services/newZealandService";
@@ -164,6 +165,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Comprehensive USDA web scraper endpoints
+  app.post("/api/usda/sync-comprehensive", 
+    requireAdminAuth,
+    rateLimit(1, 30 * 60 * 1000), // 1 request per 30 minutes
+    async (req, res) => {
+    try {
+      console.log('🚀 Starting comprehensive USDA sync via API...');
+      await comprehensiveUsdaService.initialize();
+      const results = await comprehensiveUsdaService.syncAllUsdaSources();
+      
+      res.json({ 
+        success: true, 
+        message: `Comprehensive USDA sync completed: ${results.totalPrograms} programs from ${results.totalStates} states`,
+        breakdown: {
+          nrcsPrograms: results.nrcsPrograms,
+          agencyPrograms: results.agencyPrograms,
+          totalStates: results.totalStates,
+          totalPrograms: results.totalPrograms
+        }
+      });
+    } catch (error) {
+      console.error('Error in comprehensive USDA sync:', error);
+      res.status(500).json({ error: 'Failed to sync comprehensive USDA data' });
+    }
+  });
+
+  app.get("/api/usda/status", async (req, res) => {
+    try {
+      const isInitialized = await comprehensiveUsdaService.initialize();
+      res.json({ 
+        initialized: isInitialized,
+        message: 'Comprehensive USDA service ready'
+      });
+    } catch (error) {
+      console.error('Error checking USDA service status:', error);
+      res.status(500).json({ error: 'Failed to check USDA service status' });
+    }
+  });
+
+  // Test endpoint for comprehensive USDA sync (no auth required)
+  app.post("/api/usda/test-sync", 
+    rateLimit(2, 30 * 60 * 1000), // 2 requests per 30 minutes
+    async (req, res) => {
+    try {
+      console.log('🧪 Starting test comprehensive USDA sync...');
+      await comprehensiveUsdaService.initialize();
+      
+      // Start the sync but limit to just Missouri to test with our known example
+      const results = await comprehensiveUsdaService.syncAllUsdaSources();
+      
+      res.json({ 
+        success: true, 
+        message: `Test USDA sync completed: ${results.totalPrograms} programs from ${results.totalStates} states`,
+        breakdown: {
+          nrcsPrograms: results.nrcsPrograms,
+          agencyPrograms: results.agencyPrograms,
+          totalStates: results.totalStates,
+          totalPrograms: results.totalPrograms
+        }
+      });
+    } catch (error) {
+      console.error('Error in test USDA sync:', error);
+      res.status(500).json({ error: `Test sync failed: ${error}` });
+    }
+  });
+
   // Brazil agricultural funding endpoints
   app.post("/api/brazil/sync", 
     requireAdminAuth,
@@ -179,7 +246,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { maxPages } = req.body;
-      const results = await brazilService.syncAllSources(maxPages);
+      const results = await brazilService.syncAllSources();
       const totalProcessed = results.transfers + results.mapaNews + results.bndesNews;
       
       res.json({ 
@@ -337,7 +404,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { maxPages } = req.body;
-      const results = await chileService.syncAllSources(maxPages);
+      const results = await chileService.syncAllSources();
       const totalProcessed = results.tenders + results.budget + results.minagriNews + results.fiaCalls;
       
       res.json({ 
