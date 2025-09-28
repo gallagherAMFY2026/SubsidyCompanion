@@ -268,10 +268,10 @@ export class RssParser {
       category: entry.category?.term || 'uncategorized',
       publishedDate: new Date(entry.updated),
       url: entry.link?.href || entry.id,
-      dataSource: 'rss_aafc',
+      dataSource: 'rss_generic',
       sourceUrl: entry.link?.href || entry.id,
-      sourceAgency: entry.author?.name || 'Agriculture and Agri-Food Canada',
-      country: 'CA',
+      sourceAgency: entry.author?.name || 'RSS Feed Source',
+      country: 'Unknown',
       region: this.extractLocation(fullText),
       fundingAmount: this.extractFundingAmount(fullText),
       deadline: this.extractDeadline(fullText),
@@ -285,7 +285,7 @@ export class RssParser {
       alertReason: null,
       sourceLastModified: null,
       sourceEtag: null,
-      mergedFromSources: ['rss_aafc'],
+      mergedFromSources: ['rss_generic'],
       conflictResolution: null,
       dedupeKey: '' // Will be computed by deduplication service
     };

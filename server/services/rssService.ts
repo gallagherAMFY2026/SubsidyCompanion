@@ -5,11 +5,30 @@ import path from 'path';
 import * as cheerio from 'cheerio';
 
 export class RssService {
-  // Enhanced service with direct news page scraping for richer data
+  // Enhanced service with targeted agricultural funding sources from user list
   private readonly CANADA_NEWS_URLS = [
+    // Official Government Sources
     'https://www.canada.ca/en/agriculture-agri-food/news.html',
-    'https://agriculture.canada.ca/en/news',
-    'https://www.agr.gc.ca/eng/news/'
+    'https://www.canada.ca/en/agriculture-agri-food/programs-and-services.html',
+    'https://www.canada.ca/en/services/business/grants-and-financing/agriculture.html',
+    
+    // Farmer-Focused News and Grant Listings  
+    'https://youngagrarians.org/funding/',
+    'https://youngagrarians.org/news/',
+    
+    // Industry Publications
+    'https://farmtario.com/news/',
+    'https://farmtario.com/government/',
+    'https://www.canadiancattlemen.ca/news/',
+    'https://www.canadiancattlemen.ca/government/',
+    
+    // Research and Programs
+    'https://www.beefresearch.ca/funding-programs/',
+    'https://www.foragegrassland.org/funding-opportunities',
+    
+    // Grant Aggregators
+    'https://www.hellodarwin.com/en/blog/agriculture-grants-canada',
+    'https://www.natureunited.ca/what-we-do/agriculture/'
   ];
 
   private readonly PRIMARY_FEEDS = [
@@ -50,18 +69,36 @@ export class RssService {
   private readonly MAX_RETRIES = 3;
   private readonly USER_AGENT = 'SubsidyCompanion/1.0 (agricultural-funding-monitor)';
 
-  // Canadian agricultural funding keywords for enhanced detection
-  private readonly CANADA_KEYWORDS = [
-    'agricultural', 'farming', 'farmer', 'producer', 'agriculture',
-    'grant', 'funding', 'program', 'support', 'assistance',
-    'AgriInnovate', 'AgriMarketing', 'AgriScience', 'Canadian Agricultural',
-    'Farm Credit Canada', 'AgriStability', 'AgriInvest', 'Business Risk Management',
-    'application deadline', 'funding opportunity', 'call for proposals',
-    'cost-shared', 'financial assistance', 'technical assistance'
+  // Enhanced Canadian agricultural funding keywords (applied to content, not titles)
+  private readonly CANADA_CONTENT_KEYWORDS = [
+    // Program Names
+    'AgriInnovate', 'AgriMarketing', 'AgriScience', 'AgriStability', 'AgriInvest', 
+    'Business Risk Management', 'Farm Credit Canada', 'Advance Payments Program',
+    'Canadian Agricultural Partnership', 'Sustainable CAP', 'AgriAssurance',
+    
+    // Opportunity Indicators
+    'apply', 'intake', 'deadline', 'call for proposals', 'funding opportunity',
+    'application deadline', 'submissions', 'applications now open', 'now accepting',
+    'cost-shared', 'matching funds', 'financial assistance', 'technical assistance',
+    
+    // Sectors
+    'livestock', 'cattle', 'beef', 'dairy', 'forage', 'grassland', 'sustainable',
+    'conservation', 'soil health', 'biodiversity', 'climate change', 'innovation',
+    
+    // French Terms
+    'subvention', 'financement', 'programme', 'aide financière', 'date limite',
+    'demande', 'candidature', 'agriculture durable'
+  ];
+
+  // Title filtering keywords (more generous - only exclude obvious non-opportunities)
+  private readonly CANADA_TITLE_KEYWORDS = [
+    'grant', 'funding', 'program', 'support', 'assistance', 'investment',
+    'opportunity', 'apply', 'application', 'call', 'proposals', 'intake',
+    'deadline', 'open', 'available', 'announces', 'launches', 'invests'
   ];
 
   /**
-   * Fetch Canadian news listings from AAFC pages (following NRCS pattern)
+   * Fetch Canadian news listings with enhanced selectors and pagination
    */
   private async fetchCanadianNewsListings(baseUrl: string): Promise<Array<{
     title: string;
@@ -70,51 +107,102 @@ export class RssService {
     summary?: string;
   }>> {
     try {
-      const response = await this.fetchWithRetry(baseUrl);
-      const $ = cheerio.load(response);
-      const listings: Array<any> = [];
-
-      // Parse Canadian government news page formats
-      // Format 1: News article cards (canada.ca style)
-      $('.news-item, .gc-nws, .views-row, .list-group-item').each((_, element) => {
-        const $item = $(element);
-        const titleEl = $item.find('h3 a, h2 a, .news-title a, a').first();
-        const title = titleEl.text().trim();
-        const relativeUrl = titleEl.attr('href');
+      let allListings: Array<any> = [];
+      let page = 0;
+      const maxPages = 5; // Reasonable limit to prevent infinite loops
+      
+      // Support pagination for Canadian sites
+      do {
+        const pageUrl = page === 0 ? baseUrl : `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}page=${page}`;
         
-        if (title && relativeUrl && this.isRelevantCanadianProgram(title)) {
-          const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : new URL(relativeUrl, baseUrl).toString();
-          const pubDate = $item.find('.date, .datetime, .published-date').text().trim();
-          const summary = $item.find('.summary, .description, .news-summary').text().trim();
-          
-          listings.push({
-            title,
-            url: fullUrl,
-            pubDate: pubDate || null,
-            summary: summary || null
-          });
-        }
-      });
+        try {
+          const response = await this.fetchWithRetry(pageUrl);
+          const $ = cheerio.load(response);
+          const pageListings: Array<any> = [];
 
-      // Format 2: Simple list format
-      if (listings.length === 0) {
-        $('ul li a, .item-list li a, .news-list a').each((_, element) => {
-          const $link = $(element);
-          const title = $link.text().trim();
-          const relativeUrl = $link.attr('href');
-          
-          if (title && relativeUrl && this.isRelevantCanadianProgram(title)) {
-            const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : new URL(relativeUrl, baseUrl).toString();
-            listings.push({
-              title,
-              url: fullUrl
+          // Domain-specific selectors for better precision
+          const domain = new URL(baseUrl).hostname;
+          const selectors = this.getDomainSpecificSelectors(domain);
+
+          for (const selector of selectors) {
+            $(selector).each((_, element) => {
+              const $item = $(element);
+              
+              // Multiple title selector attempts
+              const titleSelectors = ['h1 a', 'h2 a', 'h3 a', 'h4 a', '.title a', '.headline a', 'a'];
+              let titleEl = null;
+              let title = '';
+              
+              for (const titleSel of titleSelectors) {
+                titleEl = $item.find(titleSel).first();
+                title = titleEl.text().trim();
+                if (title && title.length > 10) break; // Found meaningful title
+              }
+              
+              // If no link with title, try the item itself as a link
+              if (!title && $item.is('a')) {
+                titleEl = $item;
+                title = $item.text().trim();
+              }
+              
+              const relativeUrl = titleEl?.attr('href');
+              
+              if (title && relativeUrl && title.length > 10) {
+                // Only do basic filtering here - no aggressive keyword filtering
+                const isBasicallyRelevant = title.length > 15 && 
+                  !title.toLowerCase().includes('cookie') &&
+                  !title.toLowerCase().includes('privacy') &&
+                  !title.toLowerCase().includes('contact');
+                
+                if (isBasicallyRelevant) {
+                  const fullUrl = relativeUrl.startsWith('http') ? 
+                    relativeUrl : 
+                    new URL(relativeUrl, baseUrl).toString();
+                  
+                  const pubDate = $item.find('.date, .datetime, .published-date, .post-date, time').text().trim();
+                  const summary = $item.find('.summary, .description, .excerpt, .teaser').text().trim();
+                  
+                  pageListings.push({
+                    title: title.replace(/\s+/g, ' ').trim(),
+                    url: fullUrl,
+                    pubDate: pubDate || null,
+                    summary: summary || null
+                  });
+                }
+              }
             });
+            
+            if (pageListings.length > 0) break; // Found items with this selector, stop trying others
           }
-        });
-      }
 
-      console.log(`🍁 Found ${listings.length} relevant Canadian programs from ${baseUrl}`);
-      return listings;
+          console.log(`🍁 Page ${page}: Found ${pageListings.length} items from ${pageUrl}`);
+          
+          if (pageListings.length === 0) {
+            break; // No more items, stop pagination
+          }
+          
+          allListings.push(...pageListings);
+          page++;
+          
+          // Respectful delay between pages
+          if (page < maxPages) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+          
+        } catch (pageError) {
+          console.warn(`⚠️  Failed to fetch page ${page} from ${baseUrl}:`, pageError);
+          break;
+        }
+        
+      } while (page < maxPages);
+
+      // Deduplicate by URL
+      const uniqueListings = Array.from(
+        new Map(allListings.map(item => [item.url, item])).values()
+      );
+
+      console.log(`🍁 Total: Found ${uniqueListings.length} unique items from ${baseUrl} (${allListings.length} before dedup)`);
+      return uniqueListings;
       
     } catch (error) {
       console.error('❌ Failed to fetch Canadian news listings:', error);
@@ -161,25 +249,38 @@ export class RssService {
         fullContent = `${pageTitle}\n${announcement.summary || ''}\n${fullContent}`.trim();
       }
 
-      const deadline = this.extractDeadline(fullContent);
-      const fundingAmount = this.extractFundingAmount(fullContent);
-      const programType = this.extractCanadianProgramType(fullContent);
-      
-      const isHighPriority = this.CANADA_KEYWORDS.some(keyword => 
-        announcement.title.toLowerCase().includes(keyword.toLowerCase()) ||
-        fullContent.toLowerCase().includes(keyword.toLowerCase())
+      // Apply content-based filtering (not title filtering)
+      const combinedContent = `${announcement.title} ${fullContent}`.toLowerCase();
+      const isRelevantProgram = this.CANADA_CONTENT_KEYWORDS.some(keyword => 
+        combinedContent.includes(keyword.toLowerCase())
       );
       
+      if (!isRelevantProgram) {
+        console.log(`🍁 Not relevant: ${announcement.title}`);
+        return null;
+      }
+
+      const deadline = this.extractEnhancedDeadline(fullContent);
+      const fundingAmount = this.extractEnhancedFundingAmount(fullContent);
+      const programType = this.extractCanadianProgramType(fullContent);
+      
+      const isHighPriority = this.CANADA_CONTENT_KEYWORDS.some(keyword => 
+        combinedContent.includes(keyword.toLowerCase())
+      );
+      
+      // Derive proper source attribution from domain
+      const attribution = this.getCanadianSourceAttribution(announcement.sourceDomain || announcement.url);
+      
       const program = {
-        id: `aafc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `ca-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         title: announcement.title,
         description: announcement.summary || this.extractSummary(fullContent),
         category: this.categorizeCanadianProgram(announcement.title, fullContent),
         publishedDate: this.parseDate(announcement.pubDate) || new Date(),
         deadline,
         url: announcement.url,
-        dataSource: 'canada_agriculture',
-        sourceAgency: 'Agriculture and Agri-Food Canada',
+        dataSource: attribution.dataSource,
+        sourceAgency: attribution.sourceAgency,
         country: 'Canada',
         fundingAmount,
         eligibilityTypes: ['farm', 'producer', 'organization'],
@@ -201,44 +302,100 @@ export class RssService {
    * Helper methods for Canadian program processing
    */
   private isRelevantCanadianProgram(title: string): boolean {
-    return this.CANADA_KEYWORDS.some(keyword => 
+    // Use more generous title filtering - check for basic opportunity indicators
+    return this.CANADA_TITLE_KEYWORDS.some(keyword => 
       title.toLowerCase().includes(keyword.toLowerCase())
     );
   }
 
-  private extractDeadline(content: string): Date | null {
+  private extractEnhancedDeadline(content: string): Date | null {
+    // Enhanced deadline patterns supporting English, French, and various formats
     const deadlinePatterns = [
+      // English patterns
       /deadline:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
-      /application(?:s)? (?:due|close):?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /application(?:s)? (?:due|close|closes):?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
       /applications? must be (?:received|submitted) by:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
-      /submit(?:ted)? by:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i
+      /submit(?:ted)? by:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /apply by:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /intake closes:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /closes on:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+      
+      // ISO and numeric formats
+      /deadline:?\s*(\d{4}-\d{2}-\d{2})/i,
+      /(?:due|closes|deadline):?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i,
+      /(\d{4}-\d{2}-\d{2})/g,
+      
+      // French patterns
+      /date limite:?\s*(\d{1,2} [A-Za-z]+ \d{4})/i,
+      /échéance:?\s*(\d{1,2} [A-Za-z]+ \d{4})/i,
+      /avant le:?\s*(\d{1,2} [A-Za-z]+ \d{4})/i,
+      /jusqu'au:?\s*(\d{1,2} [A-Za-z]+ \d{4})/i,
+      
+      // Flexible patterns
+      /([A-Za-z]+ \d{1,2},? \d{4})\s*deadline/i,
+      /by ([A-Za-z]+ \d{1,2},? \d{4})/i
     ];
 
     for (const pattern of deadlinePatterns) {
-      const match = content.match(pattern);
-      if (match) {
-        const dateStr = match[1];
-        const parsed = new Date(dateStr);
-        if (!isNaN(parsed.getTime())) {
-          return parsed;
+      const matches = content.match(pattern);
+      if (matches) {
+        for (const match of matches) {
+          const dateStr = typeof match === 'string' ? match : match[1];
+          if (dateStr) {
+            const parsed = new Date(dateStr);
+            if (!isNaN(parsed.getTime()) && parsed > new Date()) {
+              return parsed;
+            }
+          }
         }
       }
     }
     return null;
   }
 
-  private extractFundingAmount(content: string): string | null {
+  private extractEnhancedFundingAmount(content: string): string | null {
+    // Enhanced funding patterns supporting CAD, ranges, various formats
     const fundingPatterns = [
-      /\$[\d,]+(?:\.\d{2})?(?:\s*(?:CAD|million|thousand|k|M))?/g,
-      /up to \$[\d,]+/i,
-      /maximum of \$[\d,]+/i,
-      /funding up to \$[\d,]+/i
+      // Standard formats with CAD
+      /CAD?\s*\$?[\d,]+(?:\.\d+)?(?:\s*(?:million|thousand|k|M|billion|B))?/gi,
+      /C\$[\d,]+(?:\.\d+)?(?:\s*(?:million|thousand|k|M|billion|B))?/gi,
+      /\$[\d,]+(?:\.\d+)?\s*CAD(?:\s*(?:million|thousand|k|M|billion|B))?/gi,
+      
+      // Ranges
+      /\$[\d,]+(?:\.\d+)?\s*(?:to|–|-)?\s*\$?[\d,]+(?:\.\d+)?(?:\s*(?:million|thousand|k|M|billion|B))?/gi,
+      /between\s+\$[\d,]+(?:\.\d+)?\s+and\s+\$[\d,]+(?:\.\d+)?/gi,
+      
+      // Descriptive amounts
+      /up to\s+(?:CAD?\s*)?\$?[\d,]+(?:\.\d+)?(?:\s*(?:million|thousand|k|M|billion|B))?/gi,
+      /maximum\s+(?:of\s+)?(?:CAD?\s*)?\$?[\d,]+(?:\.\d+)?(?:\s*(?:million|thousand|k|M|billion|B))?/gi,
+      /funding\s+(?:up to|of)\s+(?:CAD?\s*)?\$?[\d,]+(?:\.\d+)?(?:\s*(?:million|thousand|k|M|billion|B))?/gi,
+      
+      // Per-project amounts
+      /per project:?\s*(?:CAD?\s*)?\$?[\d,]+(?:\.\d+)?(?:\s*(?:million|thousand|k|M))?/gi,
+      /each project:?\s*(?:CAD?\s*)?\$?[\d,]+(?:\.\d+)?(?:\s*(?:million|thousand|k|M))?/gi,
+      
+      // French formats
+      /subvention\s+de\s+[\d,]+(?:\.\d+)?\s*\$?(?:\s*(?:millions?|milliers?))?/gi,
+      /financement\s+de\s+[\d,]+(?:\.\d+)?\s*\$?(?:\s*(?:millions?|milliers?))?/gi,
+      
+      // Standard dollar amounts (fallback)
+      /\$[\d,]+(?:\.\d+)?(?:\s*(?:million|thousand|k|M|billion|B))?/gi
     ];
 
     for (const pattern of fundingPatterns) {
       const matches = content.match(pattern);
       if (matches && matches.length > 0) {
-        return matches[0];
+        // Return the first meaningful match (avoid small amounts like $5)
+        for (const match of matches) {
+          const cleanMatch = match.trim();
+          const numMatch = cleanMatch.match(/[\d,]+(?:\.\d+)?/);
+          if (numMatch) {
+            const num = parseFloat(numMatch[0].replace(/,/g, ''));
+            if (num >= 1000 || cleanMatch.toLowerCase().includes('million') || cleanMatch.toLowerCase().includes('thousand')) {
+              return cleanMatch;
+            }
+          }
+        }
       }
     }
     return null;
@@ -299,6 +456,138 @@ export class RssService {
     return 'Program';
   }
 
+  /**
+   * Get domain-specific selectors for better precision
+   */
+  private getDomainSpecificSelectors(domain: string): string[] {
+    const domainSelectors: { [key: string]: string[] } = {
+      // Canada.ca official sites
+      'canada.ca': [
+        '#wb-auto-1 .wb-feeds li',
+        '.gc-nws, .featured-news',
+        '.gc-articles article',
+        '.news-release, .media-release',
+        'main .views-row',
+        '.content-item'
+      ],
+      
+      // Young Agrarians  
+      'youngagrarians.org': [
+        '.post, .entry',
+        '.funding-item, .opportunity-item',
+        'article',
+        '.content-wrap .item'
+      ],
+      
+      // Farmtario
+      'farmtario.com': [
+        '.post, article',
+        '.news-item, .story-item',
+        '.category-government .post',
+        '.entry'
+      ],
+      
+      // Canadian Cattlemen
+      'canadiancattlemen.ca': [
+        '.post, article',
+        '.news-item',
+        '.category-news .post',
+        '.category-government .post'
+      ],
+      
+      // Beef Research Council
+      'beefresearch.ca': [
+        '.funding-program, .program-item',
+        '.post, article',
+        '.opportunity-item'
+      ],
+      
+      // Forage and Grassland
+      'foragegrassland.org': [
+        '.funding-opportunity, .opportunity-item',
+        '.post, article',
+        '.program-item'
+      ],
+      
+      // helloDarwin
+      'hellodarwin.com': [
+        '.grant-item, .funding-item',
+        'article, .post',
+        '.content-item'
+      ],
+      
+      // Nature United
+      'natureunited.ca': [
+        '.program-item, .initiative-item',
+        'article, .post',
+        '.content-item'
+      ]
+    };
+    
+    // Get domain-specific selectors or fallback to generic ones
+    return domainSelectors[domain] || [
+      'article, .post, .entry',
+      '.news-item, .content-item',
+      '.views-row, .list-group-item',
+      'ul li a, ol li a'
+    ];
+  }
+
+  /**
+   * Get proper source attribution based on domain
+   */
+  private getCanadianSourceAttribution(domainOrUrl: string): { dataSource: string; sourceAgency: string } {
+    const domain = domainOrUrl.includes('://') ? new URL(domainOrUrl).hostname : domainOrUrl;
+    
+    const attributions: { [key: string]: { dataSource: string; sourceAgency: string } } = {
+      'canada.ca': {
+        dataSource: 'canada_agriculture_official',
+        sourceAgency: 'Agriculture and Agri-Food Canada'
+      },
+      'agriculture.canada.ca': {
+        dataSource: 'canada_agriculture_official', 
+        sourceAgency: 'Agriculture and Agri-Food Canada'
+      },
+      'agr.gc.ca': {
+        dataSource: 'canada_agriculture_official',
+        sourceAgency: 'Agriculture and Agri-Food Canada'  
+      },
+      'youngagrarians.org': {
+        dataSource: 'young_agrarians',
+        sourceAgency: 'Young Agrarians'
+      },
+      'farmtario.com': {
+        dataSource: 'farmtario',
+        sourceAgency: 'Farmtario'
+      },
+      'canadiancattlemen.ca': {
+        dataSource: 'canadian_cattlemen',
+        sourceAgency: 'Canadian Cattlemen Association'
+      },
+      'beefresearch.ca': {
+        dataSource: 'beef_research_council',
+        sourceAgency: 'Beef Research Council'
+      },
+      'foragegrassland.org': {
+        dataSource: 'canadian_forage_grassland',
+        sourceAgency: 'Canadian Forage and Grassland Association'
+      },
+      'hellodarwin.com': {
+        dataSource: 'hellodarwin',
+        sourceAgency: 'helloDarwin'
+      },
+      'natureunited.ca': {
+        dataSource: 'nature_united',
+        sourceAgency: 'Nature United Canada'
+      }
+    };
+    
+    return attributions[domain] || {
+      dataSource: 'canada_agriculture',
+      sourceAgency: 'Canadian Agricultural Source'
+    };
+  }
+
   private parseDate(dateStr?: string): Date | null {
     if (!dateStr) return null;
     
@@ -357,13 +646,15 @@ export class RssService {
   }
 
   /**
-   * Sync Canadian agricultural programs from news pages (replaces RSS)
+   * Sync Canadian agricultural programs from news pages with deduplication
    */
   private async syncCanadianNewsPages(): Promise<number> {
     console.log('🍁 Syncing Canadian agricultural programs from news pages...');
     
     let totalPrograms = 0;
+    const allListings: Array<any> = [];
     
+    // Collect all listings from all sources first
     for (const newsUrl of this.CANADA_NEWS_URLS) {
       try {
         console.log(`📰 Fetching news from: ${newsUrl}`);
@@ -371,19 +662,14 @@ export class RssService {
         const listings = await this.fetchCanadianNewsListings(newsUrl);
         console.log(`🍁 Found ${listings.length} news items from ${newsUrl}`);
         
-        // Process each news item to extract program details
-        for (const listing of listings) {
-          try {
-            const program = await this.processCanadianAnnouncement(listing);
-            if (program) {
-              await storage.createSubsidyProgram(program);
-              totalPrograms++;
-              console.log(`✅ Stored Canadian program: ${program.title}`);
-            }
-          } catch (error) {
-            console.error(`❌ Failed to process Canadian listing: ${listing.title}`, error);
-          }
-        }
+        // Add source domain for attribution
+        const domain = new URL(newsUrl).hostname;
+        listings.forEach(listing => {
+          listing.sourceDomain = domain;
+          listing.sourceUrl = newsUrl;
+        });
+        
+        allListings.push(...listings);
         
         // Respectful delay between sources
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -393,8 +679,80 @@ export class RssService {
       }
     }
     
-    console.log(`🍁 Canadian news sync completed: ${totalPrograms} programs processed`);
+    // Cross-source deduplication by normalized URL and title+domain
+    const uniqueListings = this.deduplicateCanadianListings(allListings);
+    console.log(`🍁 After cross-source deduplication: ${uniqueListings.length} unique items (${allListings.length} before)`);
+    
+    // Process unique listings
+    for (const listing of uniqueListings) {
+      try {
+        const program = await this.processCanadianAnnouncement(listing);
+        if (program) {
+          // Check for existing program to prevent storage duplicates
+          const existingPrograms = await storage.getSubsidyPrograms();
+          const duplicate = existingPrograms.find(existing => 
+            this.normalizeUrl(existing.url) === this.normalizeUrl(program.url) ||
+            (existing.title === program.title && existing.sourceAgency === program.sourceAgency)
+          );
+          
+          if (!duplicate) {
+            await storage.createSubsidyProgram(program);
+            totalPrograms++;
+            console.log(`✅ Stored Canadian program: ${program.title}`);
+          } else {
+            console.log(`🔄 Skipped duplicate: ${program.title}`);
+          }
+        }
+      } catch (error) {
+        console.error(`❌ Failed to process Canadian listing: ${listing.title}`, error);
+      }
+    }
+    
+    console.log(`🍁 Canadian news sync completed: ${totalPrograms} new programs stored`);
     return totalPrograms;
+  }
+
+  /**
+   * Deduplicate listings across sources
+   */
+  private deduplicateCanadianListings(listings: Array<any>): Array<any> {
+    const urlMap = new Map();
+    const titleMap = new Map();
+    
+    for (const listing of listings) {
+      const normalizedUrl = this.normalizeUrl(listing.url);
+      const titleKey = `${listing.title.toLowerCase().trim()}-${listing.sourceDomain}`;
+      
+      // Prefer exact URL matches first
+      if (!urlMap.has(normalizedUrl)) {
+        urlMap.set(normalizedUrl, listing);
+      }
+      // Then title+domain matches
+      else if (!titleMap.has(titleKey)) {
+        titleMap.set(titleKey, listing);
+      }
+    }
+    
+    // Combine unique URLs and unique titles
+    const unique = Array.from(urlMap.values());
+    const uniqueTitles = Array.from(titleMap.values()).filter(listing => 
+      !unique.find(u => this.normalizeUrl(u.url) === this.normalizeUrl(listing.url))
+    );
+    
+    return [...unique, ...uniqueTitles];
+  }
+
+  /**
+   * Normalize URL for deduplication
+   */
+  private normalizeUrl(url: string): string {
+    try {
+      const parsed = new URL(url);
+      // Remove query params, hash, and common tracking
+      return `${parsed.protocol}//${parsed.hostname}${parsed.pathname}`.toLowerCase();
+    } catch {
+      return url.toLowerCase();
+    }
   }
 
   /**
@@ -564,7 +922,7 @@ export class RssService {
             ...program,
             dataSource: `${feedConfig.country.toLowerCase()}_rss`,
             sourceUrl,
-            sourceAgency: this.getAgencyName(feedConfig.country),
+            sourceAgency: feedConfig.name,
             country: feedConfig.country,
             region: program.location || null,
             eligibilityTypes: ['farm', 'producer', 'organization'],
@@ -625,16 +983,6 @@ export class RssService {
     }
   }
   
-  /**
-   * Get agency name for country
-   */
-  private getAgencyName(country: string): string {
-    switch (country) {
-      case 'CA': return 'Agriculture and Agri-Food Canada';
-      case 'NZ': return 'New Zealand Government';
-      default: return 'Unknown Agency';
-    }
-  }
 
   /**
    * Get cached programs or fetch fresh data if cache is stale
