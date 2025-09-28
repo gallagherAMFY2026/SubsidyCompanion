@@ -33,13 +33,6 @@ export class RssService {
 
   private readonly PRIMARY_FEEDS = [
     {
-      name: 'NZ Beehive', 
-      url: 'https://www.beehive.govt.nz/rss.xml',
-      country: 'NZ',
-      fallbacks: ['https://www.mpi.govt.nz/news/media-releases/rss.xml'],
-      mixerFallbacks: []
-    },
-    {
       name: 'Australia DAFF',
       url: 'https://www.agriculture.gov.au/about/news/stay-informed/rss',
       country: 'AU',

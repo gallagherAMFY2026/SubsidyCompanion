@@ -130,6 +130,49 @@ export class ComprehensiveUsdaService {
     }
   ];
 
+  // Additional US agricultural funding news URLs (user-provided sources)
+  private readonly ADDITIONAL_NEWS_URLS = [
+    // Federal Programs and News Sources (Priority)
+    'https://www.fsa.usda.gov/news-room/news-releases/',
+    'https://www.fsa.usda.gov/programs-and-services/',
+    'https://www.farmers.gov/your-business/beginning-farmers',
+    'https://www.farmers.gov/fund',
+    'https://www.farmers.gov/working-with-us/farm-bill',
+    'https://usafacts.org/articles/topic/agriculture/',
+    'https://usafacts.org/data/topics/economy/agriculture/',
+    
+    // State and Local-Level Grant Resources
+    'https://www.mda.state.mn.us/grants/',
+    'https://www.mda.state.mn.us/news/',
+    'https://swoopfunding.com/blog/category/agriculture/',
+    'https://swoopfunding.com/grants/agriculture/',
+    
+    // Specialized Grants and Sector-Focused Programs
+    'https://livestockconservancy.org/grants-funding/',
+    'https://livestockconservancy.org/news/',
+    'https://farmaction.us/news/',
+    'https://farmaction.us/issues/subsidies/',
+    
+    // Policy Commentary and Analysis
+    'https://www.nytimes.com/section/climate/agriculture',
+    'https://www.openthebooks.com/agriculture/',
+    
+    // Sustainability, Clean Energy, and Land Management
+    'https://insideclimatenews.org/topic/agriculture/',
+    'https://www.dailyclimate.org/agriculture/',
+    'https://www.usda.gov/climate-solutions/forestry-initiatives',
+    'https://www.fs.usda.gov/fire/fire-mgmt-funding'
+  ];
+
+  // Enhanced funding opportunity keywords (user-focused)
+  private readonly FUNDING_OPPORTUNITY_KEYWORDS = [
+    'grant', 'grants', 'funding', 'fund', 'subsidy', 'subsidies',
+    'application', 'applications', 'apply', 'deadline', 'closes',
+    'intake', 'round', 'opportunity', 'opportunities', 'scheme',
+    'support', 'assistance', 'investment', 'co-investment',
+    'program', 'initiative', 'eligibility', 'eligible', 'criteria'
+  ];
+
   // High-value program keywords for enhanced detection
   private readonly HIGH_VALUE_KEYWORDS = [
     'EQIP', 'CSP', 'Conservation Stewardship', 'Environmental Quality Incentives',
@@ -153,31 +196,34 @@ export class ComprehensiveUsdaService {
   }
 
   /**
-   * Main sync method - orchestrates all USDA data collection
+   * Main sync method - orchestrates all USDA data collection including user-provided sources
    */
   async syncAllUsdaSources(): Promise<{ 
     nrcsPrograms: number; 
-    agencyPrograms: number; 
+    agencyPrograms: number;
+    additionalNews: number;
     totalStates: number;
     totalPrograms: number;
   }> {
     console.log('🔄 Starting comprehensive USDA sync...');
     const startTime = Date.now();
 
-    const [nrcsResults, agencyResults] = await Promise.all([
+    const [nrcsResults, agencyResults, additionalResults] = await Promise.all([
       this.syncAllNrcsStates(),
-      this.syncAllAgencyNews()
+      this.syncAllAgencyNews(),
+      this.syncAdditionalNewsUrls()
     ]);
 
-    const totalPrograms = nrcsResults + agencyResults;
+    const totalPrograms = nrcsResults + agencyResults + additionalResults;
     const duration = ((Date.now() - startTime) / 1000).toFixed(1);
 
     console.log(`✅ Comprehensive USDA sync completed in ${duration}s`);
-    console.log(`📊 Results: ${nrcsResults} NRCS + ${agencyResults} Agency = ${totalPrograms} total programs`);
+    console.log(`📊 Results: ${nrcsResults} NRCS + ${agencyResults} Agency + ${additionalResults} Additional = ${totalPrograms} total programs`);
 
     return {
       nrcsPrograms: nrcsResults,
       agencyPrograms: agencyResults,
+      additionalNews: additionalResults,
       totalStates: this.STATE_CONFIGS.length,
       totalPrograms
     };

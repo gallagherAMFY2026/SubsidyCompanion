@@ -79,6 +79,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('📡 Syncing RSS data...');
       await rssService.syncRssData(forceRefresh);
       
+      // New Zealand comprehensive news sync
+      console.log('🇳🇿 Syncing New Zealand agricultural funding news...');
+      const nzResults = await newZealandService.syncAllSources();
+      console.log(`New Zealand sync results:`, nzResults);
+      
       // Enhanced storage stats
       const stats = await storage.getSubsidyProgramStats();
       console.log('📊 Post-sync stats:', stats);
@@ -109,6 +114,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('📡 Syncing RSS data...');
       await rssService.syncRssData(true);
       
+      // New Zealand comprehensive news sync
+      console.log('🇳🇿 Syncing New Zealand agricultural funding news...');
+      const nzResults = await newZealandService.syncAllSources();
+      console.log(`New Zealand sync results:`, nzResults);
+      
       // Enhanced storage stats
       const stats = await storage.getSubsidyProgramStats();
       console.log('📊 Post-sync stats:', stats);
@@ -138,12 +148,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Representative agricultural funding programs
       const demoPrograms = [
         {
+          id: "demo-eqip-2024-ca-001",
           title: "Environmental Quality Incentives Program (EQIP)",
-          description: "Financial and technical assistance for implementing conservation practices on agricultural land",
+          summary: "Financial and technical assistance for implementing conservation practices on agricultural land",
           deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), // 45 days from now
           publishedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
           url: "https://www.nrcs.usda.gov/programs-initiatives/eqip-environmental-quality-incentives-program",
           dataSource: "usda_nrcs",
+          sourceUrl: "https://www.nrcs.usda.gov/programs-initiatives/eqip-environmental-quality-incentives-program",
           sourceAgency: "Natural Resources Conservation Service",
           country: "United States",
           region: "California",
@@ -152,16 +164,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           eligibilityTypes: ["farm", "producer", "organization"],
           fundingTypes: ["grant", "cost-share"],
           location: "California",
-          isHighPriority: true,
-          opportunityNumber: "EQIP-2024-CA-001"
+          isHighPriority: "true",
+          opportunityNumber: "EQIP-2024-CA-001",
+          dedupeKey: "environmental-quality-incentives-program-eqip-nrcs.usda.gov-usda_nrcs",
+          mergedFromSources: ["usda_nrcs"]
         },
         {
+          id: "demo-csp-2024-ia-002",
           title: "Conservation Stewardship Program",
-          description: "Payments for maintaining and improving existing conservation activities",
+          summary: "Payments for maintaining and improving existing conservation activities",
           deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
           publishedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
           url: "https://www.nrcs.usda.gov/programs-initiatives/csp-conservation-stewardship-program",
           dataSource: "usda_nrcs",
+          sourceUrl: "https://www.nrcs.usda.gov/programs-initiatives/csp-conservation-stewardship-program",
           sourceAgency: "Natural Resources Conservation Service", 
           country: "United States",
           region: "Iowa",
@@ -170,16 +186,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           eligibilityTypes: ["farm", "producer"],
           fundingTypes: ["payment", "incentive"],
           location: "Iowa",
-          isHighPriority: false,
-          opportunityNumber: "CSP-2024-IA-002"
+          isHighPriority: null,
+          opportunityNumber: "CSP-2024-IA-002",
+          dedupeKey: "conservation-stewardship-program-nrcs.usda.gov-usda_nrcs",
+          mergedFromSources: ["usda_nrcs"]
         },
         {
+          id: "demo-act-2024-on-003",
           title: "Agricultural Clean Technology Program",
-          description: "Support for farmers adopting clean technology and sustainable practices",
+          summary: "Support for farmers adopting clean technology and sustainable practices",
           deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days from now
           publishedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
           url: "https://agriculture.canada.ca/programs/agricultural-clean-technology",
           dataSource: "canada_agriculture",
+          sourceUrl: "https://agriculture.canada.ca/programs/agricultural-clean-technology",
           sourceAgency: "Agriculture and Agri-Food Canada",
           country: "Canada",
           region: "Ontario",
@@ -188,16 +208,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           eligibilityTypes: ["farm", "producer", "cooperative"],
           fundingTypes: ["grant", "support"],
           location: "Ontario",
-          isHighPriority: true,
-          opportunityNumber: "ACT-2024-ON-003"
+          isHighPriority: "true",
+          opportunityNumber: "ACT-2024-ON-003",
+          dedupeKey: "agricultural-clean-technology-program-agriculture.canada.ca-canada_agriculture",
+          mergedFromSources: ["canada_agriculture"]
         },
         {
+          id: "demo-bfrdp-2024-tx-004",
           title: "Beginning Farmer and Rancher Development Program",
-          description: "Education, training, and technical assistance for new agricultural producers",
+          summary: "Education, training, and technical assistance for new agricultural producers",
           deadline: new Date(Date.now() + 75 * 24 * 60 * 60 * 1000), // 75 days from now
           publishedDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
           url: "https://www.nifa.usda.gov/beginning-farmer-rancher-development-program",
           dataSource: "usda_nifa",
+          sourceUrl: "https://www.nifa.usda.gov/beginning-farmer-rancher-development-program",
           sourceAgency: "National Institute of Food and Agriculture",
           country: "United States",
           region: "Texas",
@@ -206,8 +230,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           eligibilityTypes: ["beginning_farmer", "organization", "education"],
           fundingTypes: ["grant", "training"],
           location: "Texas",
-          isHighPriority: false,
-          opportunityNumber: "BFRDP-2024-TX-004"
+          isHighPriority: null,
+          opportunityNumber: "BFRDP-2024-TX-004",
+          dedupeKey: "beginning-farmer-and-rancher-development-program-nifa.usda.gov-usda_nifa",
+          mergedFromSources: ["usda_nifa"]
         }
       ];
       

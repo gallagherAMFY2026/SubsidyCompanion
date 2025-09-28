@@ -42,13 +42,53 @@ export class NewZealandService {
   private readonly REQUEST_TIMEOUT = 30000; // 30 seconds
   private readonly MAX_RETRIES = 3;
 
-  // New Zealand agricultural funding keywords
+  // New Zealand agricultural funding news page URLs (user-provided list)
+  private readonly NZ_NEWS_URLS = [
+    // Official Government and Program Sites (Priority)
+    'https://www.mpi.govt.nz/news-and-resources/media-releases/',
+    'https://www.mpi.govt.nz/funding-and-programmes/',
+    'https://www.mpi.govt.nz/funding-and-programmes/sustainable-food-and-fibre-futures/',
+    'https://www.doc.govt.nz/about-us/our-role/funding/',
+    'https://www.doc.govt.nz/news/',
+    
+    // Government Press Releases and Policy Updates
+    'https://www.beehive.govt.nz/release/agriculture',
+    'https://www.beehive.govt.nz/release/primary-industries',
+    'https://www.beehive.govt.nz/release/environment',
+    
+    // Grant Announcements and Industry News
+    'https://ecosmart.nz/news/',
+    'https://ecosmart.nz/grants/',
+    'https://www.rfsi.nz/news/',
+    'https://www.rfsi.nz/funding/',
+    
+    // Sustainable Farming and Land Management
+    'https://www.mpi.govt.nz/funding-and-programmes/sustainable-food-and-fibre-futures/funding-rounds/',
+    'https://www.doc.govt.nz/our-work/funding/',
+    
+    // Additional Policy Commentary and Reviews
+    'https://www.developmentaid.org/news/donors/new-zealand/',
+    'https://news.mongabay.com/series/new-zealand/'
+  ];
+
+  // Enhanced funding opportunity keywords (primary filter)
+  private readonly FUNDING_OPPORTUNITY_KEYWORDS = [
+    'grant', 'grants', 'funding', 'fund', 'subsidy', 'subsidies',
+    'application', 'applications', 'apply', 'deadline', 'closes',
+    'intake', 'round', 'opportunity', 'opportunities', 'scheme',
+    'support', 'assistance', 'investment', 'co-investment',
+    'contestable', 'programme', 'program', 'initiative',
+    'eligibility', 'eligible', 'criteria', 'requirements'
+  ];
+  
+  // Agricultural sector keywords (secondary filter)
   private readonly AGRICULTURE_KEYWORDS = [
     'farm', 'farming', 'agriculture', 'agricultural', 'dairy', 'livestock',
     'cattle', 'sheep', 'goat', 'deer', 'equine', 'pig', 'poultry',
     'PSGF', 'Primary Sector Growth Fund', 'SFF', 'Sustainable Food and Fibre',
     'catchment', 'water', 'freshwater', 'emissions', 'methane', 'nitrate',
-    'rural', 'producer', 'co-investment', 'contestable', 'wellbeing'
+    'rural', 'producer', 'sustainable', 'conservation', 'environment',
+    'land management', 'soil health', 'biodiversity', 'climate'
   ];
 
   /**
@@ -60,128 +100,647 @@ export class NewZealandService {
   }
 
   /**
-   * Sync all New Zealand agricultural funding sources
+   * Sync all New Zealand agricultural funding sources via news page scraping
    */
-  async syncAllSources(maxPages?: number): Promise<{ mpiRss: number; beehiveRss: number; getsExamples: number; mpiFunding: number }> {
-    console.log('Starting comprehensive New Zealand sync...');
+  async syncAllSources(maxPages?: number): Promise<{ newsPages: number; getsExamples: number; mpiFunding: number }> {
+    console.log('Starting comprehensive New Zealand news page sync...');
 
-    const [mpiRss, beehiveRss, getsExamples, mpiFunding] = await Promise.all([
-      this.syncMpiRss(),
-      this.syncBeehiveRss(),
+    const [newsPages, getsExamples, mpiFunding] = await Promise.all([
+      this.syncNewZealandNewsPages(),
       this.syncGetsExamples(),
       this.syncMpiFundingPages()
     ]);
 
-    console.log(`New Zealand sync completed: MPI RSS ${mpiRss}, Beehive RSS ${beehiveRss}, GETS ${getsExamples}, MPI Pages ${mpiFunding}`);
+    console.log(`New Zealand sync completed: News Pages ${newsPages}, GETS ${getsExamples}, MPI Pages ${mpiFunding}`);
 
     return {
-      mpiRss,
-      beehiveRss,
+      newsPages,
       getsExamples,
       mpiFunding
     };
   }
 
   /**
-   * Sync MPI RSS feed for agricultural funding news
+   * Sync New Zealand news pages for agricultural funding programs
    */
-  async syncMpiRss(): Promise<number> {
-    console.log('Syncing MPI RSS feed...');
+  async syncNewZealandNewsPages(): Promise<number> {
+    console.log('Syncing New Zealand agricultural news pages...');
+    
+    let totalPrograms = 0;
+    const allPrograms: InsertSubsidyProgram[] = [];
+    
+    for (const url of this.NZ_NEWS_URLS) {
+      try {
+        console.log(`Scraping: ${url}`);
+        const programs = await this.scrapeNewsPage(url);
+        allPrograms.push(...programs);
+        console.log(`Found ${programs.length} programs from ${url}`);
+      } catch (error) {
+        console.error(`Error scraping ${url}:`, error);
+        // Continue with other URLs even if one fails
+      }
+    }
+    
+    // Apply cross-source deduplication
+    const deduplicatedPrograms = this.deduplicatePrograms(allPrograms);
+    console.log(`Deduplicated ${allPrograms.length} programs to ${deduplicatedPrograms.length}`);
+    
+    // Store programs
+    for (const program of deduplicatedPrograms) {
+      try {
+        const existing = await storage.getSubsidyProgramByDedupeKey(program.dedupeKey);
+        if (existing) {
+          await storage.updateSubsidyProgram(existing.id, program);
+        } else {
+          await storage.createSubsidyProgram(program);
+        }
+        totalPrograms++;
+      } catch (error) {
+        console.error('Error storing program:', error);
+      }
+    }
+    
+    console.log(`New Zealand news page sync completed: ${totalPrograms} agricultural programs processed`);
+    return totalPrograms;
+  }
 
+  /**
+   * Scrape a single news page for agricultural funding programs
+   */
+  private async scrapeNewsPage(url: string): Promise<InsertSubsidyProgram[]> {
+    const programs: InsertSubsidyProgram[] = [];
+    
     try {
       const response = await this.retryWithBackoff(async () => {
-        const res = await fetch('https://www.mpi.govt.nz/news/media-releases/rss.xml', {
+        const res = await fetch(url, {
           headers: {
             'User-Agent': this.USER_AGENT,
-            'Accept': 'application/rss+xml, application/xml, text/xml'
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
           },
           signal: AbortSignal.timeout(this.REQUEST_TIMEOUT)
         });
 
         if (!res.ok) {
-          throw new Error(`MPI RSS fetch error: ${res.status} ${res.statusText}`);
+          throw new Error(`News page fetch error: ${res.status} ${res.statusText}`);
         }
 
         return res;
       });
 
-      const xmlText = await response.text();
-      const items = this.parseMpiRss(xmlText);
+      const html = await response.text();
+      const $ = cheerio.load(html);
+      const domain = new URL(url).hostname;
+      const selectors = this.getNZDomainSpecificSelectors(domain);
       
-      let processed = 0;
-      for (const item of items) {
-        if (this.isAgriculturalContent(item.title, item.description)) {
-          const program = this.convertMpiRssToProgram(item);
-          
-          // Check for existing program
-          const existing = await storage.getSubsidyProgramByDedupeKey(program.dedupeKey);
-          if (existing) {
-            await storage.updateSubsidyProgram(existing.id, program);
-          } else {
-            await storage.createSubsidyProgram(program);
+      // Extract program items using domain-specific selectors
+      for (const selector of selectors) {
+        for (let i = 0; i < $(selector).length; i++) {
+          try {
+            const element = $(selector)[i];
+            const program = await this.extractNZProgramFromElement($, element, url, domain);
+            if (program && this.isValidNZProgram(program)) {
+              programs.push(program);
+            }
+          } catch (error) {
+            console.warn('Error extracting program from element:', error);
           }
-          processed++;
         }
       }
-
-      console.log(`MPI RSS sync completed: ${processed} agricultural items processed`);
-      return processed;
-
+      
+      return programs;
+      
     } catch (error) {
-      console.error('Error syncing MPI RSS:', error);
-      return 0;
+      console.error(`Error scraping ${url}:`, error);
+      return [];
     }
   }
 
   /**
-   * Sync Beehive RSS feed for government announcements
+   * Get domain-specific selectors for New Zealand sites
    */
-  async syncBeehiveRss(): Promise<number> {
-    console.log('Syncing Beehive RSS feed...');
+  private getNZDomainSpecificSelectors(domain: string): string[] {
+    const domainSelectors: { [key: string]: string[] } = {
+      // MPI sites
+      'mpi.govt.nz': [
+        '.news-item, .media-release',
+        '.funding-item, .programme-item',
+        'article, .content-item',
+        '.views-row .field-content',
+        '.page-content .item'
+      ],
+      
+      // Beehive government releases
+      'beehive.govt.nz': [
+        '.release-item, .media-release',
+        'article, .content-wrap',
+        '.views-row, .release-content',
+        '.page-item .field-content'
+      ],
+      
+      // Regional development
+      'growregions.govt.nz': [
+        '.news-item, .funding-item',
+        'article, .post',
+        '.content-item, .programme-item'
+      ],
+      
+      // Media sources
+      'stuff.co.nz': [
+        'article, .story-item',
+        '.farming-news .item',
+        '.business-farming .content'
+      ],
+      
+      'nzherald.co.nz': [
+        'article, .story',
+        '.rural-news .item',
+        '.business .content-item'
+      ],
+      
+      // Innovation and research
+      'callaghaninnovation.govt.nz': [
+        '.news-item, .funding-opportunity',
+        'article, .content-item',
+        '.programme-item'
+      ],
+      
+      'mbie.govt.nz': [
+        '.funding-item, .opportunity-item',
+        'article, .content-wrap',
+        '.programme-details .item'
+      ],
+      
+      // Environmental agencies  
+      'doc.govt.nz': [
+        '.funding-programme, .grant-item',
+        'article, .content-item',
+        '.conservation-funding .item'
+      ],
+      
+      'mfe.govt.nz': [
+        '.funding-opportunity, .grant-item',
+        'article, .policy-item',
+        '.environmental-funding .item'
+      ]
+    };
+    
+    return domainSelectors[domain] || [
+      'article, .post, .entry',
+      '.news-item, .content-item',
+      '.funding-item, .opportunity-item',
+      '.views-row, .list-group-item'
+    ];
+  }
 
+  /**
+   * Extract program details from HTML element
+   */
+  private async extractNZProgramFromElement($: any, element: any, sourceUrl: string, domain: string): Promise<InsertSubsidyProgram | null> {
+    const $el = $(element);
+    
+    // Extract basic information
+    const title = this.extractNZTitle($el);
+    const summary = this.extractNZSummary($el);
+    const url = this.extractNZUrl($el, sourceUrl);
+    
+    if (!title || title.length < 10) {
+      return null;
+    }
+    
+    // Primary filter: Must contain funding opportunity indicators
+    const fullText = `${title} ${summary}`.toLowerCase();
+    const hasFundingKeywords = this.FUNDING_OPPORTUNITY_KEYWORDS.some(keyword => 
+      fullText.includes(keyword.toLowerCase())
+    );
+    
+    // Secondary filter: Must be agriculture-related
+    const hasAgricultureKeywords = this.AGRICULTURE_KEYWORDS.some(keyword => 
+      fullText.includes(keyword.toLowerCase())
+    );
+    
+    if (!hasFundingKeywords || !hasAgricultureKeywords) {
+      return null;
+    }
+    
+    // Fetch detail page for enhanced program information
+    const detailData = await this.fetchDetailPage(url);
+    
+    const attribution = this.getNZSourceAttribution(domain);
+    const publishedDate = this.extractNZDate($el) || new Date();
+    
+    // Combine listing and detail data for enhanced extraction
+    const combinedText = `${fullText} ${detailData}`.toLowerCase();
+    
+    return {
+      id: this.generateNZProgramId(title, url),
+      title: title.trim(),
+      summary: detailData ? this.extractEnhancedSummary(detailData) || summary.trim() : summary.trim(),
+      category: this.extractNZProgramType(combinedText),
+      publishedDate,
+      url,
+      dataSource: attribution.dataSource,
+      sourceUrl,
+      sourceAgency: attribution.sourceAgency,
+      country: 'New Zealand',
+      region: this.extractNZLocation(combinedText),
+      fundingAmount: this.extractNZFundingAmount(combinedText),
+      deadline: this.extractNZDeadline(combinedText),
+      location: this.extractNZLocation(combinedText),
+      program: this.extractNZProgramType(combinedText),
+      opportunityNumber: this.extractOpportunityNumber(combinedText),
+      awardNumber: null,
+      eligibilityTypes: this.extractEligibilityTypes(combinedText),
+      fundingTypes: this.extractFundingTypes(combinedText),
+      isHighPriority: this.detectNZPriority(combinedText),
+      alertReason: this.detectAlertReason(combinedText),
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: [attribution.dataSource],
+      conflictResolution: null,
+      dedupeKey: this.generateNZDedupeKey(title, url, attribution.dataSource)
+    };
+  }
+
+  /**
+   * Cross-source deduplication for New Zealand programs
+   */
+  private deduplicatePrograms(programs: InsertSubsidyProgram[]): InsertSubsidyProgram[] {
+    const dedupeMap = new Map<string, InsertSubsidyProgram>();
+    
+    for (const program of programs) {
+      const existing = dedupeMap.get(program.dedupeKey);
+      
+      if (!existing) {
+        dedupeMap.set(program.dedupeKey, program);
+      } else {
+        // Merge sources and keep the program with more information
+        const merged = this.mergeNZPrograms(existing, program);
+        dedupeMap.set(program.dedupeKey, merged);
+      }
+    }
+    
+    return Array.from(dedupeMap.values());
+  }
+
+  /**
+   * Fetch detail page content for enhanced program information
+   */
+  private async fetchDetailPage(url: string): Promise<string> {
     try {
       const response = await this.retryWithBackoff(async () => {
-        const res = await fetch('https://www.beehive.govt.nz/rss.xml', {
+        const res = await fetch(url, {
           headers: {
             'User-Agent': this.USER_AGENT,
-            'Accept': 'application/rss+xml, application/xml, text/xml'
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
           },
           signal: AbortSignal.timeout(this.REQUEST_TIMEOUT)
         });
 
         if (!res.ok) {
-          throw new Error(`Beehive RSS fetch error: ${res.status} ${res.statusText}`);
+          throw new Error(`Detail page fetch error: ${res.status} ${res.statusText}`);
         }
 
         return res;
       });
 
-      const xmlText = await response.text();
-      const items = this.parseBeehiveRss(xmlText);
+      const html = await response.text();
+      const $ = cheerio.load(html);
       
-      let processed = 0;
-      for (const item of items) {
-        if (this.isAgriculturalContent(item.title, item.description)) {
-          const program = this.convertBeehiveRssToProgram(item);
-          
-          // Check for existing program
-          const existing = await storage.getSubsidyProgramByDedupeKey(program.dedupeKey);
-          if (existing) {
-            await storage.updateSubsidyProgram(existing.id, program);
-          } else {
-            await storage.createSubsidyProgram(program);
-          }
-          processed++;
-        }
-      }
-
-      console.log(`Beehive RSS sync completed: ${processed} agricultural items processed`);
-      return processed;
-
+      // Extract main content from detail page
+      const content = $('.content, .article-content, .post-content, .page-content, main, article')
+        .first()
+        .text()
+        .trim();
+        
+      return content.substring(0, 2000); // Limit for processing efficiency
+      
     } catch (error) {
-      console.error('Error syncing Beehive RSS:', error);
-      return 0;
+      console.warn(`Error fetching detail page ${url}:`, error);
+      return ''; // Return empty string if detail page fails
     }
+  }
+
+  /**
+   * Extract enhanced summary from detail page content
+   */
+  private extractEnhancedSummary(detailContent: string): string | null {
+    if (!detailContent) return null;
+    
+    // Extract first few sentences that contain funding-related terms
+    const sentences = detailContent.split(/[.!?]+/).slice(0, 5);
+    const relevantSentences = sentences.filter(sentence => 
+      this.FUNDING_OPPORTUNITY_KEYWORDS.some(keyword => 
+        sentence.toLowerCase().includes(keyword)
+      )
+    );
+    
+    return relevantSentences.length > 0 
+      ? relevantSentences.join('. ').trim().substring(0, 300)
+      : null;
+  }
+
+  /**
+   * Extract opportunity number from content
+   */
+  private extractOpportunityNumber(content: string): string | null {
+    const patterns = [
+      /opportunity[\s#]+([A-Z0-9-]{5,15})/i,
+      /reference[\s#:]+([A-Z0-9-]{5,15})/i,
+      /grant[\s#:]+([A-Z0-9-]{5,15})/i,
+      /SFF[\s-]*([0-9]{4,6})/i,
+      /PSGF[\s-]*([0-9]{4,6})/i
+    ];
+    
+    for (const pattern of patterns) {
+      const match = content.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  }
+
+  /**
+   * Extract eligibility types from content
+   */
+  private extractEligibilityTypes(content: string): string[] {
+    const eligibilityMap = {
+      'farm': ['farm', 'farmer', 'farming'],
+      'producer': ['producer', 'grower', 'livestock owner'],
+      'organization': ['organization', 'organisation', 'cooperative', 'association'],
+      'rural': ['rural', 'rural community'],
+      'iwi': ['iwi', 'māori', 'maori', 'indigenous'],
+      'research': ['research', 'university', 'institute'],
+      'community': ['community', 'group', 'collective']
+    };
+    
+    const found: string[] = [];
+    for (const [type, keywords] of Object.entries(eligibilityMap)) {
+      if (keywords.some(keyword => content.toLowerCase().includes(keyword))) {
+        found.push(type);
+      }
+    }
+    
+    return found.length > 0 ? found : ['farm', 'producer', 'organization'];
+  }
+
+  /**
+   * Extract funding types from content
+   */
+  private extractFundingTypes(content: string): string[] {
+    const fundingMap = {
+      'grant': ['grant', 'grants'],
+      'co-investment': ['co-investment', 'co-invest', 'matching fund'],
+      'loan': ['loan', 'lending', 'finance'],
+      'subsidy': ['subsidy', 'subsidies'],
+      'support': ['support', 'assistance'],
+      'partnership': ['partnership', 'collaboration'],
+      'innovation': ['innovation', 'research', 'development']
+    };
+    
+    const found: string[] = [];
+    for (const [type, keywords] of Object.entries(fundingMap)) {
+      if (keywords.some(keyword => content.toLowerCase().includes(keyword))) {
+        found.push(type);
+      }
+    }
+    
+    return found.length > 0 ? found : ['grant', 'support'];
+  }
+
+  /**
+   * Detect high priority programs
+   */
+  private detectNZPriority(content: string): string | null {
+    const priorityTerms = [
+      'urgent', 'immediate', 'priority', 'limited time', 
+      'closing soon', 'deadline approaching', 'last call',
+      'high priority', 'critical', 'essential'
+    ];
+    
+    const foundTerm = priorityTerms.find(term => 
+      content.toLowerCase().includes(term)
+    );
+    
+    return foundTerm ? 'true' : null;
+  }
+
+  /**
+   * Detect alert reason for high priority programs
+   */
+  private detectAlertReason(content: string): string | null {
+    if (content.toLowerCase().includes('deadline') && content.toLowerCase().includes('approach')) {
+      return 'Deadline approaching';
+    }
+    if (content.toLowerCase().includes('limited time')) {
+      return 'Limited time offer';
+    }
+    if (content.toLowerCase().includes('last call')) {
+      return 'Final call for applications';
+    }
+    return null;
+  }
+
+  /**
+   * Extract title from HTML element
+   */
+  private extractNZTitle($el: any): string {
+    return $el.find('h1, h2, h3, .title, .headline, .entry-title').first().text().trim() ||
+           $el.find('a').first().text().trim() ||
+           $el.text().split('\n')[0].trim();
+  }
+
+  /**
+   * Extract summary from HTML element
+   */
+  private extractNZSummary($el: any): string {
+    return $el.find('.summary, .description, .excerpt, .intro, p').first().text().trim() ||
+           $el.find('.content').first().text().trim().substring(0, 300) ||
+           $el.text().trim().substring(0, 300);
+  }
+
+  /**
+   * Extract URL from HTML element
+   */
+  private extractNZUrl($el: any, baseUrl: string): string {
+    const href = $el.find('a').first().attr('href') || $el.attr('href');
+    if (!href) return baseUrl;
+    
+    return href.startsWith('http') ? href : new URL(href, baseUrl).toString();
+  }
+
+  /**
+   * Extract publication date from HTML element
+   */
+  private extractNZDate($el: any): Date | null {
+    const dateText = $el.find('.date, .published, .datetime, time').first().text().trim() ||
+                     $el.find('[datetime]').first().attr('datetime');
+    
+    if (!dateText) return null;
+    
+    const date = new Date(dateText);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  /**
+   * Extract funding amount from content
+   */
+  private extractNZFundingAmount(content: string): string | null {
+    const patterns = [
+      /NZ?\$([\d,]+(?:\.\d{2})?(?:\s*(?:million|m|thousand|k))?)/i,
+      /(\$[\d,]+(?:\.\d{2})?(?:\s*(?:million|m|thousand|k))?)/i,
+      /([\d,]+(?:\.\d{2})?\s*(?:million|thousand)\s*dollars?)/i
+    ];
+    
+    for (const pattern of patterns) {
+      const match = content.match(pattern);
+      if (match) return match[1] || match[0];
+    }
+    return null;
+  }
+
+  /**
+   * Extract deadline from content
+   */
+  private extractNZDeadline(content: string): Date | null {
+    const patterns = [
+      /deadline[:\s]+([^\n\.]{1,50}(?:\d{1,2}[\s,]+\d{4}|\d{4}[/-]\d{1,2}[/-]\d{1,2}))/i,
+      /applications?\s+(?:close|due|by)[:\s]+([^\n\.]{1,50}(?:\d{1,2}[\s,]+\d{4}|\d{4}[/-]\d{1,2}[/-]\d{1,2}))/i,
+      /by\s+(\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})/i
+    ];
+    
+    for (const pattern of patterns) {
+      const match = content.match(pattern);
+      if (match) {
+        const date = new Date(match[1]);
+        if (!isNaN(date.getTime())) return date;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Extract location/region from content
+   */
+  private extractNZLocation(content: string): string | null {
+    const nzRegions = [
+      'Auckland', 'Bay of Plenty', 'Canterbury', 'Gisborne', 'Hawke\'s Bay',
+      'Manawatu-Wanganui', 'Marlborough', 'Nelson', 'Northland', 'Otago',
+      'Southland', 'Taranaki', 'Tasman', 'Waikato', 'Wellington', 'West Coast'
+    ];
+    
+    for (const region of nzRegions) {
+      if (content.includes(region)) return region;
+    }
+    return null;
+  }
+
+  /**
+   * Extract program type from content
+   */
+  private extractNZProgramType(content: string): string {
+    const lowerContent = content.toLowerCase();
+    
+    if (lowerContent.includes('sustainable food and fibre') || lowerContent.includes('sff')) return 'Sustainable Food and Fibre';
+    if (lowerContent.includes('primary sector growth fund') || lowerContent.includes('psgf')) return 'Primary Sector Growth Fund';
+    if (lowerContent.includes('rural wellbeing')) return 'Rural Wellbeing';
+    if (lowerContent.includes('catchment') || lowerContent.includes('freshwater')) return 'Freshwater & Environment';
+    if (lowerContent.includes('innovation') || lowerContent.includes('research')) return 'Research & Innovation';
+    
+    return 'Program';
+  }
+
+
+  /**
+   * Get source attribution for New Zealand domains
+   */
+  private getNZSourceAttribution(domain: string): { dataSource: string; sourceAgency: string } {
+    const attributions: { [key: string]: { dataSource: string; sourceAgency: string } } = {
+      'mpi.govt.nz': {
+        dataSource: 'nz_mpi_news',
+        sourceAgency: 'Ministry for Primary Industries'
+      },
+      'beehive.govt.nz': {
+        dataSource: 'nz_beehive_news', 
+        sourceAgency: 'New Zealand Government'
+      },
+      'growregions.govt.nz': {
+        dataSource: 'nz_regional_development',
+        sourceAgency: 'Provincial Growth Fund'
+      },
+      'stuff.co.nz': {
+        dataSource: 'nz_stuff_farming',
+        sourceAgency: 'Stuff.co.nz'
+      },
+      'nzherald.co.nz': {
+        dataSource: 'nz_herald_rural',
+        sourceAgency: 'New Zealand Herald'
+      },
+      'callaghaninnovation.govt.nz': {
+        dataSource: 'nz_callaghan_innovation',
+        sourceAgency: 'Callaghan Innovation'
+      },
+      'mbie.govt.nz': {
+        dataSource: 'nz_mbie_funding',
+        sourceAgency: 'Ministry of Business, Innovation and Employment'
+      },
+      'doc.govt.nz': {
+        dataSource: 'nz_doc_funding',
+        sourceAgency: 'Department of Conservation'
+      },
+      'mfe.govt.nz': {
+        dataSource: 'nz_mfe_funding',
+        sourceAgency: 'Ministry for the Environment'
+      }
+    };
+    
+    return attributions[domain] || {
+      dataSource: 'nz_agricultural_news',
+      sourceAgency: 'New Zealand Agricultural Source'
+    };
+  }
+
+  /**
+   * Generate program ID
+   */
+  private generateNZProgramId(title: string, url: string): string {
+    const hash = title.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 20);
+    const urlHash = Buffer.from(url).toString('base64').substring(0, 10);
+    return `nz-${hash}-${urlHash}`;
+  }
+
+  /**
+   * Generate deduplication key
+   */
+  private generateNZDedupeKey(title: string, url: string, source: string): string {
+    const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    const domain = new URL(url).hostname;
+    return `${normalizedTitle}-${domain}-${source}`.replace(/\s+/g, '-');
+  }
+
+  /**
+   * Merge two programs during deduplication
+   */
+  private mergeNZPrograms(existing: InsertSubsidyProgram, newProgram: InsertSubsidyProgram): InsertSubsidyProgram {
+    return {
+      ...existing,
+      summary: newProgram.summary.length > existing.summary.length ? newProgram.summary : existing.summary,
+      fundingAmount: newProgram.fundingAmount || existing.fundingAmount,
+      deadline: newProgram.deadline || existing.deadline,
+      location: newProgram.location || existing.location,
+      mergedFromSources: Array.from(new Set([...(existing.mergedFromSources || []), ...(newProgram.mergedFromSources || [])])),
+      sourceLastModified: new Date()
+    };
+  }
+
+  /**
+   * Validate extracted program
+   */
+  private isValidNZProgram(program: InsertSubsidyProgram): boolean {
+    return program.title.length >= 10 &&
+           program.summary.length >= 20 &&
+           program.url.length > 0 &&
+           (!!program.fundingAmount || !!program.deadline || 
+            program.title.toLowerCase().includes('fund') ||
+            program.summary.toLowerCase().includes('applications'));
   }
 
   /**
@@ -295,77 +854,7 @@ export class NewZealandService {
     return processed;
   }
 
-  /**
-   * Parse MPI RSS XML using cheerio
-   */
-  private parseMpiRss(xml: string): MpiRssItem[] {
-    const items: MpiRssItem[] = [];
-    
-    try {
-      const $ = cheerio.load(xml, { xmlMode: true });
-      
-      $('item').each((_, element) => {
-        const $item = $(element);
-        
-        const title = $item.find('title').text().trim();
-        const link = $item.find('link').text().trim();
-        const description = $item.find('description').text().trim();
-        const pubDate = $item.find('pubDate').text().trim();
-        const guid = $item.find('guid').text().trim();
-        
-        if (title && link) {
-          items.push({
-            title,
-            link,
-            description: description || undefined,
-            pubDate: pubDate || undefined,
-            guid: guid || undefined
-          });
-        }
-      });
-      
-    } catch (error) {
-      console.error('Error parsing MPI RSS with cheerio:', error);
-    }
 
-    return items;
-  }
-
-  /**
-   * Parse Beehive RSS XML using cheerio
-   */
-  private parseBeehiveRss(xml: string): BeehiveRssItem[] {
-    const items: BeehiveRssItem[] = [];
-    
-    try {
-      const $ = cheerio.load(xml, { xmlMode: true });
-      
-      $('item').each((_, element) => {
-        const $item = $(element);
-        
-        const title = $item.find('title').text().trim();
-        const link = $item.find('link').text().trim();
-        const description = $item.find('description').text().trim();
-        const pubDate = $item.find('pubDate').text().trim();
-        const guid = $item.find('guid').text().trim();
-        
-        if (title && link) {
-          items.push({
-            title,
-            link,
-            description: description || undefined,
-            pubDate: pubDate || undefined,
-            guid: guid || undefined
-          });
-        }
-      });
-      
-    } catch (error) {
-      console.error('Error parsing Beehive RSS with cheerio:', error);
-    }
-
-    return items;
-  }
 
   /**
    * Parse GETS tender page using cheerio
@@ -475,63 +964,7 @@ export class NewZealandService {
     );
   }
 
-  /**
-   * Convert MPI RSS item to SubsidyProgram
-   */
-  private convertMpiRssToProgram(item: MpiRssItem): InsertSubsidyProgram {
-    const id = `nz-mpi-${this.generateIdFromUrl(item.link)}`;
-    
-    return {
-      id,
-      title: item.title,
-      summary: item.description || 'Agricultural funding opportunity from MPI',
-      category: 'Primary Sector Funding',
-      publishedDate: item.pubDate ? new Date(item.pubDate) : new Date(),
-      url: item.link,
-      fundingAmount: null,
-      deadline: null,
-      location: 'New Zealand',
-      program: 'Ministry for Primary Industries',
-      dataSource: 'nz_mpi_rss',
-      sourceUrl: item.link,
-      sourceAgency: 'Ministry for Primary Industries (MPI)',
-      country: 'NZ',
-      region: 'National',
-      eligibilityTypes: ['farm', 'producer', 'organization'],
-      fundingTypes: ['grant', 'partnership', 'co-investment'],
-      dedupeKey: this.generateDedupeKey(item.title, item.link, 'nz_mpi_rss'),
-      mergedFromSources: ['nz_mpi_rss']
-    };
-  }
 
-  /**
-   * Convert Beehive RSS item to SubsidyProgram
-   */
-  private convertBeehiveRssToProgram(item: BeehiveRssItem): InsertSubsidyProgram {
-    const id = `nz-beehive-${this.generateIdFromUrl(item.link)}`;
-    
-    return {
-      id,
-      title: item.title,
-      summary: item.description || 'Government announcement related to primary sector',
-      category: 'Government Announcement',
-      publishedDate: item.pubDate ? new Date(item.pubDate) : new Date(),
-      url: item.link,
-      fundingAmount: null,
-      deadline: null,
-      location: 'New Zealand',
-      program: 'Government Announcements',
-      dataSource: 'nz_beehive_rss',
-      sourceUrl: item.link,
-      sourceAgency: 'New Zealand Government',
-      country: 'NZ',
-      region: 'National',
-      eligibilityTypes: ['farm', 'producer', 'organization', 'community'],
-      fundingTypes: ['announcement', 'policy'],
-      dedupeKey: this.generateDedupeKey(item.title, item.link, 'nz_beehive_rss'),
-      mergedFromSources: ['nz_beehive_rss']
-    };
-  }
 
   /**
    * Convert GETS tender to SubsidyProgram
