@@ -262,7 +262,7 @@ export class RssService {
       );
       
       // Derive proper source attribution from domain
-      const attribution = this.getCanadianSourceAttribution(announcement.sourceDomain || announcement.url);
+      const attribution = this.getCanadianSourceAttribution((announcement as any).sourceDomain || announcement.url);
       
       const program = {
         id: `ca-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -658,8 +658,8 @@ export class RssService {
         // Add source domain for attribution
         const domain = new URL(newsUrl).hostname;
         listings.forEach(listing => {
-          listing.sourceDomain = domain;
-          listing.sourceUrl = newsUrl;
+          (listing as any).sourceDomain = domain;
+          (listing as any).sourceUrl = newsUrl;
         });
         
         allListings.push(...listings);

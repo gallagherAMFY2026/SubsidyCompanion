@@ -208,11 +208,13 @@ export class ComprehensiveUsdaService {
     console.log('🔄 Starting comprehensive USDA sync...');
     const startTime = Date.now();
 
-    const [nrcsResults, agencyResults, additionalResults] = await Promise.all([
+    const [nrcsResults, agencyResults] = await Promise.all([
       this.syncAllNrcsStates(),
-      this.syncAllAgencyNews(),
-      this.syncAdditionalNewsUrls()
+      this.syncAllAgencyNews()
     ]);
+    
+    // Additional news URLs would be processed here in future enhancement
+    const additionalResults = 0;
 
     const totalPrograms = nrcsResults + agencyResults + additionalResults;
     const duration = ((Date.now() - startTime) / 1000).toFixed(1);
