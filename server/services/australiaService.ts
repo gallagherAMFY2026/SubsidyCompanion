@@ -39,13 +39,57 @@ export class AustraliaService {
   private readonly REQUEST_TIMEOUT = 30000; // 30 seconds
   private readonly MAX_RETRIES = 3;
 
-  // Australian agricultural funding keywords
+  // Australian agricultural funding news URLs (user-provided comprehensive list)
+  private readonly AUSTRALIA_NEWS_URLS = [
+    // National Government Grant and News Sources
+    'https://www.agriculture.gov.au/about/news-and-media',
+    'https://www.agriculture.gov.au/biosecurity/partnerships/nbc/grants',
+    'https://www.agriculture.gov.au/about/drought',
+    'https://www.agriculture.gov.au/sites/default/files/sitecollectiondocuments/biosecurity/grants-funding.pdf',
+    
+    // Sector- and State-Specific Programs
+    'https://www.dairyaustralia.com.au/news-and-events',
+    'https://www.dairyaustralia.com.au/farm/business-tools/grants-and-funding',
+    'https://agriculture.vic.gov.au/support-and-resources/emergency-management/drought',
+    'https://agriculture.vic.gov.au/livestock-and-animals/animal-health/livestock-biosecurity',
+    'https://pir.sa.gov.au/grants_and_funding',
+    'https://pir.sa.gov.au/news',
+    'https://recfit.com.au/news/',
+    'https://recfit.com.au/projects/',
+    
+    // Sustainable Agriculture and Climate-Smart Farming
+    'https://www.landcareaustralia.org.au/news-events/',
+    'https://www.landcareaustralia.org.au/project/',
+    'https://www.mla.com.au/news-and-events/industry-news/',
+    'https://www.mla.com.au/research-and-development/Environment-and-sustainability/',
+    
+    // Technology and Equipment Support
+    'https://www.agriculture.gov.au/sites/default/files/documents/on-farm-connectivity-program.pdf',
+    'https://www.communications.gov.au/what-we-do/internet/mobile-coverage-and-capacity/mobile-black-spot-program',
+    
+    // Recent Funding News Articles
+    'https://www.miragenews.com/tag/agriculture/',
+    'https://www.miragenews.com/tag/grants/',
+    'https://arena.gov.au/news/',
+    'https://arena.gov.au/funding/',
+    'https://www.argusmedia.com/en/news/agriculture',
+    'https://www.argusmedia.com/en/news/fertilizer'
+  ];
+  
+  // Enhanced funding opportunity keywords (user-focused)
+  private readonly FUNDING_OPPORTUNITY_KEYWORDS = [
+    'grant', 'grants', 'funding', 'fund', 'subsidy', 'subsidies',
+    'rebate', 'application', 'applications', 'apply', 'deadline',
+    'round', 'opportunity', 'opportunities', 'scheme', 'program',
+    'assistance', 'support', 'initiative', 'eligibility', 'eligible'
+  ];
+  
+  // Australian agricultural context keywords
   private readonly AGRICULTURE_KEYWORDS = [
     'agriculture', 'agricultural', 'farm', 'farming', 'livestock', 'dairy',
-    'cattle', 'sheep', 'goat', 'pig', 'poultry', 'aquaculture',
-    'traceability', 'biosecurity', 'drought', 'connectivity', 'water',
-    'sustainability', 'primary producer', 'rural', 'pastoral',
-    'eid', 'nlis', 'rebate', 'recovery', 'infrastructure'
+    'cattle', 'sheep', 'beef', 'goat', 'pig', 'poultry', 'aquaculture',
+    'biosecurity', 'drought', 'primary producer', 'rural', 'pastoral',
+    'sustainability', 'climate-smart', 'landcare', 'soil health'
   ];
 
   /**
@@ -57,32 +101,122 @@ export class AustraliaService {
   }
 
   /**
-   * Sync all Australian agricultural funding sources
+   * Sync all Australian agricultural funding sources using enhanced news scraping
    */
-  async syncAllSources(maxPages?: number): Promise<{ daffRss: number; nswDpiRss: number; grantConnect: number; pirsaPrograms: number }> {
-    console.log('Starting comprehensive Australia sync...');
+  async syncAllSources(): Promise<{ newsPrograms: number; totalPrograms: number }> {
+    console.log('🇦🇺 Starting enhanced Australia agricultural funding sync...');
+    const startTime = Date.now();
 
-    const [daffRss, nswDpiRss, grantConnect, pirsaPrograms] = await Promise.all([
-      this.syncDaffRss(),
-      this.syncNswDpiRss(),
-      this.syncGrantConnect(),
-      this.syncPirsaPrograms()
-    ]);
+    const newsPrograms = await this.syncAustraliaNewsUrls();
+    const duration = ((Date.now() - startTime) / 1000).toFixed(1);
 
-    console.log(`Australia sync completed: DAFF RSS ${daffRss}, NSW DPI RSS ${nswDpiRss}, GrantConnect ${grantConnect}, PIRSA ${pirsaPrograms}`);
+    console.log(`🇦🇺 Australia sync completed in ${duration}s: ${newsPrograms} programs processed`);
 
     return {
-      daffRss,
-      nswDpiRss,
-      grantConnect,
-      pirsaPrograms
+      newsPrograms,
+      totalPrograms: newsPrograms
     };
   }
 
   /**
-   * Sync DAFF RSS feed for agricultural funding news
+   * Sync Australian agricultural funding news URLs with enhanced processing
    */
-  async syncDaffRss(): Promise<number> {
+  async syncAustraliaNewsUrls(): Promise<number> {
+    console.log('🌾 Syncing Australian agricultural funding sources...');
+    
+    let totalPrograms = 0;
+    const allPrograms: InsertSubsidyProgram[] = [];
+    
+    for (const url of this.AUSTRALIA_NEWS_URLS) {
+      try {
+        console.log(`Scraping: ${url}`);
+        const programs = await this.scrapeAustraliaNewsPage(url);
+        allPrograms.push(...programs);
+        console.log(`Found ${programs.length} programs from ${url}`);
+      } catch (error) {
+        console.error(`Error scraping ${url}:`, error);
+        // Continue with other URLs even if one fails
+      }
+    }
+    
+    // Apply cross-source deduplication
+    const deduplicatedPrograms = this.deduplicateAustraliaPrograms(allPrograms);
+    console.log(`Deduplicated ${allPrograms.length} Australia programs to ${deduplicatedPrograms.length}`);
+    
+    // Store programs
+    for (const program of deduplicatedPrograms) {
+      try {
+        const existing = await storage.getSubsidyProgramByDedupeKey(program.dedupeKey);
+        if (existing) {
+          await storage.updateSubsidyProgram(existing.id, program);
+        } else {
+          await storage.createSubsidyProgram(program);
+        }
+        totalPrograms++;
+      } catch (error) {
+        console.error('Error storing Australia program:', error);
+      }
+    }
+    
+    console.log(`Australia news sync completed: ${totalPrograms} programs processed`);
+    return totalPrograms;
+  }
+
+  /**
+   * Scrape a single Australian news page for agricultural funding programs
+   */
+  private async scrapeAustraliaNewsPage(url: string): Promise<InsertSubsidyProgram[]> {
+    const programs: InsertSubsidyProgram[] = [];
+    
+    try {
+      const response = await this.retryWithBackoff(async () => {
+        const res = await fetch(url, {
+          headers: {
+            'User-Agent': this.USER_AGENT,
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+          },
+          signal: AbortSignal.timeout(this.REQUEST_TIMEOUT)
+        });
+
+        if (!res.ok) {
+          throw new Error(`Australia news page fetch error: ${res.status} ${res.statusText}`);
+        }
+
+        return res;
+      });
+
+      const html = await response.text();
+      const $ = cheerio.load(html);
+      const domain = new URL(url).hostname;
+      const selectors = this.getAustraliaSelectors(domain);
+      
+      // Extract program items using domain-specific selectors
+      for (const selector of selectors) {
+        for (let i = 0; i < $(selector).length; i++) {
+          try {
+            const element = $(selector)[i];
+            const program = await this.extractAustraliaProgramFromElement($, element, url, domain);
+            if (program && this.isValidAustraliaProgram(program)) {
+              programs.push(program);
+            }
+          } catch (error) {
+            console.warn('Error extracting Australia program from element:', error);
+          }
+        }
+      }
+      
+      return programs;
+      
+    } catch (error) {
+      console.error(`Error scraping Australia ${url}:`, error);
+      return [];
+    }
+  }
+
+  /**
+   * Legacy DAFF RSS sync (deprecated - keeping for reference)
+   */
+  private async syncDaffRss(): Promise<number> {
     console.log('Syncing DAFF RSS feed...');
 
     try {
@@ -133,7 +267,7 @@ export class AustraliaService {
   /**
    * Sync NSW DPI RSS feed for state-level agricultural announcements
    */
-  async syncNswDpiRss(): Promise<number> {
+  private async syncNswDpiRss(): Promise<number> {
     console.log('Syncing NSW DPI RSS feed...');
 
     try {
@@ -641,6 +775,137 @@ export class AustraliaService {
     }
     
     return Math.abs(hash).toString(36);
+  }
+
+  /**
+   * Get domain-specific selectors for Australian sources
+   */
+  private getAustraliaSelectors(domain: string): string[] {
+    const domainSelectors: { [key: string]: string[] } = {
+      'agriculture.gov.au': ['article, .news-item', '.media-release', '.content-item'],
+      'dairyaustralia.com.au': ['.news-item', 'article', '.funding-item'],
+      'agriculture.vic.gov.au': ['.news-item', 'article', '.program-item'],
+      'pir.sa.gov.au': ['.grant-item', 'article', '.news-item'],
+      'recfit.com.au': ['.project-item', 'article', '.news-item'],
+      'landcareaustralia.org.au': ['.project-item', 'article', '.funding-item'],
+      'mla.com.au': ['.news-item', 'article', '.sustainability-item'],
+      'arena.gov.au': ['.news-item', 'article', '.grant-opportunity'],
+      'miragenews.com': ['article', '.news-item', '.content-item'],
+      'argusmedia.com': ['article', '.story', '.news-item']
+    };
+    
+    return domainSelectors[domain] || ['article', '.news-item', '.content-item'];
+  }
+
+  /**
+   * Extract program details from Australian news element
+   */
+  private async extractAustraliaProgramFromElement($: any, element: any, sourceUrl: string, domain: string): Promise<InsertSubsidyProgram | null> {
+    const $el = $(element);
+    
+    const title = $el.find('h1, h2, h3, .title').first().text().trim() || $el.text().trim().split('\n')[0];
+    const summary = $el.find('.summary, .excerpt, p').first().text().trim() || $el.text().trim().substring(0, 200);
+    const href = $el.find('a').first().attr('href') || '';
+    const url = href.startsWith('http') ? href : new URL(href, sourceUrl).toString();
+    
+    if (!title || title.length < 10) return null;
+    
+    const fullText = `${title} ${summary}`.toLowerCase();
+    const hasFunding = this.FUNDING_OPPORTUNITY_KEYWORDS.some(k => fullText.includes(k));
+    const hasAgriculture = this.AGRICULTURE_KEYWORDS.some(k => fullText.includes(k));
+    
+    if (!hasFunding || !hasAgriculture) return null;
+    
+    const attribution = this.getAustraliaSourceAttribution(domain);
+    
+    return {
+      id: `aus-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      title: title.trim(),
+      summary: summary.trim(),
+      category: 'Agricultural Support',
+      publishedDate: new Date(),
+      url: url || sourceUrl,
+      dataSource: attribution.dataSource,
+      sourceUrl,
+      sourceAgency: attribution.sourceAgency,
+      country: 'Australia',
+      region: 'Australia',
+      fundingAmount: null,
+      deadline: null,
+      location: 'Australia',
+      program: 'Australian Agricultural Program',
+      opportunityNumber: null,
+      awardNumber: null,
+      eligibilityTypes: ['farmer'],
+      fundingTypes: ['grant'],
+      isHighPriority: null,
+      alertReason: null,
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: [attribution.dataSource],
+      conflictResolution: null,
+      dedupeKey: this.generateAustraliaDedupeKey(title, url || sourceUrl, attribution.dataSource)
+    };
+  }
+
+  /**
+   * Cross-source deduplication for Australian programs
+   */
+  private deduplicateAustraliaPrograms(programs: InsertSubsidyProgram[]): InsertSubsidyProgram[] {
+    const dedupeMap = new Map<string, InsertSubsidyProgram>();
+    
+    for (const program of programs) {
+      const existing = dedupeMap.get(program.dedupeKey);
+      if (!existing) {
+        dedupeMap.set(program.dedupeKey, program);
+      } else {
+        const merged = this.mergeAustraliaPrograms(existing, program);
+        dedupeMap.set(program.dedupeKey, merged);
+      }
+    }
+    
+    return Array.from(dedupeMap.values());
+  }
+
+  /**
+   * Validate extracted Australian program
+   */
+  private isValidAustraliaProgram(program: InsertSubsidyProgram): boolean {
+    return program.title.length >= 10 &&
+           program.summary.length >= 20 &&
+           program.url.length > 0;
+  }
+
+  private getAustraliaSourceAttribution(domain: string): { dataSource: string; sourceAgency: string } {
+    const attributions: { [key: string]: { dataSource: string; sourceAgency: string } } = {
+      'agriculture.gov.au': { dataSource: 'australia_daff', sourceAgency: 'Department of Agriculture, Fisheries and Forestry' },
+      'dairyaustralia.com.au': { dataSource: 'australia_dairy', sourceAgency: 'Dairy Australia' },
+      'agriculture.vic.gov.au': { dataSource: 'australia_vic', sourceAgency: 'Agriculture Victoria' },
+      'pir.sa.gov.au': { dataSource: 'australia_pirsa', sourceAgency: 'PIRSA South Australia' },
+      'recfit.com.au': { dataSource: 'australia_recfit', sourceAgency: 'ReCFIT Tasmania' },
+      'landcareaustralia.org.au': { dataSource: 'australia_landcare', sourceAgency: 'Landcare Australia' },
+      'mla.com.au': { dataSource: 'australia_mla', sourceAgency: 'Meat & Livestock Australia' },
+      'arena.gov.au': { dataSource: 'australia_arena', sourceAgency: 'Australian Renewable Energy Agency' },
+      'miragenews.com': { dataSource: 'australia_mirage', sourceAgency: 'Mirage News' },
+      'argusmedia.com': { dataSource: 'australia_argus', sourceAgency: 'Argus Media' }
+    };
+    
+    return attributions[domain] || { dataSource: 'australia_news', sourceAgency: 'Australian Agricultural News' };
+  }
+
+  private generateAustraliaDedupeKey(title: string, url: string, source: string): string {
+    const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    const domain = new URL(url).hostname;
+    return `${normalizedTitle}-${domain}-${source}`.replace(/\s+/g, '-');
+  }
+
+  private mergeAustraliaPrograms(existing: InsertSubsidyProgram, newProgram: InsertSubsidyProgram): InsertSubsidyProgram {
+    return {
+      ...existing,
+      summary: newProgram.summary.length > existing.summary.length ? newProgram.summary : existing.summary,
+      mergedFromSources: Array.from(new Set([...(existing.mergedFromSources || []), ...(newProgram.mergedFromSources || [])])),
+      sourceLastModified: new Date()
+    };
   }
 }
 

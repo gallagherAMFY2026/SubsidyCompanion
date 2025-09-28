@@ -897,6 +897,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced global sync endpoints (all territories with user-provided sources)
+  app.post('/api/sync/enhanced/all',
+    requireAdminAuth,
+    rateLimit(1, 30 * 60 * 1000), // 1 request per 30 minutes
+    async (req, res) => {
+    try {
+      console.log('🌍 Starting enhanced global agricultural funding sync...');
+      const startTime = Date.now();
+      
+      const [canadaResult, nzResult, usResult, australiaResult, brazilResult, chileResult] = await Promise.allSettled([
+        rssService.syncCanadianFunding(), // Canada integrated via RSS service for now
+        newZealandService.syncAllSources(),
+        comprehensiveUsdaService.syncAllUsdaSources(),
+        australiaService.syncAllSources(),
+        brazilService.syncAllSources(),
+        chileService.syncAllSources()
+      ]);
+      
+      const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+      const results = {
+        canada: canadaResult.status === 'fulfilled' ? canadaResult.value : { error: canadaResult.reason },
+        newZealand: nzResult.status === 'fulfilled' ? nzResult.value : { error: nzResult.reason },
+        unitedStates: usResult.status === 'fulfilled' ? usResult.value : { error: usResult.reason },
+        australia: australiaResult.status === 'fulfilled' ? australiaResult.value : { error: australiaResult.reason },
+        brazil: brazilResult.status === 'fulfilled' ? brazilResult.value : { error: brazilResult.reason },
+        chile: chileResult.status === 'fulfilled' ? chileResult.value : { error: chileResult.reason }
+      };
+      
+      console.log(`🌍 Enhanced global sync completed in ${duration}s`);
+      
+      res.json({ 
+        success: true, 
+        message: 'Enhanced global agricultural funding sync completed',
+        duration: `${duration}s`,
+        results
+      });
+    } catch (error) {
+      console.error('Enhanced global sync error:', error);
+      res.status(500).json({ error: 'Enhanced global sync failed' });
+    }
+  });
+
+  app.post('/api/sync/enhanced/territory/:territory',
+    requireAdminAuth,
+    rateLimit(3, 10 * 60 * 1000), // 3 requests per 10 minutes per territory
+    async (req, res) => {
+    try {
+      const { territory } = req.params;
+      let result;
+      
+      switch (territory.toLowerCase()) {
+        case 'canada':
+          result = await rssService.syncCanadianFunding();
+          break;
+        case 'newzealand':
+        case 'new-zealand':
+          result = await newZealandService.syncAllSources();
+          break;
+        case 'unitedstates':
+        case 'united-states':
+        case 'us':
+        case 'usa':
+          result = await comprehensiveUsdaService.syncAllUsdaSources();
+          break;
+        case 'australia':
+          result = await australiaService.syncAllSources();
+          break;
+        case 'brazil':
+          result = await brazilService.syncAllSources();
+          break;
+        case 'chile':
+          result = await chileService.syncAllSources();
+          break;
+        default:
+          return res.status(400).json({ error: `Unknown territory: ${territory}. Supported: canada, newzealand, unitedstates, australia, brazil, chile` });
+      }
+      
+      res.json({ 
+        success: true, 
+        message: `Enhanced ${territory} agricultural funding sync completed`,
+        result
+      });
+    } catch (error) {
+      console.error(`Enhanced ${req.params.territory} sync error:`, error);
+      res.status(500).json({ error: `Enhanced ${req.params.territory} sync failed` });
+    }
+  });
+
+  app.get('/api/enhanced/stats',
+    rateLimit(10, 60 * 1000), // 10 requests per minute
+    async (req, res) => {
+    try {
+      const stats = await storage.getSubsidyProgramStats();
+      const territoryStats = await Promise.all([
+        storage.getSubsidyProgramsByCountry('Canada'),
+        storage.getSubsidyProgramsByCountry('New Zealand'),
+        storage.getSubsidyProgramsByCountry('United States'),
+        storage.getSubsidyProgramsByCountry('Australia'),
+        storage.getSubsidyProgramsByCountry('Brazil'),
+        storage.getSubsidyProgramsByCountry('Chile')
+      ]);
+      
+      res.json({
+        global: stats,
+        territories: {
+          canada: territoryStats[0].length,
+          newZealand: territoryStats[1].length,
+          unitedStates: territoryStats[2].length,
+          australia: territoryStats[3].length,
+          brazil: territoryStats[4].length,
+          chile: territoryStats[5].length
+        },
+        coverage: {
+          total: 6,
+          active: territoryStats.filter(t => t.length > 0).length
+        }
+      });
+    } catch (error) {
+      console.error('Enhanced stats error:', error);
+      res.status(500).json({ error: 'Failed to get enhanced stats' });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

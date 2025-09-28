@@ -432,7 +432,11 @@ export class BrazilService {
       opportunityNumber: transfer.codigo,
       eligibilityTypes: ['farm', 'rural-business'],
       fundingTypes: ['transfer'],
-      mergedFromSources: ['portal_transparencia']
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: ['portal_transparencia'],
+      conflictResolution: null,
+      dedupeKey: this.generateDedupeKey(transfer.programa, transfer.municipio, transfer.codigo)
     };
   }
 
@@ -461,7 +465,11 @@ export class BrazilService {
       opportunityNumber: null,
       eligibilityTypes: ['farm', 'rural-enterprise'],
       fundingTypes: ['grant', 'support'],
-      mergedFromSources: ['mapa_news']
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: ['mapa_news'],
+      conflictResolution: null,
+      dedupeKey: this.generateDedupeKey(news.title, news.href, 'mapa_news')
     };
   }
 
@@ -490,7 +498,11 @@ export class BrazilService {
       opportunityNumber: null,
       eligibilityTypes: ['farm', 'rural-enterprise', 'cooperative'],
       fundingTypes: ['loan', 'credit'],
-      mergedFromSources: ['bndes_news']
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: ['bndes_news'],
+      conflictResolution: null,
+      dedupeKey: this.generateDedupeKey(news.title, news.href, 'bndes_news')
     };
   }
 
@@ -754,6 +766,15 @@ export class BrazilService {
     if (news.title.toLowerCase().includes('cooperativa')) tags.push('cooperativa');
     
     return tags;
+  }
+
+  /**
+   * Generate deduplication key for Brazil programs
+   */
+  private generateDedupeKey(title: string, location: string, source: string): string {
+    const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    const normalizedLocation = location.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    return `${normalizedTitle}-${normalizedLocation}-${source}`.replace(/\s+/g, '-');
   }
 }
 

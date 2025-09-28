@@ -706,6 +706,13 @@ export class RssService {
   }
 
   /**
+   * Public method for Canadian funding sync (matches route expectations)
+   */
+  async syncCanadianFunding(): Promise<number> {
+    return await this.syncCanadianNewsPages();
+  }
+
+  /**
    * Deduplicate listings across sources
    */
   private deduplicateCanadianListings(listings: Array<any>): Array<any> {

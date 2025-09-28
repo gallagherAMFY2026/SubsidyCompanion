@@ -470,7 +470,11 @@ export class ChileService {
       opportunityNumber: tender.CodigoExterno,
       eligibilityTypes: ['organization', 'company'],
       fundingTypes: ['procurement', 'contract'],
-      mergedFromSources: ['chilecompra_api']
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: ['chilecompra_api'],
+      conflictResolution: null,
+      dedupeKey: this.generateDedupeKey(tender.Nombre, tender.CodigoExterno, 'chilecompra_api')
     };
   }
 
@@ -499,7 +503,11 @@ export class ChileService {
       opportunityNumber: item.codigo_programa,
       eligibilityTypes: ['government', 'organization'],
       fundingTypes: ['budget-execution'],
-      mergedFromSources: ['presupuesto_abierto']
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: ['presupuesto_abierto'],
+      conflictResolution: null,
+      dedupeKey: this.generateDedupeKey(item.nombre_programa, item.codigo_programa, 'presupuesto_abierto')
     };
   }
 
@@ -528,7 +536,11 @@ export class ChileService {
       opportunityNumber: null,
       eligibilityTypes: ['farm', 'rural-enterprise'],
       fundingTypes: ['grant', 'support'],
-      mergedFromSources: ['minagri_news']
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: ['minagri_news'],
+      conflictResolution: null,
+      dedupeKey: this.generateDedupeKey(news.title, news.href, 'minagri_news')
     };
   }
 
@@ -557,7 +569,11 @@ export class ChileService {
       opportunityNumber: null,
       eligibilityTypes: ['farm', 'research-institution', 'company'],
       fundingTypes: ['innovation-grant'],
-      mergedFromSources: ['fia_calls']
+      sourceLastModified: null,
+      sourceEtag: null,
+      mergedFromSources: ['fia_calls'],
+      conflictResolution: null,
+      dedupeKey: this.generateDedupeKey(call.title, call.href, 'fia_calls')
     };
   }
 
@@ -776,6 +792,15 @@ export class ChileService {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Generate deduplication key for Chile programs
+   */
+  private generateDedupeKey(title: string, identifier: string, source: string): string {
+    const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    const normalizedId = identifier.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    return `${normalizedTitle}-${normalizedId}-${source}`.replace(/\s+/g, '-');
   }
 }
 
