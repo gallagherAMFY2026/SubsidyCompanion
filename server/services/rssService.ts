@@ -2,24 +2,17 @@ import { rssParser } from './rssParser';
 import { storage } from '../storage';
 import fs from 'fs/promises';
 import path from 'path';
+import * as cheerio from 'cheerio';
 
 export class RssService {
-  // Enhanced RSS service with fallback feeds and RSS mixer services
+  // Enhanced service with direct news page scraping for richer data
+  private readonly CANADA_NEWS_URLS = [
+    'https://www.canada.ca/en/agriculture-agri-food/news.html',
+    'https://agriculture.canada.ca/en/news',
+    'https://www.agr.gc.ca/eng/news/'
+  ];
+
   private readonly PRIMARY_FEEDS = [
-    {
-      name: 'Canada AAFC',
-      url: 'https://www.canada.ca/en/agriculture-agri-food/news.rss.xml',
-      country: 'CA',
-      fallbacks: [
-        'https://www.agr.gc.ca/eng/news/?rss=1',
-        'https://agriculture.canada.ca/en/news/rss',
-        'https://feeds.feedburner.com/CanadaAgricultureNews'
-      ],
-      mixerFallbacks: [
-        'https://rss.app/feeds/canada-agriculture-news.xml',
-        'https://fetchrss.com/rss/canada-agri-news.xml'
-      ]
-    },
     {
       name: 'NZ Beehive', 
       url: 'https://www.beehive.govt.nz/rss.xml',
@@ -55,6 +48,354 @@ export class RssService {
   private readonly CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
   private readonly REQUEST_TIMEOUT = 30000; // 30 seconds
   private readonly MAX_RETRIES = 3;
+  private readonly USER_AGENT = 'SubsidyCompanion/1.0 (agricultural-funding-monitor)';
+
+  // Canadian agricultural funding keywords for enhanced detection
+  private readonly CANADA_KEYWORDS = [
+    'agricultural', 'farming', 'farmer', 'producer', 'agriculture',
+    'grant', 'funding', 'program', 'support', 'assistance',
+    'AgriInnovate', 'AgriMarketing', 'AgriScience', 'Canadian Agricultural',
+    'Farm Credit Canada', 'AgriStability', 'AgriInvest', 'Business Risk Management',
+    'application deadline', 'funding opportunity', 'call for proposals',
+    'cost-shared', 'financial assistance', 'technical assistance'
+  ];
+
+  /**
+   * Fetch Canadian news listings from AAFC pages (following NRCS pattern)
+   */
+  private async fetchCanadianNewsListings(baseUrl: string): Promise<Array<{
+    title: string;
+    url: string;
+    pubDate?: string;
+    summary?: string;
+  }>> {
+    try {
+      const response = await this.fetchWithRetry(baseUrl);
+      const $ = cheerio.load(response);
+      const listings: Array<any> = [];
+
+      // Parse Canadian government news page formats
+      // Format 1: News article cards (canada.ca style)
+      $('.news-item, .gc-nws, .views-row, .list-group-item').each((_, element) => {
+        const $item = $(element);
+        const titleEl = $item.find('h3 a, h2 a, .news-title a, a').first();
+        const title = titleEl.text().trim();
+        const relativeUrl = titleEl.attr('href');
+        
+        if (title && relativeUrl && this.isRelevantCanadianProgram(title)) {
+          const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : new URL(relativeUrl, baseUrl).toString();
+          const pubDate = $item.find('.date, .datetime, .published-date').text().trim();
+          const summary = $item.find('.summary, .description, .news-summary').text().trim();
+          
+          listings.push({
+            title,
+            url: fullUrl,
+            pubDate: pubDate || null,
+            summary: summary || null
+          });
+        }
+      });
+
+      // Format 2: Simple list format
+      if (listings.length === 0) {
+        $('ul li a, .item-list li a, .news-list a').each((_, element) => {
+          const $link = $(element);
+          const title = $link.text().trim();
+          const relativeUrl = $link.attr('href');
+          
+          if (title && relativeUrl && this.isRelevantCanadianProgram(title)) {
+            const fullUrl = relativeUrl.startsWith('http') ? relativeUrl : new URL(relativeUrl, baseUrl).toString();
+            listings.push({
+              title,
+              url: fullUrl
+            });
+          }
+        });
+      }
+
+      console.log(`🍁 Found ${listings.length} relevant Canadian programs from ${baseUrl}`);
+      return listings;
+      
+    } catch (error) {
+      console.error('❌ Failed to fetch Canadian news listings:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Process Canadian news announcement (following NRCS pattern)
+   */
+  private async processCanadianAnnouncement(
+    announcement: { title: string; url: string; pubDate?: string; summary?: string }
+  ): Promise<any | null> {
+    try {
+      console.log(`🍁 Processing: ${announcement.title}`);
+      
+      if (!this.isValidUrl(announcement.url)) {
+        console.warn(`⚠️  Invalid URL skipped: ${announcement.url}`);
+        return null;
+      }
+      
+      const content = await this.fetchWithRetry(announcement.url);
+      const $ = cheerio.load(content);
+      
+      // Enhanced content extraction for Canadian gov pages
+      const contentSelectors = [
+        '.gc-main, .main-content, .content, article',
+        '.page-content, .entry-content, .news-content',
+        '.body, .text, .description, .announcement-content',
+        '.wb-main, .container-fluid .row'
+      ];
+      
+      let fullContent = '';
+      for (const selector of contentSelectors) {
+        const extractedContent = $(selector).text().trim();
+        if (extractedContent.length > fullContent.length) {
+          fullContent = extractedContent;
+        }
+      }
+      
+      if (!fullContent || fullContent.length < 100) {
+        console.warn(`⚠️  Insufficient content extracted from ${announcement.url} (${fullContent.length} chars)`);
+        const pageTitle = $('title').text() || $('h1').first().text();
+        fullContent = `${pageTitle}\n${announcement.summary || ''}\n${fullContent}`.trim();
+      }
+
+      const deadline = this.extractDeadline(fullContent);
+      const fundingAmount = this.extractFundingAmount(fullContent);
+      const programType = this.extractCanadianProgramType(fullContent);
+      
+      const isHighPriority = this.CANADA_KEYWORDS.some(keyword => 
+        announcement.title.toLowerCase().includes(keyword.toLowerCase()) ||
+        fullContent.toLowerCase().includes(keyword.toLowerCase())
+      );
+      
+      const program = {
+        id: `aafc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        title: announcement.title,
+        description: announcement.summary || this.extractSummary(fullContent),
+        category: this.categorizeCanadianProgram(announcement.title, fullContent),
+        publishedDate: this.parseDate(announcement.pubDate) || new Date(),
+        deadline,
+        url: announcement.url,
+        dataSource: 'canada_agriculture',
+        sourceAgency: 'Agriculture and Agri-Food Canada',
+        country: 'Canada',
+        fundingAmount,
+        eligibilityTypes: ['farm', 'producer', 'organization'],
+        fundingTypes: this.extractFundingTypes(fullContent),
+        isHighPriority,
+        location: this.extractCanadianLocation(fullContent),
+        region: this.extractCanadianLocation(fullContent)
+      };
+      
+      return program;
+      
+    } catch (error) {
+      console.error(`❌ Failed to process Canadian announcement ${announcement.title}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Helper methods for Canadian program processing
+   */
+  private isRelevantCanadianProgram(title: string): boolean {
+    return this.CANADA_KEYWORDS.some(keyword => 
+      title.toLowerCase().includes(keyword.toLowerCase())
+    );
+  }
+
+  private extractDeadline(content: string): Date | null {
+    const deadlinePatterns = [
+      /deadline:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /application(?:s)? (?:due|close):?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /applications? must be (?:received|submitted) by:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+      /submit(?:ted)? by:?\s*([A-Za-z]+ \d{1,2},? \d{4})/i
+    ];
+
+    for (const pattern of deadlinePatterns) {
+      const match = content.match(pattern);
+      if (match) {
+        const dateStr = match[1];
+        const parsed = new Date(dateStr);
+        if (!isNaN(parsed.getTime())) {
+          return parsed;
+        }
+      }
+    }
+    return null;
+  }
+
+  private extractFundingAmount(content: string): string | null {
+    const fundingPatterns = [
+      /\$[\d,]+(?:\.\d{2})?(?:\s*(?:CAD|million|thousand|k|M))?/g,
+      /up to \$[\d,]+/i,
+      /maximum of \$[\d,]+/i,
+      /funding up to \$[\d,]+/i
+    ];
+
+    for (const pattern of fundingPatterns) {
+      const matches = content.match(pattern);
+      if (matches && matches.length > 0) {
+        return matches[0];
+      }
+    }
+    return null;
+  }
+
+  private extractSummary(content: string): string {
+    const sentences = content.split(/[.!?]+/);
+    return sentences.slice(0, 2).join('. ').trim();
+  }
+
+  private categorizeCanadianProgram(title: string, content: string): string {
+    const titleAndContent = `${title} ${content}`.toLowerCase();
+    
+    if (titleAndContent.includes('innovation') || titleAndContent.includes('research')) return 'Innovation';
+    if (titleAndContent.includes('marketing') || titleAndContent.includes('market')) return 'Marketing';
+    if (titleAndContent.includes('environment') || titleAndContent.includes('conservation')) return 'Conservation';
+    if (titleAndContent.includes('youth') || titleAndContent.includes('young')) return 'Youth';
+    if (titleAndContent.includes('export') || titleAndContent.includes('trade')) return 'Trade';
+    
+    return 'General';
+  }
+
+  private extractFundingTypes(content: string): string[] {
+    const types = [];
+    const lowerContent = content.toLowerCase();
+    
+    if (lowerContent.includes('grant')) types.push('grant');
+    if (lowerContent.includes('loan')) types.push('loan');
+    if (lowerContent.includes('support')) types.push('support');
+    if (lowerContent.includes('assistance')) types.push('assistance');
+    
+    return types.length > 0 ? types : ['grant'];
+  }
+
+  private extractCanadianLocation(content: string): string | null {
+    const provinces = [
+      'British Columbia', 'Alberta', 'Saskatchewan', 'Manitoba', 
+      'Ontario', 'Quebec', 'New Brunswick', 'Nova Scotia', 
+      'Prince Edward Island', 'Newfoundland and Labrador'
+    ];
+    
+    for (const province of provinces) {
+      if (content.includes(province)) {
+        return province;
+      }
+    }
+    return null;
+  }
+
+  private extractCanadianProgramType(content: string): string {
+    const lowerContent = content.toLowerCase();
+    
+    if (lowerContent.includes('agriinnovate')) return 'AgriInnovate';
+    if (lowerContent.includes('agrimarketing')) return 'AgriMarketing';
+    if (lowerContent.includes('agriscience')) return 'AgriScience';
+    if (lowerContent.includes('agristability')) return 'AgriStability';
+    
+    return 'Program';
+  }
+
+  private parseDate(dateStr?: string): Date | null {
+    if (!dateStr) return null;
+    
+    const parsed = new Date(dateStr);
+    return isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  private isValidUrl(url: string): boolean {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
+
+  private async fetchWithRetry(url: string): Promise<string> {
+    for (let attempt = 1; attempt <= this.MAX_RETRIES; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.REQUEST_TIMEOUT);
+        
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': this.USER_AGENT,
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1'
+          },
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.text();
+        
+      } catch (error) {
+        console.warn(`Attempt ${attempt}/${this.MAX_RETRIES} failed for ${url}:`, (error as Error).message);
+        
+        if (attempt === this.MAX_RETRIES) {
+          throw error;
+        }
+        
+        const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    
+    throw new Error('All retry attempts failed');
+  }
+
+  /**
+   * Sync Canadian agricultural programs from news pages (replaces RSS)
+   */
+  private async syncCanadianNewsPages(): Promise<number> {
+    console.log('🍁 Syncing Canadian agricultural programs from news pages...');
+    
+    let totalPrograms = 0;
+    
+    for (const newsUrl of this.CANADA_NEWS_URLS) {
+      try {
+        console.log(`📰 Fetching news from: ${newsUrl}`);
+        
+        const listings = await this.fetchCanadianNewsListings(newsUrl);
+        console.log(`🍁 Found ${listings.length} news items from ${newsUrl}`);
+        
+        // Process each news item to extract program details
+        for (const listing of listings) {
+          try {
+            const program = await this.processCanadianAnnouncement(listing);
+            if (program) {
+              await storage.createSubsidyProgram(program);
+              totalPrograms++;
+              console.log(`✅ Stored Canadian program: ${program.title}`);
+            }
+          } catch (error) {
+            console.error(`❌ Failed to process Canadian listing: ${listing.title}`, error);
+          }
+        }
+        
+        // Respectful delay between sources
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+      } catch (error) {
+        console.error(`❌ Failed to sync Canadian news from ${newsUrl}:`, error);
+      }
+    }
+    
+    console.log(`🍁 Canadian news sync completed: ${totalPrograms} programs processed`);
+    return totalPrograms;
+  }
 
   /**
    * Fetch RSS content with enhanced error handling, fallbacks, and RSS mixer services
@@ -194,11 +535,18 @@ export class RssService {
    */
   async syncRssData(forceRefresh: boolean = false): Promise<void> {
     try {
-      console.log('Starting enhanced RSS sync with fallback support...');
+      console.log('Starting enhanced sync with news page scraping and RSS fallback...');
       
       let totalPrograms = 0;
       const allPrograms: any[] = [];
       
+      // PRIORITY 1: Canadian news page scraping (replaces RSS)
+      console.log('🍁 Starting Canadian news page scraping...');
+      const canadianPrograms = await this.syncCanadianNewsPages();
+      totalPrograms += canadianPrograms;
+      console.log(`✅ Canadian news scraping completed: ${canadianPrograms} programs`);
+      
+      // Continue with remaining RSS feeds (NZ, AU)
       for (const feedConfig of this.PRIMARY_FEEDS) {
         try {
           console.log(`\nSyncing ${feedConfig.name}...`);
