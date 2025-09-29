@@ -58,11 +58,20 @@ export default function EligibilityScreen({ onNext }: EligibilityScreenProps) {
   ];
 
   const practices = [
-    { value: "cross-fencing", label: "Cross-fencing" },
+    { value: "cross-fencing", label: "Cross-fencing / Rotational grazing" },
     { value: "watering-systems", label: "Watering systems" },
     { value: "pasture-renovation", label: "Pasture renovation" },
-    { value: "ipm-exclusion", label: "IPM/wildlife exclusion" },
-    { value: "traceability", label: "Traceability" }
+    { value: "soil-health", label: "Soil health / Cover crops" },
+    { value: "conservation-tillage", label: "Conservation tillage" },
+    { value: "nutrient-management", label: "Nutrient management" },
+    { value: "irrigation-efficiency", label: "Irrigation efficiency" },
+    { value: "riparian-buffers", label: "Riparian buffers / Wetlands" },
+    { value: "biodiversity", label: "Biodiversity / Habitat" },
+    { value: "emissions-reduction", label: "Emissions reduction" },
+    { value: "agroforestry", label: "Agroforestry / Silvopasture" },
+    { value: "ipm-exclusion", label: "IPM / Wildlife exclusion" },
+    { value: "drought-resilience", label: "Drought resilience" },
+    { value: "traceability", label: "Traceability / Certification" }
   ];
 
   const updateField = (field: keyof EligibilityData, value: string) => {
@@ -71,13 +80,36 @@ export default function EligibilityScreen({ onNext }: EligibilityScreenProps) {
     
     // Auto-calculate result when enough data is provided
     if (newData.operation && newData.scale && newData.location && newData.practice) {
+      // Determine program based on location
+      let programName = "Environmental Quality Incentives Program (EQIP)";
+      let ruleType = "Ranking cutoff";
+      let nextDate = "November 15, 2024";
+      
+      if (newData.location.startsWith('canada')) {
+        programName = "Canadian Agricultural Partnership (CAP) - AgriInvest";
+        nextDate = "Rolling applications - Contact provincial office";
+      } else if (newData.location.startsWith('australia')) {
+        programName = "National Landcare Program";
+        nextDate = "March 31, 2025";
+      } else if (newData.location.startsWith('newzealand')) {
+        programName = "Sustainable Food and Fibre Futures (SFF Futures)";
+        nextDate = "Quarterly rounds - Next: December 2024";
+      } else if (newData.location.startsWith('brazil')) {
+        programName = "PRONAF - Programa Nacional de Fortalecimento da Agricultura Familiar";
+        nextDate = "Contact local MAPA office";
+        ruleType = "First-come, first-served";
+      } else if (newData.location.startsWith('chile')) {
+        programName = "FIA - Fundación para la Innovación Agraria";
+        nextDate = "Variable by program - Check FIA website";
+      }
+      
       const mockResult: EligibilityResult = {
         eligible: "likely",
-        program: "Environmental Quality Incentives Program (EQIP)",
+        program: programName,
         costShare: "50-75%",
         cap: "$15,000-$40,000",
-        ruleType: "Ranking cutoff",
-        nextDate: "November 15, 2024",
+        ruleType,
+        nextDate,
         checklist: ["Land control proof", "Compliance ID verification", "Dated quote/practice sketch"]
       };
       setResult(mockResult);
@@ -136,10 +168,51 @@ export default function EligibilityScreen({ onNext }: EligibilityScreenProps) {
                   <SelectValue placeholder="Select your location" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="us-iowa">United States - Iowa</SelectItem>
-                  <SelectItem value="us-texas">United States - Texas</SelectItem>
-                  <SelectItem value="us-california">United States - California</SelectItem>
-                  <SelectItem value="canada-alberta">Canada - Alberta</SelectItem>
+                  <optgroup label="🍁 Canada">
+                    <SelectItem value="canada-national">Canada - National Programs</SelectItem>
+                    <SelectItem value="canada-alberta">Canada - Alberta</SelectItem>
+                    <SelectItem value="canada-bc">Canada - British Columbia</SelectItem>
+                    <SelectItem value="canada-saskatchewan">Canada - Saskatchewan</SelectItem>
+                    <SelectItem value="canada-ontario">Canada - Ontario</SelectItem>
+                    <SelectItem value="canada-quebec">Canada - Quebec</SelectItem>
+                  </optgroup>
+                  <optgroup label="🇺🇸 United States">
+                    <SelectItem value="us-national">United States - National Programs</SelectItem>
+                    <SelectItem value="us-iowa">United States - Iowa</SelectItem>
+                    <SelectItem value="us-illinois">United States - Illinois</SelectItem>
+                    <SelectItem value="us-nebraska">United States - Nebraska</SelectItem>
+                    <SelectItem value="us-minnesota">United States - Minnesota</SelectItem>
+                    <SelectItem value="us-kansas">United States - Kansas</SelectItem>
+                    <SelectItem value="us-wisconsin">United States - Wisconsin</SelectItem>
+                    <SelectItem value="us-california">United States - California</SelectItem>
+                    <SelectItem value="us-texas">United States - Texas</SelectItem>
+                    <SelectItem value="us-missouri">United States - Missouri</SelectItem>
+                  </optgroup>
+                  <optgroup label="🇦🇺 Australia">
+                    <SelectItem value="australia-national">Australia - National Programs</SelectItem>
+                    <SelectItem value="australia-nsw">Australia - New South Wales</SelectItem>
+                    <SelectItem value="australia-victoria">Australia - Victoria</SelectItem>
+                    <SelectItem value="australia-queensland">Australia - Queensland</SelectItem>
+                    <SelectItem value="australia-sa">Australia - South Australia</SelectItem>
+                    <SelectItem value="australia-wa">Australia - Western Australia</SelectItem>
+                  </optgroup>
+                  <optgroup label="🇳🇿 New Zealand">
+                    <SelectItem value="newzealand-national">New Zealand - National Programs</SelectItem>
+                    <SelectItem value="newzealand-north">New Zealand - North Island</SelectItem>
+                    <SelectItem value="newzealand-south">New Zealand - South Island</SelectItem>
+                  </optgroup>
+                  <optgroup label="🇧🇷 Brazil">
+                    <SelectItem value="brazil-national">Brazil - National Programs</SelectItem>
+                    <SelectItem value="brazil-south">Brazil - South Region</SelectItem>
+                    <SelectItem value="brazil-southeast">Brazil - Southeast Region</SelectItem>
+                    <SelectItem value="brazil-central">Brazil - Central-West Region</SelectItem>
+                  </optgroup>
+                  <optgroup label="🇨🇱 Chile">
+                    <SelectItem value="chile-national">Chile - National Programs</SelectItem>
+                    <SelectItem value="chile-central">Chile - Central Zone</SelectItem>
+                    <SelectItem value="chile-south">Chile - South Zone</SelectItem>
+                    <SelectItem value="chile-north">Chile - North Zone</SelectItem>
+                  </optgroup>
                 </SelectContent>
               </Select>
             </div>
@@ -196,13 +269,36 @@ export default function EligibilityScreen({ onNext }: EligibilityScreenProps) {
               onClick={() => {
                 // Auto-calculate result when button is clicked
                 if (formData.operation && formData.scale && formData.location && formData.practice) {
+                  // Determine program based on location
+                  let programName = "Environmental Quality Incentives Program (EQIP)";
+                  let ruleType = "Ranking cutoff";
+                  let nextDate = "November 15, 2024";
+                  
+                  if (formData.location.startsWith('canada')) {
+                    programName = "Canadian Agricultural Partnership (CAP) - AgriInvest";
+                    nextDate = "Rolling applications - Contact provincial office";
+                  } else if (formData.location.startsWith('australia')) {
+                    programName = "National Landcare Program";
+                    nextDate = "March 31, 2025";
+                  } else if (formData.location.startsWith('newzealand')) {
+                    programName = "Sustainable Food and Fibre Futures (SFF Futures)";
+                    nextDate = "Quarterly rounds - Next: December 2024";
+                  } else if (formData.location.startsWith('brazil')) {
+                    programName = "PRONAF - Programa Nacional de Fortalecimento da Agricultura Familiar";
+                    nextDate = "Contact local MAPA office";
+                    ruleType = "First-come, first-served";
+                  } else if (formData.location.startsWith('chile')) {
+                    programName = "FIA - Fundación para la Innovación Agraria";
+                    nextDate = "Variable by program - Check FIA website";
+                  }
+                  
                   const mockResult: EligibilityResult = {
                     eligible: "likely",
-                    program: "Environmental Quality Incentives Program (EQIP)",
+                    program: programName,
                     costShare: "50-75%",
                     cap: "$15,000-$40,000",
-                    ruleType: "Ranking cutoff",
-                    nextDate: "November 15, 2024",
+                    ruleType,
+                    nextDate,
                     checklist: ["Land control proof", "Compliance ID verification", "Dated quote/practice sketch"]
                   };
                   setResult(mockResult);
