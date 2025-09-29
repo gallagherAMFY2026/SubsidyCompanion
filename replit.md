@@ -6,6 +6,13 @@ Subsidy Companion is a comprehensive global agricultural funding intelligence pl
 
 ## Recent Changes
 
+### September 29, 2025 - Homepage Restructuring: Subsidies as Primary Content
+- **Homepage restructured from 4 to 2 options**: Simplified from eligibility/practices/submission/deadlines to "Browse Subsidies" (primary) and "Check My Eligibility" to make subsidies the focal point
+- **SubsidyBrowser component created**: New comprehensive subsidy browser with search, country filtering, sort options (deadline/priority/newest), and program statistics prominently displayed at top
+- **All programs now visible**: Removed .slice(0,6) limitation to display complete program database instead of just 6 sample programs
+- **Navigation simplified**: Updated to show Browse Subsidies, Check Eligibility, and Help; removed standalone submission pack and deadlines as they're now integrated workflows
+- **End-to-end testing confirmed**: All functionality working correctly across the restructured interface with subsidies as primary content
+
 ### September 29, 2025 - Global Eligibility Checker Upgrade
 - **Expanded Location Coverage**: Upgraded from 4 hardcoded US/Canada locations to 48 comprehensive options across all 6 territories
   - Canada: 7 locations (National + 6 provinces including Alberta, BC, Saskatchewan, Manitoba, Ontario, Quebec)
