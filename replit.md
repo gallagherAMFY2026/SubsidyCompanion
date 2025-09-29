@@ -2,7 +2,31 @@
 
 ## Overview
 
-Subsidy Companion is a full-stack web application designed to help farmers navigate agricultural subsidy programs. The application streamlines the complex process of finding, evaluating, and applying for conservation and agricultural subsidies by providing eligibility checking, practice exploration, submission pack generation, and deadline tracking. The system integrates with Agriculture and Agri-Food Canada RSS feeds to provide real-time program information and uses a clean, utility-first design approach inspired by productivity applications like Notion and Linear.
+Subsidy Companion is a comprehensive global agricultural funding intelligence platform covering 6 territories (Canada, US, Australia, New Zealand, Brazil, Chile). The application streamlines the complex process of finding, evaluating, and applying for conservation and agricultural subsidies by providing eligibility checking, practice exploration, submission pack generation, and deadline tracking. The system integrates with multiple government data sources across territories to provide real-time program information and uses a clean, utility-first design approach inspired by productivity applications like Notion and Linear.
+
+## Recent Changes
+
+### September 29, 2025 - Global Eligibility Checker Upgrade
+- **Expanded Location Coverage**: Upgraded from 4 hardcoded US/Canada locations to 48 comprehensive options across all 6 territories
+  - Canada: 7 locations (National + 6 provinces including Alberta, BC, Saskatchewan, Manitoba, Ontario, Quebec)
+  - United States: 18 locations (National + 17 major agricultural states)
+  - Australia: 8 locations (National + 7 states/territories)
+  - New Zealand: 5 locations (National + 4 key regions)
+  - Brazil: 5 locations (National + 4 regions)
+  - Chile: 5 locations (National + 4 zones)
+- **Enhanced Practice Selection**: Expanded from 5 basic practices to 14 comprehensive agricultural conservation techniques including modern options like soil health/cover crops, emissions reduction, agroforestry/silvopasture, drought resilience, and biodiversity/habitat management
+- **Territory-Specific Program Logic**: Implemented centralized `getProgramByLocation()` function that displays realistic program names based on user's selected territory:
+  - Canada: Canadian Agricultural Partnership (CAP) - AgriInvest
+  - US: Environmental Quality Incentives Program (EQIP)
+  - Australia: National Landcare Program
+  - New Zealand: Sustainable Food and Fibre Futures (SFF Futures)
+  - Brazil: PRONAF - Programa Nacional de Fortalecimento da Agricultura Familiar
+  - Chile: FIA - Fundación para la Innovación Agraria
+- **Technical Improvements**: 
+  - Replaced non-standard `<optgroup>` with proper shadcn/Radix UI `SelectGroup` and `SelectLabel` components
+  - Centralized territory-to-program mapping to eliminate code duplication and prevent drift
+  - Maintained consistent location value prefixes for reliable territory detection
+- **Validation**: End-to-end Playwright testing confirmed all 6 territories display correct program names and deadlines
 
 ## User Preferences
 
