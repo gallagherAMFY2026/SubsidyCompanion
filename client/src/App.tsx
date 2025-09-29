@@ -41,6 +41,7 @@ import PracticeCard from "@/components/PracticeCard";
 import SubmissionPack from "@/components/SubmissionPack";
 import DeadlineCalendar from "@/components/DeadlineCalendar";
 import AIAssistant from "@/components/AIAssistant";
+import SubsidyBrowser from "@/components/SubsidyBrowser";
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -71,7 +72,7 @@ function AppContent() {
   });
 
   // Transform enhanced programs into practice cards format
-  const practicePrograms = allPrograms.slice(0, 6).map((program: SubsidyProgram) => ({
+  const practicePrograms = allPrograms.map((program: SubsidyProgram) => ({
     title: program.title,
     category: program.category,
     costShare: program.fundingAmount || "Varies by program",
@@ -126,46 +127,11 @@ function AppContent() {
       
       case "practices":
         return (
-          <div className="max-w-6xl mx-auto p-6 space-y-6">
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl font-semibold">Explore Practices</h1>
-              <p className="text-muted-foreground">Browse conservation practices and their funding opportunities</p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {practicePrograms.map((practice: any, index: number) => (
-                <PracticeCard
-                  key={index}
-                  {...practice}
-                  onBuildPlan={() => {
-                    setUserData({ ...userData, selectedPractice: practice });
-                    setCurrentPage("submission");
-                  }}
-                />
-              ))}
-            </div>
-            
-            {/* Enhanced program statistics display */}
-            {programStats && (
-              <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-muted/20 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-primary">{programStats.total}</div>
-                  <div className="text-sm text-muted-foreground">Total Programs</div>
-                </div>
-                <div className="bg-muted/20 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-green-600">{programStats.active}</div>
-                  <div className="text-sm text-muted-foreground">Active Programs</div>
-                </div>
-                <div className="bg-muted/20 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-orange-600">{programStats.highPriority}</div>
-                  <div className="text-sm text-muted-foreground">High Priority</div>
-                </div>
-                <div className="bg-muted/20 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-blue-600">{programStats.upcomingDeadlines}</div>
-                  <div className="text-sm text-muted-foreground">Deadlines This Week</div>
-                </div>
-              </div>
-            )}
-          </div>
+          <SubsidyBrowser 
+            programs={allPrograms}
+            stats={programStats}
+            isLoading={programsLoading}
+          />
         );
       
       case "submission":

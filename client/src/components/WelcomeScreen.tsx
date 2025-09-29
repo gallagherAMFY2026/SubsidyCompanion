@@ -9,31 +9,17 @@ interface WelcomeScreenProps {
 export default function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
   const modes = [
     {
-      id: "eligibility",
-      title: "Check eligibility",
-      description: "Find out if you qualify for subsidy programs in under 60 seconds",
-      icon: CheckCircle,
+      id: "practices",
+      title: "Browse Subsidies",
+      description: "Explore available programs across 6 territories with funding amounts and deadlines",
+      icon: FileText,
       primary: true
     },
     {
-      id: "practices",
-      title: "Explore practices",
-      description: "Browse conservation practices and their typical funding ranges",
-      icon: FileText,
-      primary: false
-    },
-    {
-      id: "submission",
-      title: "Get my submission pack",
-      description: "Generate a complete submission-ready pack for your local office",
-      icon: FileText,
-      primary: false
-    },
-    {
-      id: "deadlines",
-      title: "Learn deadlines",
-      description: "View upcoming deadlines and application windows in your area",
-      icon: Calendar,
+      id: "eligibility",
+      title: "Check My Eligibility",
+      description: "Get personalized results in 60 seconds and generate your submission pack",
+      icon: CheckCircle,
       primary: false
     }
   ];
@@ -45,8 +31,7 @@ export default function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
           Subsidy Companion
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto" data-testid="text-subtitle">
-          In under 5 minutes: confirm likely eligibility, see typical funding amounts, 
-          and get a personalized submission pack for your local office.
+          Access agricultural funding programs across Canada, US, Australia, New Zealand, Brazil, and Chile.
         </p>
       </div>
 
