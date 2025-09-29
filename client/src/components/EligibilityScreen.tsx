@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { CheckCircle, AlertCircle, DollarSign, Clock, ArrowRight } from "lucide-react";
@@ -74,42 +74,62 @@ export default function EligibilityScreen({ onNext }: EligibilityScreenProps) {
     { value: "traceability", label: "Traceability / Certification" }
   ];
 
+  // Centralized territory-to-program mapping
+  const getProgramByLocation = (location: string) => {
+    if (location.startsWith('canada')) {
+      return {
+        program: "Canadian Agricultural Partnership (CAP) - AgriInvest",
+        ruleType: "Ranking cutoff",
+        nextDate: "Rolling applications - Contact provincial office"
+      };
+    } else if (location.startsWith('australia')) {
+      return {
+        program: "National Landcare Program",
+        ruleType: "Ranking cutoff",
+        nextDate: "March 31, 2025"
+      };
+    } else if (location.startsWith('newzealand')) {
+      return {
+        program: "Sustainable Food and Fibre Futures (SFF Futures)",
+        ruleType: "Ranking cutoff",
+        nextDate: "Quarterly rounds - Next: December 2024"
+      };
+    } else if (location.startsWith('brazil')) {
+      return {
+        program: "PRONAF - Programa Nacional de Fortalecimento da Agricultura Familiar",
+        ruleType: "First-come, first-served",
+        nextDate: "Contact local MAPA office"
+      };
+    } else if (location.startsWith('chile')) {
+      return {
+        program: "FIA - Fundación para la Innovación Agraria",
+        ruleType: "Ranking cutoff",
+        nextDate: "Variable by program - Check FIA website"
+      };
+    }
+    // Default to US EQIP
+    return {
+      program: "Environmental Quality Incentives Program (EQIP)",
+      ruleType: "Ranking cutoff",
+      nextDate: "November 15, 2024"
+    };
+  };
+
   const updateField = (field: keyof EligibilityData, value: string) => {
     const newData = { ...formData, [field]: value };
     setFormData(newData);
     
     // Auto-calculate result when enough data is provided
     if (newData.operation && newData.scale && newData.location && newData.practice) {
-      // Determine program based on location
-      let programName = "Environmental Quality Incentives Program (EQIP)";
-      let ruleType = "Ranking cutoff";
-      let nextDate = "November 15, 2024";
-      
-      if (newData.location.startsWith('canada')) {
-        programName = "Canadian Agricultural Partnership (CAP) - AgriInvest";
-        nextDate = "Rolling applications - Contact provincial office";
-      } else if (newData.location.startsWith('australia')) {
-        programName = "National Landcare Program";
-        nextDate = "March 31, 2025";
-      } else if (newData.location.startsWith('newzealand')) {
-        programName = "Sustainable Food and Fibre Futures (SFF Futures)";
-        nextDate = "Quarterly rounds - Next: December 2024";
-      } else if (newData.location.startsWith('brazil')) {
-        programName = "PRONAF - Programa Nacional de Fortalecimento da Agricultura Familiar";
-        nextDate = "Contact local MAPA office";
-        ruleType = "First-come, first-served";
-      } else if (newData.location.startsWith('chile')) {
-        programName = "FIA - Fundación para la Innovación Agraria";
-        nextDate = "Variable by program - Check FIA website";
-      }
+      const programData = getProgramByLocation(newData.location);
       
       const mockResult: EligibilityResult = {
         eligible: "likely",
-        program: programName,
+        program: programData.program,
         costShare: "50-75%",
         cap: "$15,000-$40,000",
-        ruleType,
-        nextDate,
+        ruleType: programData.ruleType,
+        nextDate: programData.nextDate,
         checklist: ["Land control proof", "Compliance ID verification", "Dated quote/practice sketch"]
       };
       setResult(mockResult);
@@ -168,15 +188,18 @@ export default function EligibilityScreen({ onNext }: EligibilityScreenProps) {
                   <SelectValue placeholder="Select your location" />
                 </SelectTrigger>
                 <SelectContent>
-                  <optgroup label="🍁 Canada">
+                  <SelectGroup>
+                    <SelectLabel>Canada</SelectLabel>
                     <SelectItem value="canada-national">Canada - National Programs</SelectItem>
                     <SelectItem value="canada-alberta">Canada - Alberta</SelectItem>
                     <SelectItem value="canada-bc">Canada - British Columbia</SelectItem>
                     <SelectItem value="canada-saskatchewan">Canada - Saskatchewan</SelectItem>
+                    <SelectItem value="canada-manitoba">Canada - Manitoba</SelectItem>
                     <SelectItem value="canada-ontario">Canada - Ontario</SelectItem>
                     <SelectItem value="canada-quebec">Canada - Quebec</SelectItem>
-                  </optgroup>
-                  <optgroup label="🇺🇸 United States">
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>United States</SelectLabel>
                     <SelectItem value="us-national">United States - National Programs</SelectItem>
                     <SelectItem value="us-iowa">United States - Iowa</SelectItem>
                     <SelectItem value="us-illinois">United States - Illinois</SelectItem>
@@ -184,35 +207,53 @@ export default function EligibilityScreen({ onNext }: EligibilityScreenProps) {
                     <SelectItem value="us-minnesota">United States - Minnesota</SelectItem>
                     <SelectItem value="us-kansas">United States - Kansas</SelectItem>
                     <SelectItem value="us-wisconsin">United States - Wisconsin</SelectItem>
+                    <SelectItem value="us-indiana">United States - Indiana</SelectItem>
+                    <SelectItem value="us-ohio">United States - Ohio</SelectItem>
+                    <SelectItem value="us-missouri">United States - Missouri</SelectItem>
+                    <SelectItem value="us-south-dakota">United States - South Dakota</SelectItem>
+                    <SelectItem value="us-north-dakota">United States - North Dakota</SelectItem>
                     <SelectItem value="us-california">United States - California</SelectItem>
                     <SelectItem value="us-texas">United States - Texas</SelectItem>
-                    <SelectItem value="us-missouri">United States - Missouri</SelectItem>
-                  </optgroup>
-                  <optgroup label="🇦🇺 Australia">
+                    <SelectItem value="us-florida">United States - Florida</SelectItem>
+                    <SelectItem value="us-georgia">United States - Georgia</SelectItem>
+                    <SelectItem value="us-north-carolina">United States - North Carolina</SelectItem>
+                    <SelectItem value="us-arkansas">United States - Arkansas</SelectItem>
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Australia</SelectLabel>
                     <SelectItem value="australia-national">Australia - National Programs</SelectItem>
                     <SelectItem value="australia-nsw">Australia - New South Wales</SelectItem>
                     <SelectItem value="australia-victoria">Australia - Victoria</SelectItem>
                     <SelectItem value="australia-queensland">Australia - Queensland</SelectItem>
                     <SelectItem value="australia-sa">Australia - South Australia</SelectItem>
                     <SelectItem value="australia-wa">Australia - Western Australia</SelectItem>
-                  </optgroup>
-                  <optgroup label="🇳🇿 New Zealand">
+                    <SelectItem value="australia-tas">Australia - Tasmania</SelectItem>
+                    <SelectItem value="australia-nt">Australia - Northern Territory</SelectItem>
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>New Zealand</SelectLabel>
                     <SelectItem value="newzealand-national">New Zealand - National Programs</SelectItem>
-                    <SelectItem value="newzealand-north">New Zealand - North Island</SelectItem>
-                    <SelectItem value="newzealand-south">New Zealand - South Island</SelectItem>
-                  </optgroup>
-                  <optgroup label="🇧🇷 Brazil">
+                    <SelectItem value="newzealand-auckland">New Zealand - Auckland</SelectItem>
+                    <SelectItem value="newzealand-waikato">New Zealand - Waikato</SelectItem>
+                    <SelectItem value="newzealand-canterbury">New Zealand - Canterbury</SelectItem>
+                    <SelectItem value="newzealand-otago">New Zealand - Otago</SelectItem>
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Brazil</SelectLabel>
                     <SelectItem value="brazil-national">Brazil - National Programs</SelectItem>
-                    <SelectItem value="brazil-south">Brazil - South Region</SelectItem>
-                    <SelectItem value="brazil-southeast">Brazil - Southeast Region</SelectItem>
-                    <SelectItem value="brazil-central">Brazil - Central-West Region</SelectItem>
-                  </optgroup>
-                  <optgroup label="🇨🇱 Chile">
+                    <SelectItem value="brazil-south">Brazil - South Region (RS, SC, PR)</SelectItem>
+                    <SelectItem value="brazil-southeast">Brazil - Southeast (SP, MG, RJ, ES)</SelectItem>
+                    <SelectItem value="brazil-central">Brazil - Central-West (GO, MT, MS, DF)</SelectItem>
+                    <SelectItem value="brazil-northeast">Brazil - Northeast Region</SelectItem>
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Chile</SelectLabel>
                     <SelectItem value="chile-national">Chile - National Programs</SelectItem>
+                    <SelectItem value="chile-north">Chile - North Zone</SelectItem>
                     <SelectItem value="chile-central">Chile - Central Zone</SelectItem>
                     <SelectItem value="chile-south">Chile - South Zone</SelectItem>
-                    <SelectItem value="chile-north">Chile - North Zone</SelectItem>
-                  </optgroup>
+                    <SelectItem value="chile-austral">Chile - Austral Zone</SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
@@ -269,36 +310,15 @@ export default function EligibilityScreen({ onNext }: EligibilityScreenProps) {
               onClick={() => {
                 // Auto-calculate result when button is clicked
                 if (formData.operation && formData.scale && formData.location && formData.practice) {
-                  // Determine program based on location
-                  let programName = "Environmental Quality Incentives Program (EQIP)";
-                  let ruleType = "Ranking cutoff";
-                  let nextDate = "November 15, 2024";
-                  
-                  if (formData.location.startsWith('canada')) {
-                    programName = "Canadian Agricultural Partnership (CAP) - AgriInvest";
-                    nextDate = "Rolling applications - Contact provincial office";
-                  } else if (formData.location.startsWith('australia')) {
-                    programName = "National Landcare Program";
-                    nextDate = "March 31, 2025";
-                  } else if (formData.location.startsWith('newzealand')) {
-                    programName = "Sustainable Food and Fibre Futures (SFF Futures)";
-                    nextDate = "Quarterly rounds - Next: December 2024";
-                  } else if (formData.location.startsWith('brazil')) {
-                    programName = "PRONAF - Programa Nacional de Fortalecimento da Agricultura Familiar";
-                    nextDate = "Contact local MAPA office";
-                    ruleType = "First-come, first-served";
-                  } else if (formData.location.startsWith('chile')) {
-                    programName = "FIA - Fundación para la Innovación Agraria";
-                    nextDate = "Variable by program - Check FIA website";
-                  }
+                  const programData = getProgramByLocation(formData.location);
                   
                   const mockResult: EligibilityResult = {
                     eligible: "likely",
-                    program: programName,
+                    program: programData.program,
                     costShare: "50-75%",
                     cap: "$15,000-$40,000",
-                    ruleType,
-                    nextDate,
+                    ruleType: programData.ruleType,
+                    nextDate: programData.nextDate,
                     checklist: ["Land control proof", "Compliance ID verification", "Dated quote/practice sketch"]
                   };
                   setResult(mockResult);
