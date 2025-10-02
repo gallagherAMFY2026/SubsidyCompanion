@@ -17,55 +17,55 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
-// NEW: Subsidy programs from curated spreadsheet (10.01.25)
+// Curated subsidy programs from Excel spreadsheet (10.01.25 onwards)
 export const subsidyProgramsCurated = pgTable("subsidy_programs_curated_10_01_25", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   
-  // Core fields (present in all sheets)
-  country: text("country").notNull(), // 'US', 'CA', 'NZ', 'AU', 'CL', 'BR', 'LATAM'
-  programName: text("program_name").notNull(),
+  // Core fields
+  country: text("country").notNull(),
+  program_name: text("program_name").notNull(),
   description: text("description"),
   hyperlink: text("hyperlink"),
   
   // Funding details
-  fundingAmount: text("funding_amount"),
-  paymentCap: text("payment_cap"),
+  funding_amount: text("funding_amount"),
+  payment_cap: text("payment_cap"),
   
   // Objectives and focus
-  keyObjectives: text("key_objectives"),
-  focus: text("focus"), // Used in CL/BR/LATAM sheets
+  key_objectives: text("key_objectives"),
+  focus: text("focus"),
   
   // Administration
-  administered: text("administered"), // Used in CL/BR/LATAM sheets
+  administered: text("administered"),
   
   // Limits and cutoffs
-  acreageProductionLimit: text("acreage_production_limit"), // US specific
-  eligibilityCutoffs: text("eligibility_cutoffs"), // BR/LATAM
-  cutoffsCaps: text("cutoffs_caps"), // CL specific
+  acreage_production_limit: text("acreage_production_limit"),
+  eligibility_cutoffs: text("eligibility_cutoffs"),
+  cutoffs_caps: text("cutoffs_caps"),
   
   // Deadlines
-  closingDate: text("closing_date"),
-  applicationDeadline: text("application_deadline"),
-  budgetExhaustion: text("budget_exhaustion_marker"),
+  closing_date: text("closing_date"),
+  application_deadline: text("application_deadline"),
+  budget_exhaustion_marker: text("budget_exhaustion_marker"),
   
   // Additional information
-  additionalInfo: text("additional_information"),
-  notesStructure: text("notes_structure"),
-  details: text("details"), // CL specific
-  definitionsHowItWorks: text("definitions_how_it_works"), // BR/LATAM
+  additional_information: text("additional_information"),
+  notes_structure: text("notes_structure"),
+  details: text("details"),
+  definitions_how_it_works: text("definitions_how_it_works"),
   
   // Metadata
-  sourceSheet: text("source_sheet").notNull(), // Which Excel sheet this came from
-  importedAt: timestamp("imported_at").defaultNow().notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  source_sheet: text("source_sheet").notNull(),
+  imported_at: timestamp("imported_at").defaultNow().notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const insertSubsidyProgramCuratedSchema = createInsertSchema(subsidyProgramsCurated).omit({
   id: true,
-  importedAt: true,
-  createdAt: true,
-  updatedAt: true,
+  imported_at: true,
+  created_at: true,
+  updated_at: true,
 });
 
 export type InsertSubsidyProgramCurated = z.infer<typeof insertSubsidyProgramCuratedSchema>;
