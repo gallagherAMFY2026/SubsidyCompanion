@@ -1,0 +1,171 @@
+Here’s your best-option Replit brief, updated to treat your uploaded spreadsheet as the single source of truth (including the new deeper... tab) and to block any stale/hard-coded sources Replit keeps dragging in.
+
+Paste the whole block into Replit:
+
+META (prepend to all tasks):
+You are a senior backend engineer. Generate production-grade code with clean folder layout, strong typing, comments, and tests. Optimize for reliability, observability, and compliance (robots.txt) over raw speed.
+
+TASK:
+Create a repo “subsidy-companion-crawler” that collects public information from government portals without tripping rate limits or bot defenses. 
+CRITICAL: All crawl seeds MUST come ONLY from the attached Excel workbook and the repo’s YAML policy file. Do NOT import, reuse, reference, or infer any sources from prior runs, samples, templates, or hidden caches. If a seed is not in the workbook or YAML, skip it and log a WARNING.
+
+AUTHORITATIVE INPUTS (NO OTHERS):
+- Excel file path: /mnt/data/Subsidies and Cut-Offs.xlsx
+  - Must load both the default sheet(s) AND the sheet named exactly "deeper..." (this sheet contains new sources that must NOT be overlooked).
+- YAML policy path: ./policies/domains.yaml
+
+STACK & KEY LIBS:
+- Python 3.11, asyncio
+- httpx (async client w/ HTTP/2), pydantic-settings
+- tenacity (retries w/ exponential backoff + jitter)
+- aiolimiter (per-host token-bucket rate limiting)
+- aiobreaker (async circuit breaker)
+- lxml + readability-lxml (content extraction)
+- PyMuPDF (PDF text/tables); pandas for CSV normalization & Excel ingest
+- Playwright (Python binding) as a fallback renderer only
+- SQLite for lightweight state/cache; optional Redis example for queues
+- FastAPI for /health and /metrics (Prometheus)
+
+REPO SCAFFOLD:
+- pyproject.toml, Makefile, Dockerfile (slim + CA certs), pre-commit, mypy/ruff
+- src/crawler/{config.py, seeds.py, robots.py, frontier.py, fetcher.py, proxies.py, breaker.py, extract.py, pipeline.py, cli.py}
+- src/api/{app.py}  -> /health, /metrics
+- policies/domains.yaml (per-domain rules)
+- tests/{unit/, integration/, fixtures/}
+- README.md (run/CI instructions)
+- .github/workflows/ci.yml (pytest + type check)
+
+SEEDS & CONFIG (HARD REQUIREMENTS):
+1) Seed loader (src/crawler/seeds.py)
+   - Read `/mnt/data/Subsidies and Cut-Offs.xlsx` using pandas.
+   - Load ALL default sheets AND the sheet named "deeper..." (case-sensitive).
+   - Accept columns like {country, domain, url, notes, priority}; tolerate extras.
+   - Validate URLs; drop blanks/duplicates; normalize hostnames.
+   - Compute and log SHA256 of the workbook and list of sheet names; include in run metadata.
+   - Expose `load_seeds()` -> List[Seed]; strictly return only rows from the workbook (no merges with any legacy lists).
+   - Unit tests must assert the "deeper..." sheet is loaded and contributes seeds.
+2) Config precedence (src/crawler/config.py)
+   - pydantic-settings: .env and env vars configure timeouts, concurrency, storage paths, etc.
+   - Precedence: environment vars > .env > code defaults.
+   - Include flag `ALLOW_EXTERNAL_SEEDS=false` by default; when false, reject any seed not present in workbook or YAML and raise on attempt to use it.
+   - Provide `STATE_DIR` and a CLI flag `--purge-state` that deletes SQLite caches, seen-URL DB, and temp artifacts on startup.
+
+POLITENESS & FETCH (implement all):
+1) Polite async fetcher (httpx AsyncClient)
+   - Strict timeouts: connect=5s, read=20s, total=30s (configurable). Enable HTTP/2; reuse connections.
+   - Concurrency: global + per-host (default 8 global, 2 per-host) via asyncio.Semaphore + aiolimiter token buckets.
+   - Conditional GETs: persist ETag/Last-Modified; send If-None-Match/If-Modified-Since.
+   - Per-URL deadline: cancel >40s and record attempts/elapsed.
+2) Retry with jittered exponential backoff (tenacity)
+   - Retry idempotent GETs only on network errors/timeouts and HTTP 429/5xx.
+   - Respect Retry-After; initial=0.5s, jittered, cap 8s, stop_after_attempt=6.
+3) Circuit breaker + read-through cache (aiobreaker + SQLite)
+   - Closed/Open/Half-open; window=20 calls; fail threshold=50%; open timeout=30s.
+   - When open, return last cached response (if available) and enqueue for manual review.
+
+PROXIES & JS FALLBACK:
+4) Proxy manager with adaptive rotation
+   - JSON config of providers, weights, and types (residential, static-residential, datacenter).
+   - API: acquire_proxy(target), report_result(proxy, outcome).
+   - Demote/quarantine on 429/403/timeout; recheck every 10 min.
+   - Sticky sessions per-domain (TTL) and auto slow-down when block signals rise.
+5) Playwright only as fallback
+   - Heuristic `should_render_js(html, status, headers)` triggers headless fetch when content is JS-only or 403/406 despite robots allow.
+   - Toggle headless via config; reuse browser/context; selector-based waits; persist cookies/storage.
+   - No CAPTCHA/WAF bypass. On detection, save HAR + screenshot + headers; escalate and stop.
+
+SCHEDULER, ROBOTS, DISCOVERY:
+6) robots.txt parser: obey Disallow and crawl-delay; configurable User-Agent.
+7) Frontier: per-domain token buckets; dedupe via normalized URL + Bloom filter; persistence in SQLite.
+8) Discovery order: robots → sitemaps → RSS/Atom → site search → in-page links (seeded domains only).
+
+EXTRACTION & NORMALIZATION:
+9) HTML: readability extraction + meta (OpenGraph/Twitter), JSON-LD/microdata; fields:
+   {url, final_url, retrieved_at, status, content_type, title, publish_date, body_text, sections[], links_out[], source_type, sha256, attempts, elapsed_ms}
+10) JSON endpoints: sniff/normalize schema.
+11) PDFs: extract text + tables (PyMuPDF); preserve headings when tagged; record sha256 + provenance.
+12) CSVs: sniff delimiter, normalize to UTF-8 LF, write clean CSV.
+
+GOVERNANCE & “GOV MODE”:
+13) gov_mode (default for .gov/.gouv/.govt and any configured domain)
+   - Max 1 RPS per domain; per-host concurrency=1; longer timeouts.
+   - Strict robots adherence; session stickiness for authenticated search flows.
+   - Backoff ceiling up to 60s on repeated 429/503; auto-pause domain after N blocks; emit structured throttling logs.
+
+OBSERVABILITY & OPS:
+14) Structured JSON logs (domain, status, latency, retries, breaker_state, seed_origin=excel|yaml).
+15) Prometheus metrics: requests_total, errors_total, avg_latency_ms, by_status, by_domain, breaker_opens_total.
+16) FastAPI /health and /metrics endpoints. OpenTelemetry traces optional.
+
+CLI & GUARDRAILS:
+17) CLI:
+   - `python -m crawler.cli --urls-from-excel "/mnt/data/Subsidies and Cut-Offs.xlsx" --include-sheet "deeper..." --gov-mode --concurrency 8 --per-host 2 --timeout 30 --deadline 40 --purge-state`
+   - `--urls-from-excel` and `--include-sheet` are REQUIRED; fail fast if the file or sheet is missing.
+   - On startup, verify that the active seed set equals (Excel ∪ YAML) and nothing else; print a diff and EXIT NON-ZERO if any external/legacy seeds are detected.
+18) STATE & PURGE:
+   - All state (SQLite DBs, seen URLs, caches) must live under STATE_DIR (default ./state). `--purge-state` must remove it entirely before a run.
+
+TESTS & ACCEPTANCE:
+- Unit tests:
+  - Excel ingest: asserts that the "deeper..." sheet is loaded and contributes seeds; workbook SHA256 logged.
+  - Config precedence: env vars override .env override defaults; `ALLOW_EXTERNAL_SEEDS=false` blocks stray seeds.
+  - robots allow/deny + crawl-delay respected.
+  - retry/backoff (simulate 429 then 200) w/ Retry-After handling.
+  - circuit breaker open/half-open behavior.
+  - proxy demotion/quarantine.
+  - `should_render_js` decision path.
+- Integration smoke:
+  - With gov_mode, crawl 3 placeholder public domains sourced ONLY from the Excel + YAML; assert <2 RPS per host, robots honored, ≥1 conditional 304 observed.
+  - Simulated intermittent 429 endpoint shows backoff and per-domain concurrency reduction.
+  - Trigger Playwright on a JS-only page; HAR/screenshot saved; no CAPTCHA solving attempted.
+- README must show exact commands to run local + Docker + CI. CI must run tests and type checks.
+
+NON-GOALS:
+- No CAPTCHA/WAF bypass. On detection, capture diagnostics and stop.
+- No uncontrolled parallelism or ignoring robots.txt.
+- No hidden/default seeds or legacy lists; only Excel + YAML.
+
+
+Two things to underline for Replit (so it stops “helpfully” pulling old junk):
+
+Excel is king: use pandas.read_excel(..., sheet_name=["deeper...", None]) or similar to explicitly load the deeper... tab by name; log the workbook’s sheet list so CI fails if the tab isn’t found. Pandas supports named-sheet loading directly. 
+Pandas
++1
+
+Config precedence + purge: set precedence to env > .env > defaults with pydantic-settings, and wire --purge-state to delete caches before a run so Replit’s leftovers can’t leak in. Environment variables override dotenv values by design. 
+Pydantic
++1
+
+Why this is stable:
+
+Token-bucket per-host limits (aiolimiter) enforce politeness even when concurrent. 
+aiolimiter.readthedocs.io
++2
+PyPI
++2
+
+Jittered exponential backoff w/ Retry-After (Tenacity) is the standard way to ride out 429/5xx. 
+tenacity.readthedocs.io
++1
+
+Circuit breaker stops hammering fragile portals (aiobreaker). 
+PyPI
++1
+
+Robots/crawl-delay and sitemap/RSS-first keep you on the right side of ethics and lower failure rates. 
+Google for Developers
++1
+
+Selector-based Playwright waits (not fixed sleeps) keep JS pages reliable. 
+Playwright
++2
+Playwright
++2
+
+Prometheus gives you “why it failed” visibility immediately. 
+prometheus.github.io
++2
+Prometheus
++2
+
+If you want, I’ll also give you a 10-line Excel ingestion snippet (with assert that deeper... exists) you can paste straight into seeds.py.
