@@ -1,0 +1,1698 @@
+{
+  "What is a Subsidy": [
+    {
+      "Subsidy Overview": "Subsidies in agriculture are government transfers that shift risk, lower costs, or raise prices to achieve policy goals such as food security, farm income stability, rural development, environmental outcomes, and trade competitiveness, and they are measured internationally with standardized indicators and “boxes” to classify how distorting they are to markets. At a global level, total support to agriculture across OECD economies averaged roughly USD 349 billion in 2020–22, with about two thirds flowing directly to producers via market price support or budgetary payments; these supports today rely less on price support than in past decades but still vary widely across countries and commodities."
+    },
+    {
+      "Subsidy Overview": "Who gets subsidies"
+    },
+    {
+      "Subsidy Overview": "Producer-facing transfers go to individual farms (smallholders to large agribusiness) as the Producer Support Estimate (PSE), while sector services such as research, inspection, and infrastructure are counted in general services (GSSE), and some measures support consumers directly (CSE) via lower prices or vouchers."
+    },
+    {
+      "Subsidy Overview": "Targeting differs by instrument: area-based EU direct payments go broadly to farms, US programs like ARC/PLC/EQIP cap payments per person or entity, and Brazil’s Plano Safra routes cheap credit through banks with line-specific quotas; low-subsidy New Zealand largely relies on market revenues and regulation, not direct farm transfers."
+    },
+    {
+      "Subsidy Overview": "What kinds exist (typology)"
+    },
+    {
+      "Subsidy Overview": "Market Price Support (MPS): policies that keep domestic prices above/below world benchmarks (tariffs, quotas, administered prices), transferring value from consumers/taxpayers to producers and historically the largest, most distorting category."
+    },
+    {
+      "Subsidy Overview": "Budgetary Producer Payments: cash-like transfers delivered by formulas:"
+    },
+    {
+      "Subsidy Overview": "Coupled output payments (pay per ton/head) and input subsidies (e.g., fertilizer, water, energy) that directly raise production and are classed as trade‑distorting “Amber Box” under WTO rules."
+    },
+    {
+      "Subsidy Overview": "Partially decoupled “Blue Box” payments that limit production via quotas or set-asides, reducing distortions relative to Amber Box."
+    },
+    {
+      "Subsidy Overview": "Decoupled “Green Box” payments with minimal trade distortion, such as environmental schemes, research, disaster relief, and income support not linked to current production or prices."
+    },
+    {
+      "Subsidy Overview": "Insurance and risk tools: premium subsidies for crop/animal insurance (e.g., US PSR; many countries co-finance premiums) and disaster aid windows with payment limits."
+    },
+    {
+      "Subsidy Overview": "Concessional credit and guarantees: subsidized interest via budget equalization (e.g., Brazil Plano Safra, RenovAgro/PRONAF ABC+ lines for low‑carbon investments)."
+    },
+    {
+      "Subsidy Overview": "Public goods/GSSE: R&D, biosecurity, extension, inspection, and infrastructure that lift sector productivity without paying specific farms directly."
+    },
+    {
+      "Subsidy Overview": "Where and how they operate (design levers)"
+    },
+    {
+      "Subsidy Overview": "Caps, de minimis, and quotas: most programs impose per‑farmer caps, per‑project ceilings, or “until funds exhausted” quotas, and WTO allows only limited, capped Amber Box support with special rules for developing countries."
+    },
+    {
+      "Subsidy Overview": "Gatekeepers and compliance: registries and environmental baselines (e.g., Brazil’s CAR/SICAR) are prerequisites for concessional lines or eco‑schemes, and EU CAP eco‑schemes dedicate a fixed share of direct payments to climate/biodiversity practices."
+    },
+    {
+      "Subsidy Overview": "Calendars: program windows follow fiscal or crop-year calendars and close once envelopes are allocated, creating urgency and first‑come or competitive dynamics (e.g., bank quotas under Plano Safra)."
+    },
+    {
+      "Subsidy Overview": "Which farmers are most affected"
+    },
+    {
+      "Subsidy Overview": "Amber Box/input subsidies tend to benefit larger, input‑intensive operations by design unless tightly targeted; IMF analysis notes political appeal and risk of overuse and misallocation when markets are imperfect or objectives are diffuse."
+    },
+    {
+      "Subsidy Overview": "Decoupled income and environmental payments are accessible to a wider set of farms but still skew to landholders unless small‑farmer top‑ups or redistributive tools are enforced; EU reforms add a 10% redistributive payment but resisted mandatory caps on very large farms, so distribution remains uneven."
+    },
+    {
+      "Subsidy Overview": "In credit‑heavy systems (Brazil), bankable producers with complete compliance files secure more of the quota; family farmers tap PRONAF (with lower rates) while medium/large use Pronamp/RenovAgro, each with product-specific limits and green lines for pasture recovery and ILPF."
+    },
+    {
+      "Subsidy Overview": "In low‑subsidy settings (New Zealand), exposure to market risk is higher; the removal in the 1980s forced rapid restructuring and revealed prior overproduction on marginal land that had been profitable only due to subsidies."
+    },
+    {
+      "Subsidy Overview": "Do subsidies make food cheaper for consumers?"
+    },
+    {
+      "Subsidy Overview": "Price-support and coupled output subsidies can reduce consumer prices by raising supply or lowering domestic prices (positive CSE) but often raise fiscal costs and distort trade; OECD documents show MPS is the most distortionary and can also raise consumer prices if protectionist tools push prices above world levels."
+    },
+    {
+      "Subsidy Overview": "Consumer‑facing subsidies (vouchers or targeted fruit/vegetable discounts) increase purchases among low‑income households; meta‑analyses estimate a 10% price cut raises fruit/vegetable sales roughly 5–16%, but evidence on sustained diet change is mixed and effects are inelastic."
+    },
+    {
+      "Subsidy Overview": "Input subsidies frequently lower production costs and can reduce prices in efficient markets; IMF notes they sometimes miss poorest farmers, are fiscally costly, and risk environmental harm from over‑application, muting long‑run consumer benefits."
+    },
+    {
+      "Subsidy Overview": "Why subsidies persist (political economy)"
+    },
+    {
+      "Subsidy Overview": "Broad coalitions: subsidies touch many voters (farmers, rural workers, input suppliers), making them politically durable; attempts at removal often see partial returns unless market institutions and safety nets replace them."
+    },
+    {
+      "Subsidy Overview": "Strategic goals: governments use them to stabilize supply amid climate shocks, pursue green transitions (eco‑schemes, ABC+), or defend export positions; Brazil’s 2025/26 Plano Safra totals R$516.2 billion in subsidized credit to sustain output and green investments."
+    },
+    {
+      "Subsidy Overview": "Noteworthy regional initiatives"
+    },
+    {
+      "Subsidy Overview": "European Union CAP 2023–27: Eco‑schemes must account for about 25% of direct payments after a learning phase, with higher shares of rural development funds ringfenced for agri‑environment; redistributive top‑up (≥10%) seeks to correct concentration, but mandatory caps on very large farms were not adopted."
+    },
+    {
+      "Subsidy Overview": "United States 2025 assistance: new economic assistance payments (ECAP) added temporary caps of $125k or $250k tied to farm‑income share and hard filing deadlines, illustrating modern “cut‑off calculations” in action; payments may be factored down initially to avoid exceeding appropriations."
+    },
+    {
+      "Subsidy Overview": "Brazil’s low‑carbon shift: RenovAgro and PRONAF ABC+ finance degraded pasture recovery, ILPF, and forests at concessional rates, but access is cut off by annual bank quotas, CAR compliance, and practice lists embedded in central bank resolutions; total Plano Safra envelopes adjust yearly and close when fully subscribed."
+    },
+    {
+      "Subsidy Overview": "New Zealand’s subsidy‑free model: a rare, sustained elimination of most farm subsidies since the 1980s created a high‑efficiency, market‑oriented sector but shifted adjustment costs to producers and left ongoing environmental challenges to be managed by regulation and market incentives."
+    },
+    {
+      "Subsidy Overview": "How to evaluate subsidy quality"
+    },
+    {
+      "Subsidy Overview": "Market distortion and environmental impact: OECD flags output‑based payments, MPS, and variable input subsidies as the most distorting and environmentally risky; performance‑based, decoupled, or public‑goods investments are less distorting and often preferable."
+    },
+    {
+      "Subsidy Overview": "Targeting and leakage: IMF notes that targeting higher‑productivity farms can maximize aggregate output, but political and equity considerations often favor smallholders; either approach requires strong local markets to transmit benefits to consumers."
+    },
+    {
+      "Subsidy Overview": "Sunset clauses and caps: robust caps, transparent deadlines, and factor‑down mechanisms (pro‑rata cuts) help keep programs within budgets and reduce winner‑take‑all dynamics, as seen in US ECAP and EU eco‑scheme learning periods."
+    },
+    {
+      "Subsidy Overview": "Bottom line"
+    },
+    {
+      "Subsidy Overview": "Subsidies are diverse policy tools that redistribute hundreds of billions globally each year to stabilize farm incomes, steer practices, and influence prices, but their impact on consumers ranges from cheaper food (when subsidies expand supply or lower retail prices) to more expensive food (when protection raises domestic prices), and the best outcomes come from transparent, capped, and environmentally aligned designs that correct genuine market failures rather than entrench distortions"
+    }
+  ],
+  "Subsidy Insights & Cutoffs": [
+    {
+      "Cut Off Calculation": "A \"cut off calculation\" for a farmer typically refers to the process of determining the final eligibility or limit for payments under a subsidy or income support program. This means there is a specific threshold—such as a maximum adjusted gross income, acreage, production level, or application deadline—that, once reached, either no further payments are made or applications are no longer accepted for that period."
+    },
+    {
+      "Cut Off Calculation": "A \"cut off calculation\" for a farmer typically refers to the process of determining the final eligibility or limit for payments under a subsidy or income support program. This means there is a specific threshold—such as a maximum adjusted gross income, acreage, production level, or application deadline—that, once reached, either no further payments are made or applications are no longer accepted for that period."
+    },
+    {
+      "Cut Off Calculation": "Practical Examples"
+    },
+    {
+      "Cut Off Calculation": "In U.S. farm subsidy programs, cut off calculations may include maximum total payments per year (e.g., a $125,000 annual cap per crop program, or $900,000 adjusted gross income limits for eligibility)."
+    },
+    {
+      "Cut Off Calculation": "For payment-triggered subsidies like ARC or PLC, the program calculates what a farmer will receive based on a formula (like county revenue benchmarks), and payments are cut off if revenue or price limits aren't met or if program funds run out."
+    },
+    {
+      "Cut Off Calculation": "Timing cut offs also apply: once funding is exhausted or enrollment deadlines pass, additional qualified farmers may not receive benefits or be accepted for that cycle."
+    },
+    {
+      "Cut Off Calculation": "Loan subsidy programs may use cut off calculations based on income, asset withdrawals, or verified business expenses to determine the subsidy payment amount or eligibility window."
+    },
+    {
+      "Cut Off Calculation": "Farmer Implications"
+    },
+    {
+      "Cut Off Calculation": "Understanding cut offs is crucial for planning: farmers must apply early, keep records, and monitor status so they do not miss out due to program or timing limits."
+    },
+    {
+      "Cut Off Calculation": "Cut off calculations can affect both the amount received and whether a farmer qualifies during competitive or tight budget environments."
+    },
+    {
+      "Cut Off Calculation": "A cut off calculation is a program’s way of ensuring fair distribution within defined limits so farmers are aware of when, how much, and who can receive support"
+    },
+    {
+      "Cut Off Calculation": "Glboal Implications"
+    },
+    {
+      "Cut Off Calculation": "Are cut off calculations a US approach or do they exist in our other territories?"
+    },
+    {
+      "Cut Off Calculation": "Cut off calculations—such as income or payment caps, application deadlines, or eligible quantity limits—are not unique to the United States; they are a standard feature of agricultural subsidy and support programs worldwide."
+    },
+    {
+      "Cut Off Calculation": "International Examples"
+    },
+    {
+      "Cut Off Calculation": "Canada, Australia, New Zealand, Brazil, Chile, UK, EU: Each country or region implements agricultural support programs with various eligibility criteria, ceilings, or deadline cut offs, in line with their own budgets and policies but frequently following international frameworks (like WTO or OECD definitions)."
+    },
+    {
+      "Cut Off Calculation": "Types of Cut Offs Globally: These include payment caps, acreage/production-based limits, application or enrollment closing dates, and budget exhaustion markers—ensuring fair and orderly distribution of funds or benefits."
+    },
+    {
+      "Cut Off Calculation": "WTO and OECD Standards: The WTO and OECD require participating governments to define, quantify, and control their subsidy outlays, which almost always involves some form of cut off or cap for transparency and trade compliance."
+    },
+    {
+      "Cut Off Calculation": "Price Bands and Minimum Support: In emerging and developed markets alike, mechanisms like minimum guaranteed prices (India, Brazil, EU), or capped payment and area support (Australia, New Zealand), are calculated with clearly outlined cut off points, occasionally revisited based on fiscal or market realities."
+    },
+    {
+      "Cut Off Calculation": "Implication"
+    },
+    {
+      "Cut Off Calculation": "Whether in the US or other Gallagher territories, some form of cut off calculation is universal in agricultural subsidy administration to keep programs within fiscal and policy bounds and to ensure transparency and equity for all eligible farmers"
+    }
+  ],
+  "US": [
+    {
+      "Subsidy Program": "Agriculture Risk Coverage (ARC)",
+      "Description": "Pays subsidies to farmers when revenues fall below a guaranteed level; covers 20+ crops.",
+      "Funding Amount": "Up to $6 billion annually",
+      "Key Objectives": "Supplement income, manage commodity supply",
+      "Additional Information": "Larger subsidies for lower revenues",
+      "Payment Caps": "$125,000 per individual/entity",
+      "Acreage/Production Limit": "Yes—per base/covered acre",
+      "Application/Enrollment Deadline": "Yes",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "ARC Overview"
+    },
+    {
+      "Subsidy Program": "Price Support Program (PLC, etc.)",
+      "Description": "Pays farmers to keep production down, stabilize supply and prices.",
+      "Funding Amount": "Varies",
+      "Key Objectives": "Stabilize prices, prevent food waste",
+      "Additional Information": "Manages supply/demand for commodities",
+      "Payment Caps": "$125,000 per individual/entity",
+      "Acreage/Production Limit": "Yes—limited by base acres",
+      "Application/Enrollment Deadline": "Yes",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "Price Support Policy"
+    },
+    {
+      "Subsidy Program": "Conservation Reserve Program (CRP)",
+      "Description": "Annual rental payment for conserving environmentally sensitive land.",
+      "Funding Amount": "$1.8 billion annually (2023)",
+      "Key Objectives": "Improve environmental quality, conservation",
+      "Additional Information": "Focus on long-term land improvement",
+      "Payment Caps": "$50,000 per individual/entity",
+      "Acreage/Production Limit": "Yes—enrollment cap on acres",
+      "Application/Enrollment Deadline": "Yes (sign-up windows)",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "CRP Info"
+    },
+    {
+      "Subsidy Program": "Commodity Credit Corporation (CCC)",
+      "Description": "Loans/subsidies to control prices, stabilize farm income.",
+      "Funding Amount": "Up to $30 billion borrowing limit",
+      "Key Objectives": "Control prices, support income",
+      "Additional Information": "Long-term, flexible marketing/price loans",
+      "Payment Caps": "$30 billion borrowing authority",
+      "Acreage/Production Limit": "Set by congressional authority",
+      "Application/Enrollment Deadline": "N/A",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "CCC Background"
+    },
+    {
+      "Subsidy Program": "Federal Crop Insurance Corporation (FCIC)",
+      "Description": "National crop insurance with private partners.",
+      "Funding Amount": "$8 billion annually (2023)",
+      "Key Objectives": "Risk mitigation, financial stability",
+      "Additional Information": "Crop/livestock insurance coverage",
+      "Payment Caps": "Varies by program",
+      "Acreage/Production Limit": "Yes—insured acreage rules",
+      "Application/Enrollment Deadline": "Yes",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "FCIC Explanation"
+    },
+    {
+      "Subsidy Program": "Disaster Aid",
+      "Description": "Assistance for natural disasters (loans, grants, payments).",
+      "Funding Amount": "Varies",
+      "Key Objectives": "Recovery, continuity for producers",
+      "Additional Information": "Emergency-specific support",
+      "Payment Caps": "Caps vary by program",
+      "Acreage/Production Limit": "N/A",
+      "Application/Enrollment Deadline": "Yes (emergency windows)",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "Disaster Aid Update"
+    },
+    {
+      "Subsidy Program": "Research and Development",
+      "Description": "Grant funding for ag research, innovation, technology.",
+      "Funding Amount": "$2 billion annually (2023)",
+      "Key Objectives": "Innovation, efficiency improvements",
+      "Additional Information": "Institution/university support",
+      "Payment Caps": "Varies, grant-based caps",
+      "Acreage/Production Limit": "N/A",
+      "Application/Enrollment Deadline": "Yes (grant deadlines)",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "R&D Funding Info"
+    },
+    {
+      "Subsidy Program": "Marketing Assistance",
+      "Description": "Supports market access and competitiveness, export programs.",
+      "Funding Amount": "$500 million annually (2023)",
+      "Key Objectives": "Build market access, export competitiveness",
+      "Additional Information": "Includes MAP program for exports",
+      "Payment Caps": "Caps by commodity/contract",
+      "Acreage/Production Limit": "Yes (volume/acreage)",
+      "Application/Enrollment Deadline": "Yes",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "MAP Background"
+    },
+    {
+      "Subsidy Program": "Nutrition Assistance",
+      "Description": "Subsidies for SNAP, food security for families/individuals.",
+      "Funding Amount": "$70 billion annually (2023)",
+      "Key Objectives": "Nutrition security, income relief",
+      "Additional Information": "SNAP + supplier-level caps",
+      "Payment Caps": "N/A farm-level; caps for suppliers",
+      "Acreage/Production Limit": "N/A",
+      "Application/Enrollment Deadline": "Yes",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "SNAP Program Info"
+    },
+    {
+      "Subsidy Program": "Environmental Quality Incentives Program (EQIP)",
+      "Description": "Technical/financial aid for conservation practices.",
+      "Funding Amount": "Up to $450,000 limit per entity",
+      "Key Objectives": "Conservation, water mgmt, pest/rodent control",
+      "Additional Information": "National & regional cost-share priorities",
+      "Payment Caps": "$450,000 total/entity",
+      "Acreage/Production Limit": "Yes—by project/acreage",
+      "Application/Enrollment Deadline": "Yes",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "EQIP Details"
+    },
+    {
+      "Subsidy Program": "Conservation Stewardship Program (CSP)",
+      "Description": "Supports adoption/improvement of conservation ag activities.",
+      "Funding Amount": "Up to $200,000 limit per entity",
+      "Key Objectives": "Water, wildlife, soil, climate co-benefits",
+      "Additional Information": "Focus on wildlife, water exclusion",
+      "Payment Caps": "$200,000 total/entity",
+      "Acreage/Production Limit": "Yes—by contract/acreage",
+      "Application/Enrollment Deadline": "Yes",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "CSP Details"
+    },
+    {
+      "Subsidy Program": "Wildlife Habitat Incentive Program (WHIP)",
+      "Description": "Incentives for developing wildlife habitat on private lands.",
+      "Funding Amount": "Set by USDA NRCS",
+      "Key Objectives": "Water, wildlife habitat, ecosystem improvement",
+      "Additional Information": "Wildlife exclusion/conservation",
+      "Payment Caps": "Contract/project caps",
+      "Acreage/Production Limit": "Yes—by project/acreage",
+      "Application/Enrollment Deadline": "Yes",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "WHIP Overview"
+    },
+    {
+      "Subsidy Program": "Farm Service Agency (FSA) Loans",
+      "Description": "Low-interest loans for wide range of farm operations.",
+      "Funding Amount": "Set by USDA FSA",
+      "Key Objectives": "Access to capital, expansion, sustainability",
+      "Additional Information": "Conservation, water, grazing priorities",
+      "Payment Caps": "Caps by loan type/program",
+      "Acreage/Production Limit": "Yes—loan size/acreage",
+      "Application/Enrollment Deadline": "Yes",
+      "Budget Exhaustion Marker": "Yes",
+      "Hyperlink": "FSA Loans Info"
+    },
+    {
+      "Subsidy Program": "Observations"
+    },
+    {
+      "Subsidy Program": "Payment caps and acreage/production limits are standard, controlling maximum amounts paid to any one applicant or on any eligible acreage."
+    },
+    {
+      "Subsidy Program": "Application/enrollment deadlines ensure timely allocation and prevent over-subscription."
+    },
+    {
+      "Subsidy Program": "Budget exhaustion markers mean that once funds run out, further applications are deferred or denied."
+    },
+    {
+      "Subsidy Program": "All major federal programs publish transparent cut-offs as core features—see ARC, PLC, CRP, EQIP, CSP, WHIP, FSA Loans."
+    },
+    {
+      "Subsidy Program": "Each measure helps maintain program integrity and makes funding distribution fair and predictable for agricultural producers. Annual reviews may adjust caps and eligibility, and competitive pools can close early if demand surges."
+    },
+    {
+      "Subsidy Program": "Major Federal Online Platforms"
+    },
+    {
+      "Subsidy Program": "Grants.gov"
+    },
+    {
+      "Subsidy Program": "Centralized website for searching and applying for federal grants across all agencies. Includes federal grants funded by the USDA, NIH, NSF, Department of Education, Department of Energy, and more."
+    },
+    {
+      "Subsidy Program": "USAspending.gov"
+    },
+    {
+      "Subsidy Program": "Official open data platform showing all federal spending, including grants, contracts, loans, and direct payments."
+    },
+    {
+      "Subsidy Program": "Key Agencies with Online Funding Programs"
+    },
+    {
+      "Subsidy Program": "U.S. Department of Agriculture (USDA)"
+    },
+    {
+      "Subsidy Program": "Many grants and subsidies for farms, agribusiness, research, and rural development are listed and managed online via USDA sites (including the National Agricultural Statistics Service)."
+    },
+    {
+      "Subsidy Program": "National Institutes of Health (NIH)"
+    },
+    {
+      "Subsidy Program": "Comprehensive online database for health and biomedical research grants, including application and eligibility details. RSS feeds available for updates."
+    },
+    {
+      "Subsidy Program": "National Science Foundation (NSF)"
+    },
+    {
+      "Subsidy Program": "Publishes online grant opportunities for research and education in science and engineering fields."
+    },
+    {
+      "Subsidy Program": "Department of Education"
+    },
+    {
+      "Subsidy Program": "Lists federal student aid, school grants, and education innovation grants online."
+    },
+    {
+      "Subsidy Program": "Environmental Protection Agency (EPA)"
+    },
+    {
+      "Subsidy Program": "Online resources for environment-related grants, research funding, and support."
+    },
+    {
+      "Subsidy Program": "Specialized Funding Info Hubs"
+    },
+    {
+      "Subsidy Program": "Rural Health Information Hub"
+    },
+    {
+      "Subsidy Program": "Aggregates and posts grants, loans, incentives, and technical assistance specifically for rural health programs nationwide. Online search and RSS feed options available."
+    },
+    {
+      "Subsidy Program": "Small Business Administration (SBA)"
+    },
+    {
+      "Subsidy Program": "Provides information online for small business grants, loan programs, and startup funding opportunities."
+    },
+    {
+      "Subsidy Program": "How to Access These Programs Online"
+    },
+    {
+      "Subsidy Program": "Visit the main platform (e.g., Grants.gov) to search across all agencies."
+    },
+    {
+      "Subsidy Program": "Go to sector-specific agency websites for specialized programs (USDA for agriculture, NIH for health, etc.)."
+    },
+    {
+      "Subsidy Program": "Use open data platforms (USAspending.gov) for federal funding and spending details."
+    },
+    {
+      "Subsidy Program": "These resources allow users to search for opportunities, review requirements, and often apply directly online, making it easier than ever to access government-funded grants and subsidies in the United States"
+    }
+  ],
+  "CA": [
+    {
+      "Subsidy Program": "AgriInvest",
+      "Description": "Provides matching contributions to farmers’ savings accounts to manage income declines.",
+      "Funding Amount": "$600 million annually (2023)",
+      "Key Objectives": "Manage income risks and support farm investment.",
+      "Additional Information": "Farmers may withdraw funds any time.",
+      "Payment/Funding Cap": "Set per cycle/project",
+      "Closing Date/Deadline": "2025 cycle",
+      "Budget Exhaustion Marker": "Yes, funding constraint",
+      "Notes/Structure": "Application/selection window",
+      "Hyperlink": "AgriInvest Details"
+    },
+    {
+      "Subsidy Program": "AgriStability",
+      "Description": "Payments to farmers whose income falls below 70% of historical average.",
+      "Funding Amount": "$1 billion annually (2023)",
+      "Key Objectives": "Stabilize income, financial resilience.",
+      "Additional Information": "Payments are based on margin declines.",
+      "Payment/Funding Cap": "Yes, set per allocation",
+      "Closing Date/Deadline": "Open until allocated",
+      "Budget Exhaustion Marker": "Yes",
+      "Notes/Structure": "Rolling, closes when spent",
+      "Hyperlink": "AgriStability Details"
+    },
+    {
+      "Subsidy Program": "AgriInsurance",
+      "Description": "Insurance for crop and livestock losses due to natural disasters.",
+      "Funding Amount": "$1.5 billion annually (2023)",
+      "Key Objectives": "Risk mitigation for crop/livestock production.",
+      "Additional Information": "Includes weather-related losses.",
+      "Payment/Funding Cap": "Yes, eligibility/project",
+      "Closing Date/Deadline": "Open until allocated",
+      "Budget Exhaustion Marker": "Yes",
+      "Notes/Structure": "Rolling, merit-based funds",
+      "Hyperlink": "AgriInsurance Info"
+    },
+    {
+      "Subsidy Program": "AgriRecovery",
+      "Description": "Disaster aid for farmers impacted by natural events.",
+      "Funding Amount": "$100 million annually (2023)",
+      "Key Objectives": "Recovery, ensure production continuity.",
+      "Additional Information": "Emergency grants and funding.",
+      "Payment/Funding Cap": "Yes, set per allocation",
+      "Closing Date/Deadline": "Open until allocated",
+      "Budget Exhaustion Marker": "Yes",
+      "Notes/Structure": "Project funding cycles",
+      "Hyperlink": "AgriRecovery Overview"
+    },
+    {
+      "Subsidy Program": "AgriInnovation Program",
+      "Description": "R&D to improve agricultural practices/technology.",
+      "Funding Amount": "$200 million annually (2023)",
+      "Key Objectives": "Promote innovation and efficiency.",
+      "Additional Information": "Supports institutions and universities.",
+      "Payment/Funding Cap": "$20,000/year, $40,000/4yr",
+      "Closing Date/Deadline": "Annual, 4-year program",
+      "Budget Exhaustion Marker": "Yes, annual & lifetime caps",
+      "Notes/Structure": "Project deadlines apply",
+      "Hyperlink": "AgriInnovation Program"
+    },
+    {
+      "Subsidy Program": "AgriMarketing Program",
+      "Description": "Supports domestic & export market access/competitiveness.",
+      "Funding Amount": "$50 million annually (2023)",
+      "Key Objectives": "Enhance market access and competitiveness.",
+      "Additional Information": "Includes Market Access Program (MAP).",
+      "Payment/Funding Cap": "Yes, set per allocation",
+      "Closing Date/Deadline": "Open until allocated",
+      "Budget Exhaustion Marker": "Yes",
+      "Notes/Structure": "Rolling, using OFCAF pool",
+      "Hyperlink": "AgriMarketing Guide"
+    },
+    {
+      "Subsidy Program": "Sustainable Canadian Agricultural Partnership (SCAP)",
+      "Description": "Funds sustainable practices and environmental initiatives.",
+      "Funding Amount": "$3.5 billion/5 years (2023)",
+      "Key Objectives": "Promote sustainable agriculture, emissions reduction.",
+      "Additional Information": "Includes cost-sharing with provinces/territories.",
+      "Payment/Funding Cap": "Set per program element",
+      "Closing Date/Deadline": "Open-ended, some close",
+      "Budget Exhaustion Marker": "Yes, project-based funding mode",
+      "Notes/Structure": "See program guide",
+      "Hyperlink": "SCAP Overview"
+    },
+    {
+      "Subsidy Program": "Species at Risk Partnerships on Agricultural Lands (SARPAL)",
+      "Description": "Provides funding to protect species at risk on agricultural lands.",
+      "Funding Amount": "Set per allocation",
+      "Key Objectives": "Conservation, wildlife exclusion.",
+      "Additional Information": "Environment and Climate Change Canada administers.",
+      "Payment/Funding Cap": "Yes, set per allocation",
+      "Closing Date/Deadline": "Open until allocated",
+      "Budget Exhaustion Marker": "Yes",
+      "Notes/Structure": "Project-based, merit chosen",
+      "Hyperlink": "SARPAL Program Info"
+    },
+    {
+      "Subsidy Program": "Representative Major Provincial Programs (as referenced above)"
+    },
+    {
+      "Subsidy Program": "Provincial Program",
+      "Description": "Payment/Funding Cap",
+      "Funding Amount": "Closing Date/Deadline",
+      "Key Objectives": "Budget Exhaustion Marker",
+      "Additional Information": "Notes/Structure",
+      "Payment/Funding Cap": "Hyperlink"
+    },
+    {
+      "Subsidy Program": "Alberta — Resilient Agricultural Landscape",
+      "Description": "Set per cycle/project",
+      "Funding Amount": "2025 cycle",
+      "Key Objectives": "Yes",
+      "Additional Information": "Application/selection window",
+      "Payment/Funding Cap": "Program Info"
+    },
+    {
+      "Subsidy Program": "Alberta — OFCAF",
+      "Description": "Yes, set per allocation",
+      "Funding Amount": "Open until allocated",
+      "Key Objectives": "Yes",
+      "Additional Information": "Rolling, closes when spent",
+      "Payment/Funding Cap": "Apply for OFCAF"
+    },
+    {
+      "Subsidy Program": "BC Traceability Adoption Program",
+      "Description": "$20,000/year, $40,000/4 yrs",
+      "Funding Amount": "Annual, 4-year program",
+      "Key Objectives": "Yes, annual & lifetime caps",
+      "Additional Information": "Project deadlines",
+      "Payment/Funding Cap": "TAP Program Guide"
+    },
+    {
+      "Subsidy Program": "PEI Future Farmer Program",
+      "Description": "Up to $10,000/project",
+      "Funding Amount": "Annual/rolling",
+      "Key Objectives": "Yes, capped & eligibility",
+      "Additional Information": "Succession, farm sales minimum",
+      "Payment/Funding Cap": "Future Farmer Details"
+    },
+    {
+      "Subsidy Program": "Saskatchewan Beef Cattle – Biosecurity",
+      "Description": "$15,000/producer",
+      "Funding Amount": 46843,
+      "Key Objectives": "Yes, by date & cap",
+      "Additional Information": "Five-year window",
+      "Payment/Funding Cap": "Bison Biosecurity and Welfare Program"
+    },
+    {
+      "Subsidy Program": "SCIC Honey Bee Compensation",
+      "Description": "$5,000/one-time",
+      "Funding Amount": "Annual, review",
+      "Key Objectives": "Yes, capped, one time",
+      "Additional Information": "Process/rules per application",
+      "Payment/Funding Cap": "Honey Bee Compensation"
+    },
+    {
+      "Subsidy Program": "Observations"
+    },
+    {
+      "Subsidy Program": "All major federal and leading provincial Canadian programs deploy project, income, or annual funding caps, clear application windows, and strict budget exhaustion rules to ensure orderly and equitable distribution."
+    },
+    {
+      "Subsidy Program": "Most programs are “rolling” or “open until allocated,” closing as soon as their earmarked funds are spent."
+    },
+    {
+      "Subsidy Program": "Cost-share structures, eligibility requirements (especially for environmental/sustainability initiatives), and annual/project review cycles are universal program features."
+    },
+    {
+      "Subsidy Program": "Competitive elements are increasingly common—many funds use ranked or merit-based allocations, and not all eligible applicants receive funding each round."
+    },
+    {
+      "Subsidy Program": "Reference guides for each territory provide comprehensive details on eligibility, deadlines, and payment rules."
+    },
+    {
+      "Subsidy Program": "Find out more: https://caain.ca/funding-calls/2025-funding-competitions/ "
+    },
+    {
+      "Subsidy Program": "Land and Water Care"
+    },
+    {
+      "Subsidy Program": "CAAIN Research and Innovation Funding"
+    },
+    {
+      "Subsidy Program": "Close Date: Open now, until allocated."
+    },
+    {
+      "Subsidy Program": "Description: CAAIN is seeking applications for research and innovation projects in the large-scale cultivation of crops on a minimum of 100 acres of land that:"
+    },
+    {
+      "Subsidy Program": "(1) Advance the development, use, and value of automation and robotics"
+    },
+    {
+      "Subsidy Program": "(2) Support the creation of data-based decision-making tools that can be applied to improve knowledge, reduce risk or optimize production"
+    },
+    {
+      "Subsidy Program": "(3) Contribute to the implementation of a smart farm platform or smart farm networks to support technology adoption through fulsome integration of partners; creation frameworks for validation, demonstration and scaling; and training of a technologically proficient agricultural workforce"
+    },
+    {
+      "Subsidy Program": "Find out more: https://caain.ca/funding-calls/2025-funding-competitions/"
+    },
+    {
+      "Subsidy Program": "Alberta"
+    },
+    {
+      "Subsidy Program": "Fencing"
+    },
+    {
+      "Subsidy Program": "Resilient Agricultural Landscape Program"
+    },
+    {
+      "Subsidy Program": "Close Date: Currently preparing for 2025 applications. Until allocated."
+    },
+    {
+      "Subsidy Program": "Description: Supports producers to conserve and enhance the environmental resiliency of their agricultural landscapes."
+    },
+    {
+      "Subsidy Program": "Find out more: https://www.alberta.ca/resilient-agricultural-landscape-program"
+    },
+    {
+      "Subsidy Program": "OFCAF"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated."
+    },
+    {
+      "Subsidy Program": "Description: The On-Farm Climate Action Fund (OFCAF) is an initiative to help farmers tackle climate change."
+    },
+    {
+      "Subsidy Program": "Find out more: https://rdar.ca/funding-opportunities/applying-for-ofcaf"
+    },
+    {
+      "Subsidy Program": "Sustainable Canadian Agricultural Partnership"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated."
+    },
+    {
+      "Subsidy Program": "Description: This federal-provincial partnership delivers grant programs that generate sustainable economic growth in the agricultural and agri-food sector."
+    },
+    {
+      "Subsidy Program": "Find out more: https://www.alberta.ca/sustainable-cap#scap-updates"
+    },
+    {
+      "Subsidy Program": "Land and Water Care"
+    },
+    {
+      "Subsidy Program": "Farm Technology Program"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated."
+    },
+    {
+      "Subsidy Program": "Description: Supports innovative technology that minimizes agricultural waste and optimizes farm efficiency, and tools that secure business assets."
+    },
+    {
+      "Subsidy Program": "Find out more: https://www.alberta.ca/farm-technology-program"
+    },
+    {
+      "Subsidy Program": "British Columbia"
+    },
+    {
+      "Subsidy Program": "Traceability "
+    },
+    {
+      "Subsidy Program": "Traceability Adoption Program"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated. "
+    },
+    {
+      "Subsidy Program": "Description: Traceability Adoption Program provides cost-shared funding towards the purchase and installation of traceability systems, practices, technologies, or infrastructure."
+    },
+    {
+      "Subsidy Program": "Find out more: https://iafbc.ca/traceability-adoption-program/"
+    },
+    {
+      "Subsidy Program": "Manitoba"
+    },
+    {
+      "Subsidy Program": "Fencing"
+    },
+    {
+      "Subsidy Program": "Prairie Watersheds Climate Program"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated. "
+    },
+    {
+      "Subsidy Program": "Description: The Prairie Watersheds Climate Program (PWCP) provides funding incentives to producers who implement any of three eligible beneficial management practices (BMPs) into their operations."
+    },
+    {
+      "Subsidy Program": "Find out more: https://manitobawatersheds.org/prairie-watershed-climate-program "
+    },
+    {
+      "Subsidy Program": "New Brunswick"
+    },
+    {
+      "Subsidy Program": "Land and Water"
+    },
+    {
+      "Subsidy Program": "Agriculture Programs"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated. "
+    },
+    {
+      "Subsidy Program": "Description: A number of Provincial, Federal and cost-shared programs are available to assist the New Brunswick agriculture industry in various areas of activity. Specific examples include management, production diversification, market development, environmental improvements, land development, sustainability, food safety, training, research and innovation."
+    },
+    {
+      "Subsidy Program": "Find out more: https://www2.gnb.ca/content/gnb/en/departments/10/agriculture/content/agriculture_programs.html"
+    },
+    {
+      "Subsidy Program": "Newfoundland"
+    },
+    {
+      "Subsidy Program": "No current funding opportunities"
+    },
+    {
+      "Subsidy Program": "Novia Scotia"
+    },
+    {
+      "Subsidy Program": "No current funding opportunities"
+    },
+    {
+      "Subsidy Program": "Ontario"
+    },
+    {
+      "Subsidy Program": "Fencing"
+    },
+    {
+      "Subsidy Program": "SARPAL - Cross fencing"
+    },
+    {
+      "Subsidy Program": "Description: This BMP provides an opportunity to protect nesting grassland birds by incorporating rotational grazing with the intent of leaving some areas ungrazed until after July 15."
+    },
+    {
+      "Subsidy Program": "Find out more: https://programguides.ontariosoilcrop.org/program/cross-fencing-for-rotational-grazing-2/"
+    },
+    {
+      "Subsidy Program": "SARPAL - Exclusion fencing"
+    },
+    {
+      "Subsidy Program": "Description: Funding is to support permanent fencing to exclude livestock from forest/woodland areas and treed corridors (e.g., established windbreaks, tree buffer strips) to protect critical forage and habitat areas for Monarch, Eastern Foxsnake, Gypsy Cuckoo and Rusty-patched Bumble Bees."
+    },
+    {
+      "Subsidy Program": "Find out more: https://programguides.ontariosoilcrop.org/program/fencing-to-exclude-livestock-from-woodland-areas-2/"
+    },
+    {
+      "Subsidy Program": "Prince Edward Island"
+    },
+    {
+      "Subsidy Program": "Fencing"
+    },
+    {
+      "Subsidy Program": "Future Farmer Program"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated. "
+    },
+    {
+      "Subsidy Program": "Description: The Future Farmer Program will support business sector capacity growth and competitiveness by supporting new farmers to improve the probability that they establish or continue profitable and sustainable commercial farm businesses. "
+    },
+    {
+      "Subsidy Program": "Find out more: https://www.princeedwardisland.ca/en/information/agriculture/future-farmer-program"
+    },
+    {
+      "Subsidy Program": "Livestock Strategy Program"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated. "
+    },
+    {
+      "Subsidy Program": "Description: The Prince Edward Island (PEI) Livestock Strategy Program will support projects that are designed to increase productivity, resource capacity, environmental sustainability, revenue diversification and risk management."
+    },
+    {
+      "Subsidy Program": "Find out more: https://www.princeedwardisland.ca/en/information/agriculture/pei-livestock-strategy-program"
+    },
+    {
+      "Subsidy Program": "Animal Performance and Traceability"
+    },
+    {
+      "Subsidy Program": "Agriculture Research and Innovation Program"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated. "
+    },
+    {
+      "Subsidy Program": "Description: The Agriculture Research and Innovation Program will support farm-level applied research, innovation and adoption projects that are designed to address challenges and opportunities and increase the competitiveness, productivity and profitability of the PEI agriculture industry.  "
+    },
+    {
+      "Subsidy Program": "Find out more: https://www.princeedwardisland.ca/en/information/agriculture/agriculture-research-and-innovation-program"
+    },
+    {
+      "Subsidy Program": "Quebec"
+    },
+    {
+      "Subsidy Program": "No current funding opportunities"
+    },
+    {
+      "Subsidy Program": "Saskatchewan"
+    },
+    {
+      "Subsidy Program": "Fencing"
+    },
+    {
+      "Subsidy Program": "Prairie Watersheds Climate Program"
+    },
+    {
+      "Subsidy Program": "Close Date: Until allocated. "
+    },
+    {
+      "Subsidy Program": "Description: The Prairie Watersheds Climate Program (PWCP) provides funding incentives to producers who implement any of three eligible beneficial management practices (BMPs) into their operations."
+    },
+    {
+      "Subsidy Program": "Find out more: https://manitobawatersheds.org/prairie-watershed-climate-program"
+    },
+    {
+      "Subsidy Program": "Animal Health"
+    },
+    {
+      "Subsidy Program": "Beef Cattle - Animal Health and Biosecurity Producer Program"
+    },
+    {
+      "Subsidy Program": "Close Date: March 31, 2028"
+    },
+    {
+      "Subsidy Program": "Description: The Animal Health and Biosecurity Producer Program provides beef cattle producers, First Nation Bands raising beef cattle and beef cattle grazing associations operating on Saskatchewan Crown land pastures, with a rebate for voluntary veterinarian assessments, Verified Beef Production Plus (VBP+) audits (including re-certification) and approved eligible equipment expenses that improve biosecurity and animal welfare practices. "
+    },
+    {
+      "Subsidy Program": "Find out more: https://www.saskatchewan.ca/business/agriculture-natural-resources-and-industry/agribusiness-farmers-and-ranchers/sustainable-canadian-agricultural-partnership/programs-for-farmers-and-ranchers/animal-health-and-biosecurity-program/beef-cattle"
+    },
+    {
+      "Subsidy Program": "Beehive protection"
+    },
+    {
+      "Subsidy Program": "Honey Bee compensation "
+    },
+    {
+      "Subsidy Program": "Description: SCIC will reimburse for the cost of posts, wire, insulators, connectors, and gate handle insulators and will reimburse for the purchase of new fencers with batteries. The equipment must have a life expectancy of five years or more. Valid original receipts must be provided for all reimbursable costs. Original receipts will be returned to the beekeeper/business prior to reimbursement of funds. Please include a sheet summarizing the totals of each receipt. You may be required to submit a photo of the yard if requested by the Bear Fence."
+    },
+    {
+      "Subsidy Program": "Total amount to be reimbursed by SCIC (80% of allowable costs up to $5000)"
+    },
+    {
+      "Subsidy Program": "Find out more: https://www.scic.ca/wildlife-damage/program-overview/honey-bee-compensation"
+    },
+    {
+      "Subsidy Program": "Nationwide Programs"
+    },
+    {
+      "Subsidy Program": "CAAIN Research and Innovation Funding"
+    },
+    {
+      "Subsidy Program": "Supports large-scale crop cultivation projects (100+ acres)."
+    },
+    {
+      "Subsidy Program": "Focus on automation, robotics, data-based decision-making, smart farm platforms, and workforce training."
+    },
+    {
+      "Subsidy Program": "Funding is available until allocated."
+    },
+    {
+      "Subsidy Program": "More info and applications: CAAIN 2025 Funding Competitions"
+    },
+    {
+      "Subsidy Program": "Up to 40% of eligible project costs reimbursed, max $3 million. Involves multi-stakeholder collaborations including SMEs."
+    },
+    {
+      "Subsidy Program": "Provincial Programs"
+    },
+    {
+      "Subsidy Program": "Alberta"
+    },
+    {
+      "Subsidy Program": "Resilient Agricultural Landscape Program"
+    },
+    {
+      "Subsidy Program": "Supports conservation/environmental resiliency on farms."
+    },
+    {
+      "Subsidy Program": "Preparing for 2025 applications."
+    },
+    {
+      "Subsidy Program": "More info: Alberta Resilient Agricultural Landscape Program"
+    },
+    {
+      "Subsidy Program": "On-Farm Climate Action Fund (OFCAF)"
+    },
+    {
+      "Subsidy Program": "Helps farmers tackle climate change."
+    },
+    {
+      "Subsidy Program": "Applications open until allocated."
+    },
+    {
+      "Subsidy Program": "Details: Apply for OFCAF"
+    },
+    {
+      "Subsidy Program": "Sustainable Canadian Agricultural Partnership (SCAP)"
+    },
+    {
+      "Subsidy Program": "Federal-provincial partnership delivering grants for sustainable growth in ag sector."
+    },
+    {
+      "Subsidy Program": "More info: Sustainable CAP Alberta"
+    },
+    {
+      "Subsidy Program": "Farm Technology Program"
+    },
+    {
+      "Subsidy Program": "Supports innovation to minimize waste and optimize efficiency."
+    },
+    {
+      "Subsidy Program": "Open until funds allocated."
+    },
+    {
+      "Subsidy Program": "Info: Farm Technology Program Alberta"
+    },
+    {
+      "Subsidy Program": "British Columbia"
+    },
+    {
+      "Subsidy Program": "Traceability Adoption Program"
+    },
+    {
+      "Subsidy Program": "Cost-shared funding for traceability systems and technologies."
+    },
+    {
+      "Subsidy Program": "Open until funds allocated."
+    },
+    {
+      "Subsidy Program": "More info"
+    },
+    {
+      "Subsidy Program": "Manitoba"
+    },
+    {
+      "Subsidy Program": "Prairie Watersheds Climate Program (PWCP)"
+    },
+    {
+      "Subsidy Program": "Funding for beneficial management practices to improve sustainability."
+    },
+    {
+      "Subsidy Program": "Ongoing until allocated."
+    },
+    {
+      "Subsidy Program": "Details"
+    },
+    {
+      "Subsidy Program": "New Brunswick"
+    },
+    {
+      "Subsidy Program": "Agriculture Programs"
+    },
+    {
+      "Subsidy Program": "Provincial/federal cost-shared programs including diversification, sustainability, training, and innovation."
+    },
+    {
+      "Subsidy Program": "Open-ended."
+    },
+    {
+      "Subsidy Program": "More info"
+    },
+    {
+      "Subsidy Program": "Ontario"
+    },
+    {
+      "Subsidy Program": "SARPAL - Cross Fencing and Exclusion Fencing"
+    },
+    {
+      "Subsidy Program": "BMP programs supporting rotational grazing and protection of critical habitat through fencing."
+    },
+    {
+      "Subsidy Program": "Cross Fencing"
+    },
+    {
+      "Subsidy Program": "Exclusion Fencing"
+    },
+    {
+      "Subsidy Program": "Prince Edward Island"
+    },
+    {
+      "Subsidy Program": "Future Farmer Program"
+    },
+    {
+      "Subsidy Program": "Supports new farmers to build sustainable businesses."
+    },
+    {
+      "Subsidy Program": "Until allocated."
+    },
+    {
+      "Subsidy Program": "More info"
+    },
+    {
+      "Subsidy Program": "Livestock Strategy Program"
+    },
+    {
+      "Subsidy Program": "Projects supporting productivity and sustainability in livestock farming."
+    },
+    {
+      "Subsidy Program": "Until allocated."
+    },
+    {
+      "Subsidy Program": "Details"
+    },
+    {
+      "Subsidy Program": "Agriculture Research and Innovation Program"
+    },
+    {
+      "Subsidy Program": "Funding for farm-level applied research and innovation."
+    },
+    {
+      "Subsidy Program": "Open until allocated."
+    },
+    {
+      "Subsidy Program": "Info"
+    },
+    {
+      "Subsidy Program": "Saskatchewan"
+    },
+    {
+      "Subsidy Program": "Prairie Watersheds Climate Program (PWCP)"
+    },
+    {
+      "Subsidy Program": "Similar to Manitoba’s, for beneficial management practices."
+    },
+    {
+      "Subsidy Program": "Open until allocated."
+    },
+    {
+      "Subsidy Program": "Details"
+    },
+    {
+      "Subsidy Program": "Beef Cattle - Animal Health and Biosecurity Producer Program"
+    },
+    {
+      "Subsidy Program": "Rebates for veterinary assessments, audits, and equipment to improve biosecurity."
+    },
+    {
+      "Subsidy Program": "Closes March 31, 2028."
+    },
+    {
+      "Subsidy Program": "Info"
+    },
+    {
+      "Subsidy Program": "Other"
+    },
+    {
+      "Subsidy Program": "SCIC Honey Bee Compensation Program"
+    },
+    {
+      "Subsidy Program": "Compensation for fencing and equipment protecting bees from wildlife damage."
+    },
+    {
+      "Subsidy Program": "Covers 80% of costs up to $5,000."
+    },
+    {
+      "Subsidy Program": "More info"
+    }
+  ],
+  "NZ": [
+    {
+      "Subsidy Program": "Erosion Control Funding Program",
+      "Description": "Provides funding for erosion control measures on farms.",
+      "Funding Amount": "$10 million annually (2023)",
+      "Key Objectives": "Prevent soil erosion, improve land management.",
+      "Additional Information": "Focus on high-risk erosion areas.",
+      "Payment/Funding Cap": "Caps: 30–70% of eligible costs/project, pool size & annual regional limits.",
+      "Closing Date/Deadline": "Annual, competitive cycle.",
+      "Budget Exhaustion Marker": "Yes, closes when region/project pool spent.",
+      "Notes/Structure": "Regional, land type focused, annual selection.",
+      "Hyperlink": "MPI Erosion Control Guidelines"
+    },
+    {
+      "Subsidy Program": "Adverse Events Income Support",
+      "Description": "Financial assistance to farmers after natural disasters.",
+      "Funding Amount": "Varies",
+      "Key Objectives": "Emergency relief, continuity of production.",
+      "Additional Information": "Includes emergency disaster response.",
+      "Payment/Funding Cap": "Caps: Income/asset limits, per person/family payment thresholds.",
+      "Closing Date/Deadline": "Rolling disaster-triggered windows.",
+      "Budget Exhaustion Marker": "Yes, ceases payment when thresholds reached.",
+      "Notes/Structure": "Linked to Ministry for Social Development.",
+      "Hyperlink": "MSD Disaster Payment Caps"
+    },
+    {
+      "Subsidy Program": "Research and Development",
+      "Description": "Funds research to improve agricultural practices and technology.",
+      "Funding Amount": "$50 million annually (2023)",
+      "Key Objectives": "Innovation, efficiency, knowledge transfer.",
+      "Additional Information": "Supports universities/institutions.",
+      "Payment/Funding Cap": "Caps: Competitive calls, % costs, fixed annual pool, project caps.",
+      "Closing Date/Deadline": "Grant deadlines: annual/quarterly rounds.",
+      "Budget Exhaustion Marker": "Yes, pool/project caps, competition.",
+      "Notes/Structure": "R&D project ranking, annual pool close.",
+      "Hyperlink": "NZ R&D Incentive Guide"
+    },
+    {
+      "Subsidy Program": "Market Development",
+      "Description": "Supports domestic/export marketing of NZ ag products.",
+      "Funding Amount": "$20 million annually (2023)",
+      "Key Objectives": "Enhance access & product competitiveness.",
+      "Additional Information": "Includes MAP competitive program.",
+      "Payment/Funding Cap": "Caps: Project/event limit, pool/round caps.",
+      "Closing Date/Deadline": "Competitive cycle/round.",
+      "Budget Exhaustion Marker": "Yes, pool closes when allocated.",
+      "Notes/Structure": "Event and project merit-based.",
+      "Hyperlink": "MAP Eligibility & Guidelines"
+    },
+    {
+      "Subsidy Program": "Sustainable Land Management & Climate Change (SLMACC) Fund",
+      "Description": "Research/projects for improved land management.",
+      "Funding Amount": "Administered by MPI, annual pool.",
+      "Key Objectives": "Water conservation, climate resilience.",
+      "Additional Information": "Focus: rotational grazing, water management.",
+      "Payment/Funding Cap": "Caps: Annual/round pool, per project limit, closes when spent.",
+      "Closing Date/Deadline": "Annual competitive round, fixed deadline.",
+      "Budget Exhaustion Marker": "Yes, rounds close at allocation.",
+      "Notes/Structure": "Project review, pool split among territories.",
+      "Hyperlink": "SLMACC Fund Information"
+    },
+    {
+      "Subsidy Program": "Hill Country Erosion Fund",
+      "Description": "Funds to combat erosion, encourage sustainable practices.",
+      "Funding Amount": "Administered by MPI (regional/annual pool).",
+      "Key Objectives": "Land, grazing, conservation improvements.",
+      "Additional Information": "Regional target, conservation partners.",
+      "Payment/Funding Cap": "Caps: 60–70% of planting/fencing cost, regional annual pool.",
+      "Closing Date/Deadline": "Annual deadline (usually Sep/Oct), closes by March.",
+      "Budget Exhaustion Marker": "Yes, closes early if pool exhausted.",
+      "Notes/Structure": "Five-year window; annual project selection.",
+      "Hyperlink": "Hill Country Erosion Fund Details"
+    },
+    {
+      "Subsidy Program": "Biodiversity Fund",
+      "Description": "Supports native species/ecosystem projects.",
+      "Funding Amount": "Administered by DOC (annual regional pool).",
+      "Key Objectives": "Conservation, wildlife exclusion.",
+      "Additional Information": "Council/region-led, competitive rounds.",
+      "Payment/Funding Cap": "Caps: Pool, project size by council, annual round competitive.",
+      "Closing Date/Deadline": "Annual project round/review.",
+      "Budget Exhaustion Marker": "Yes, closes when pool allocated.",
+      "Notes/Structure": "Only open for new/priority areas each cycle.",
+      "Hyperlink": "DOC Biodiversity Funding Info"
+    },
+    {
+      "Subsidy Program": "Smart Farming Grant (added)",
+      "Description": "Grants for farm innovation/technology/efficiency.",
+      "Funding Amount": "Up to NZ$50,000/project",
+      "Key Objectives": "Accelerate farm sustainability, digital adoption.",
+      "Additional Information": "For individual farm projects.",
+      "Payment/Funding Cap": "Caps: Up to $50,000/farm, annual pool, closes Sep 30 or when spent.",
+      "Closing Date/Deadline": "Annual deadline, pool closes early.",
+      "Budget Exhaustion Marker": "Yes, first-come/merit allocation.",
+      "Notes/Structure": "Popular, closes early in oversubscription.",
+      "Hyperlink": "Smart Farming Grant Info"
+    },
+    {
+      "Subsidy Program": "Sustainable Farming Fund (added)",
+      "Description": "Partnership grants for farmer-led innovation/sustainability.",
+      "Funding Amount": "NZ$6–8 million annually",
+      "Key Objectives": "Co-innovation, best practices adoption.",
+      "Additional Information": "Requires co-funding from applicants.",
+      "Payment/Funding Cap": "Caps: 80% max cost, competitive pool, closes when spent.",
+      "Closing Date/Deadline": "Annual/biannual competitive rounds.",
+      "Budget Exhaustion Marker": "Yes, only as long as pool remains.",
+      "Notes/Structure": "Partner/farmer groups, regional quota.",
+      "Hyperlink": "SFF Information & Forms"
+    },
+    {
+      "Subsidy Program": "Observations"
+    },
+    {
+      "Subsidy Program": "Every NZ agricultural or environmental fund relies on competitive pools, project caps, annual limits, income/asset thresholds, or regional caps. No major NZ program is open-ended—allocations close as soon as funding is exhausted or at strict deadlines."
+    },
+    {
+      "Subsidy Program": "These competitive rounds and regional pools drive innovative practices but also require early action; highly oversubscribed programs may close ahead of schedule."
+    },
+    {
+      "Subsidy Program": "Success rates in application rounds reflect merit, regional focus, and policy priorities—producers must stay alert to windows and requirements. Annual policy reviews adjust caps for inflation and demand."
+    },
+    {
+      "Subsidy Program": "NZ’s model prioritizes environmental stewardship, disaster recovery, and innovation; all major environmental and agricultural investments include transparent cut-off mechanisms for equity and fiscal discipline."
+    }
+  ],
+  "AU": [
+    {
+      "Subsidy Program": "Farm Management Deposits (FMD) Scheme",
+      "Description": "Lets primary producers set aside pre‑tax income in good years and draw in bad years; tax deferral instrument",
+      "Funding Amount": "~$1B annually (estimated market size)",
+      "Key Objectives": "Income smoothing, risk management",
+      "Additional Information": "ATO and DAFF administer tax treatment and policy",
+      "Payment/Funding Cap": "Caps: up to A$800,000 across all FMDs; non‑primary production income must be ≤A$100,000 to deposit; minimum deposit A$1,000; 12‑month holding rule with drought exemptions",
+      "Closing Date/Deadline": "Deposits by 30 June to claim deduction for that year",
+      "Budget Exhaustion Marker": "Budget neutral, but capped by statutory deposit limits",
+      "Notes/Structure": "Bank products under ATO rules; early access allowed in defined adverse events",
+      "Hyperlink": "ATO FMD overview - DAFF FMD - ATO cap/30 June rule"
+    },
+    {
+      "Subsidy Program": "Drought Resilience Funding (Future Drought Fund streams)",
+      "Description": "Grants to build drought preparedness, innovation, soils and landscape resilience",
+      "Funding Amount": "A$519M over 8 years (FDF streams)",
+      "Key Objectives": "Prepare for, manage, recover from drought",
+      "Additional Information": "Multiple competitive grant rounds via Community Grants Hub",
+      "Payment/Funding Cap": "Typical grant caps vary by stream (e.g., soils & landscapes A$0.5M–A$1M); co‑investment often required",
+      "Closing Date/Deadline": "Strict opening/closing dates per round; late applications not accepted",
+      "Budget Exhaustion Marker": "Yes—fixed round pools; closes when allocated",
+      "Notes/Structure": "Open competitive or targeted rounds; final reports and milestones required",
+      "Hyperlink": "FDF grants EOI/round guide - Soils & Landscapes round timing/caps - Program closures example"
+    },
+    {
+      "Subsidy Program": "Research & Development (RDCs/levy‑matched, Rural R&D)",
+      "Description": "Competitive grants and levy‑matched projects via RDCs and programs",
+      "Funding Amount": "~A$850M annually (incl. levy matching)",
+      "Key Objectives": "Innovation, productivity, biosecurity",
+      "Additional Information": "Involves universities and RDCs portfolio",
+      "Payment/Funding Cap": "Caps by opportunity; project budgets negotiated; milestone payments",
+      "Closing Date/Deadline": "Calendar of calls with fixed deadlines",
+      "Budget Exhaustion Marker": "Yes—appropriation and program pools",
+      "Notes/Structure": "Merit assessed; reporting and audits required",
+      "Hyperlink": "RDC program landing pages; see also Austrade/EMDG for market R&D"
+    },
+    {
+      "Subsidy Program": "Market Development (Export Market Development Grants, EMDG)",
+      "Description": "Grants to help SMEs build exports of goods/services/IP",
+      "Funding Amount": "~A$100M+ annually across rounds",
+      "Key Objectives": "Expand exports, market access",
+      "Additional Information": "Administered by Austrade, three‑tier model",
+      "Payment/Funding Cap": "Tier caps FY2025: Tier1 up to A$40k/yr (2 yrs), Tier2 up to A$80k/yr (3 yrs), Tier3 up to A$150k/yr (3 yrs), lifecycle limit 8 years",
+      "Closing Date/Deadline": "Round windows (e.g., Round 4 for 2025–27 activities); milestones required",
+      "Budget Exhaustion Marker": "Yes—annual pool; proration if oversubscribed",
+      "Notes/Structure": "Matched funding; milestone reporting or funding reduced",
+      "Hyperlink": "Austrade apply - 2025 cap tiers"
+    },
+    {
+      "Subsidy Program": "National Landcare Program (incl. Smart Farming Partnerships, Environment Small Grants)",
+      "Description": "Grants for sustainable land management, biodiversity, rotational grazing, water conservation",
+      "Funding Amount": "Multi‑year appropriations; grant rounds vary",
+      "Key Objectives": "Conservation outcomes, sustainable practices",
+      "Additional Information": "Delivered via DAFF/Community Grants Hub",
+      "Payment/Funding Cap": "Caps by opportunity (e.g., project‑specific limits in guidelines)",
+      "Closing Date/Deadline": "Fixed closing dates; late apps only in exceptional cases",
+      "Budget Exhaustion Marker": "Yes—competitive pool, closes when allocated",
+      "Notes/Structure": "Milestones, completion and acquittal dates (e.g., 30 Jun or 30 Nov depending on round)",
+      "Hyperlink": "Smart Farming Partnerships R2 guidelines: deadlines/late rules - Environment Small Grants timing"
+    },
+    {
+      "Subsidy Program": "Regional Investment Corporation (RIC) Loans – AgriStarter, Drought, AgBiz Drought, Farm Investment",
+      "Description": "Concessional loans to farm businesses and ag‑related SMEs",
+      "Funding Amount": "Lending program totals >A$5B settled; new A$1B allocation in 2025",
+      "Key Objectives": "Resilience, succession, investment, export readiness",
+      "Additional Information": "10‑year terms; first 5 years interest‑only typical",
+      "Payment/Funding Cap": "Caps: up to A$2M per loan (AgriStarter, Drought, Farm Investment); AgBiz Drought up to A$500k",
+      "Closing Date/Deadline": "Applications open; guidelines set eligibility; refinance expected after term",
+      "Budget Exhaustion Marker": "Lending allocation capped; applications may queue if funding tight",
+      "Notes/Structure": "Max 50% of eligible commercial debt; viability, security requirements",
+      "Hyperlink": "RIC review/loan caps - Loan product explainer/caps - Govt $1B boost 2025 - RIC product links"
+    },
+    {
+      "Subsidy Program": "On‑Farm Emergency Water Infrastructure Rebate (state‑run, common model)",
+      "Description": "Rebates for stock water infrastructure to address animal welfare and drought resilience",
+      "Funding Amount": "Program pools vary by state",
+      "Key Objectives": "Water security, drought resilience",
+      "Additional Information": "State delivery (NSW, TAS, others)",
+      "Payment/Funding Cap": "Typical cap: 25% rebate up to A$25,000 per enterprise",
+      "Closing Date/Deadline": "Closes at set date or earlier if funds exhausted",
+      "Budget Exhaustion Marker": "Yes—“until funds exhausted” clause",
+      "Notes/Structure": "Eligibility: grazing/horticulture; disaster/drought impact",
+      "Hyperlink": "NSW scheme guide: $25k cap & close when exhausted - TAS scheme: $25k cap"
+    },
+    {
+      "Subsidy Program": "Observations"
+    },
+    {
+      "Subsidy Program": "Australia’s supports blend tax-based smoothing (FMD), concessional lending (RIC), competitive grants (FDF, Landcare), and export market grants (EMDG), each with explicit cut-offs: statutory caps, grant ceilings, loan maximums, strict round deadlines, and “funds exhausted” clauses."
+    },
+    {
+      "Subsidy Program": "FMD is not an open-ended subsidy; it has hard caps (A$800k), income eligibility thresholds, and timing rules (deposit by 30 June) that function as cut-off calculations for benefit access."
+    },
+    {
+      "Subsidy Program": "Drought and Landcare programs consistently enforce fixed closing dates and reject late applications barring exceptional circumstances; pools are allocated competitively and may close early if oversubscribed."
+    },
+    {
+      "Subsidy Program": "RIC loans impose product-level caps (generally A$2M, 10-year term with 5 years interest-only) and portfolio-level funding ceilings, with fresh appropriations in 2025 adding A$1B to maintain access beyond 2026."
+    },
+    {
+      "Subsidy Program": "EMDG’s 2025 tiers formalize lifecycle and annual caps, tightening compliance and milestone reporting—important for planning multi-year market development for ag exporters."
+    },
+    {
+      "Subsidy Program": "If deeper drill-down by commodity or state program is needed (e.g., biosecurity grants, bushfire recovery units, carbon + biodiversity pilots), a follow-on grid can be produced with program-specific caps and closing dates."
+    }
+  ],
+  "CL": [
+    {
+      "Program": "Programa de Desarrollo de Inversiones (PDI)",
+      "Focus": "Equipment, on-farm upgrades (watering points, fencing, sheds)",
+      "Administered": "INDAP",
+      "Details": "Non-reimbursable cofinancing to develop or strengthen smallholders’ investments",
+      "Cut Offs / Caps": "Co-finance % caps; competitive “concursos” with fixed windows; closes when allocated",
+      "Link": "INDAP PDI"
+    },
+    {
+      "Program": "Crédito Enlace Ley 18.450 (Riego y Drenaje)",
+      "Focus": "Bridge credit to execute irrigation works subsidized by Law 18.450",
+      "Administered": "INDAP (credit) + CNR (bonus)",
+      "Details": "Short-term credit tied to awarded irrigation bonus; uses endosable bonus certificate as guarantee",
+      "Cut Offs / Caps": "Requires CNR-awarded bonus; credit only up to certified bonus; open year-round but contingent on bonus award",
+      "Link": "INDAP Crédito Enlace 18.450"
+    },
+    {
+      "Program": "Ley 18.450 Bonificación de Riego y Drenaje",
+      "Focus": "Irrigation/drainage infrastructure, technification",
+      "Administered": "CNR (Comisión Nacional de Riego)",
+      "Details": "State subsidy to co-finance irrigation works selected via public competitions",
+      "Cut Offs / Caps": "Smallholders up to 90% subsidy; others up to 80%; strict concurso calendar and closing dates",
+      "Link": "CNR Concursos - Bonificación % - Calendario 2025"
+    },
+    {
+      "Program": "PRODESAL (Programa de Desarrollo Local)",
+      "Focus": "Extension + small productive subsidies; grazing, small livestock",
+      "Administered": "INDAP + Municipalities",
+      "Details": "Increases smallholders’ incomes; links to services and social programs; includes FOA (Fondo de Operación Anual) inputs",
+      "Cut Offs / Caps": "Annual FOA amounts; municipal/area caps; scheduled deliveries before planting season",
+      "Link": "PRODESAL - FOA delivery example"
+    },
+    {
+      "Program": "SIRSD-S (Suelos Degradados) – Recuperación de Suelos",
+      "Focus": "Pasture renovation, erosion control, fertilization",
+      "Administered": "INDAP/CNR regional concursos",
+      "Details": "Cost-share incentives to recover degraded soils for smallholders",
+      "Cut Offs / Caps": "Concurso windows; practice-specific caps; closes when regional budget allocated",
+      "Link": "INDAP Concursos portal"
+    },
+    {
+      "Program": "Alianzas Productivas (AP)",
+      "Focus": "Market linkages for smallholders with buyers",
+      "Administered": "INDAP",
+      "Details": "Contracts with anchor firms; technical assistance and co-investments",
+      "Cut Offs / Caps": "Limited cohort size per call; performance milestones; annual intake",
+      "Link": "Concursos AP"
+    },
+    {
+      "Program": "Bono Legal de Aguas",
+      "Focus": "Regularization/legal costs for water rights",
+      "Administered": "INDAP/CNR",
+      "Details": "Helps finance legalization of water rights required for investment",
+      "Cut Offs / Caps": "Concurso with fixed quotas; per‑beneficiary cap",
+      "Link": "Concursos list"
+    },
+    {
+      "Program": "Fondo de Manejo del Bosque Nativo",
+      "Focus": "Sustainable native forest management on farms (silvopastoral compatible)",
+      "Administered": "CONAF",
+      "Details": "Competitive fund pays a per‑hectare bonus for eligible activities under Law 20.283",
+      "Cut Offs / Caps": "Up to 0.3 UTM/ha; max 700 UTM per beneficiary; must win a concurso; pay after activity verified",
+      "Link": "ChileAtiende ficha - BCN caps"
+    },
+    {
+      "Program": "SAG Programas Fitosanitarios (ej. Lobesia botrana)",
+      "Focus": "Pest control affecting fruit, forage systems",
+      "Administered": "SAG",
+      "Details": "National plan deploys control tools and co-financed actions",
+      "Cut Offs / Caps": "Seasonal strategies; procurement/participation windows; capped per area",
+      "Link": "SAG PNLb Estrategia 2025/26 - Digital platforms initiative"
+    },
+    {
+      "Program": "COBEX – Cobertura al Fomento del Comercio Exterior",
+      "Focus": "Guarantees for export financing (ag exporters eligible)",
+      "Administered": "CORFO",
+      "Details": "Partial credit guarantees for export operations",
+      "Cut Offs / Caps": "Caps: Micro 5,000 UF; Small 7,000 UF; Medium 9,000 UF; Large exporters 35,000 UF",
+      "Link": "ChileAtiende COBEX"
+    },
+    {
+      "Program": "INDAP Créditos (Corto y Largo Plazo)",
+      "Focus": "Working capital and investment loans for smallholders",
+      "Administered": "INDAP",
+      "Details": "Tailored credit products; rates and terms adapted to agricultural cycles",
+      "Cut Offs / Caps": "Product caps and eligibility; subject to budget and risk policies",
+      "Link": "Crédito LP/CP landing - Promo ref."
+    },
+    {
+      "Program": "Notes and guidance"
+    },
+    {
+      "Program": "For livestock producers (cattle, sheep, goats, horses), priority programs that map to rotational grazing or water security: SIRSD-S, PDI (watering points/fencing), Ley 18.450 technification, PRODESAL/FOA seasonal inputs, and CONAF’s native forest fund for silvopastoral practices."
+    },
+    {
+      "Program": "All listed programs operate via concursos (competitive calls), annual caps, per‑beneficiary limits, or guarantee ceilings—classic cut-off mechanisms; plan for early application each window."
+    }
+  ],
+  "BR": [
+    {
+      "Country": "Brazil",
+      "Program": "ABC+ Plan (Plano ABC+) and RenovAgro (investment credit lines)",
+      "Focus": "Low‑carbon ag: no‑till, pasture recovery, ILPF, bioinputs, forests",
+      "Administered": "MAPA + National Monetary Council (CMN); executed by public/private banks",
+      "Definitions/How It Works": "Investment rural credit lines earmarked for practices that reduce emissions; post‑2023 medium/large producers use RenovAgro; family farmers use PRONAF ABC+; interest equalized within Plano Safra",
+      "Payment/Funding Cap": "Annual Plano Safra sets envelope; proposals for at least R$8B to ABC+ and R$5B to PRONAF ABC+ cited in policy recommendations; limits per borrower set by CMN and bank product tables",
+      "Eligibility Cut-Offs": "Must be registered in CAR (Rural Environmental Registry) or equivalent and comply with Forest Code; practice list restricted (ILPF, degraded pasture recovery, forests, etc.)",
+      "Application/Deadline": "Seasonal “Plano Safra” window each crop year; bank intake until quotas filled",
+      "Budget Exhaustion Marker": "Yes—each bank receives quotas; lines close when institutional quota is spent",
+      "Notes/Structure": "RenovAgro introduced via CMN 5079/2023; PRONAF ABC+ maintained via CMN 5080/2023 with differentiated (lower) interest and revised limits for Floresta/Semiarid",
+      "Link": "ABC+ executive summary - ABC+ as NDC catalyst - Plano Safra credit/interest landscape - Agroicone analysis incl. RenovAgro/PRONAF ABC+ details"
+    },
+    {
+      "Country": "Brazil",
+      "Program": "PRONAF (including PRONAF ABC+)",
+      "Focus": "Family farming working capital and investment; sustainable practices for smallholders",
+      "Administered": "MAPA + BCB; executed by banks/credit co‑ops",
+      "Definitions/How It Works": "National rural credit system line dedicated to family farms; PRONAF ABC+ earmarks for low‑carbon practices",
+      "Payment/Funding Cap": "Per‑beneficiary limits vary by subprogram; PRONAF ABC+ Floresta/Semiarid limits adjusted in 2023/24; lifecycle access limited by Plano Safra envelopes",
+      "Eligibility Cut-Offs": "Requires CAF (National Family Farming Registry) and CAR; income/scale thresholds to qualify as family farmer",
+      "Application/Deadline": "Annual; intake open while resources last",
+      "Budget Exhaustion Marker": "Yes—bank quotas; once used, applications pause or roll",
+      "Notes/Structure": "Access gaps exist (documentation like CAF/CAR); implementation capacity affects low‑carbon uptake",
+      "Link": "Agroicone/CMN summaries - Access barriers discussion - CAR role"
+    },
+    {
+      "Country": "Brazil",
+      "Program": "Plano Safra (umbrella: Custeio/Investimento incl. Moderfrota, storage, etc.)",
+      "Focus": "Seasonal working capital (custeio) and investments (machinery, storage)",
+      "Administered": "MAPA/ME + CMN; BNDES and banks",
+      "Definitions/How It Works": "Sets all official rural credit lines’ interest rates, limits, and quotas each crop year",
+      "Payment/Funding Cap": "Credit limits per product/borrower; interest ranges by size and line (historically ~2.75%–7.5% controlled credit)",
+      "Eligibility Cut-Offs": "Producer size definitions; CAR compliance; environmental and fiscal regularity",
+      "Application/Deadline": "Seasonal; contracts within crop-year validity",
+      "Budget Exhaustion Marker": "Yes—bank quotas and Treasury equalization caps",
+      "Notes/Structure": "Moderfrota and others finance tractors/harvesters; credit concentration trends highlighted by IFIs",
+      "Link": "CPI finance landscape - World Bank policy note on rural finance/Moderfrota"
+    },
+    {
+      "Country": "Brazil",
+      "Program": "Rural Insurance Premium Subsidy (PSR)",
+      "Focus": "Crop/livestock insurance premium subsidy",
+      "Administered": "MAPA + insurers",
+      "Definitions/How It Works": "Federal subsidy pays part of producer premium to increase insurance uptake",
+      "Payment/Funding Cap": "Annual appropriation defines total subsidy cap; per‑policy and per‑producer subsidy limits applied by MAPA",
+      "Eligibility Cut-Offs": "Eligible crops/regions; policy rules; farm compliance",
+      "Application/Deadline": "Annual calls; insurer applications aligned to seasons",
+      "Budget Exhaustion Marker": "Yes—funds exhaust during season; allocation pauses",
+      "Notes/Structure": "Demonstrated to influence demand; pivotal for risk management",
+      "Link": "Academic review of PSR"
+    },
+    {
+      "Country": "Brazil",
+      "Program": "National Water Agency (ANA) – Rural Water/Grant Programs (Pacto pelas Águas; sanitation in rural areas)",
+      "Focus": "Water quality, irrigation efficiency, reuse",
+      "Administered": "ANA; with states/municipalities",
+      "Definitions/How It Works": "Technical/financial cooperation to expand access/quality; co‑funding with state entities",
+      "Payment/Funding Cap": "Project caps defined per call; match funding often required",
+      "Eligibility Cut-Offs": "Census/need-based eligibility; environmental permits",
+      "Application/Deadline": "Calls list fixed opening/closing; procurement-based",
+      "Budget Exhaustion Marker": "Yes—project pool limits",
+      "Notes/Structure": "Rural water reuse/quality projects support dairy/irrigation efficiency in states like MG",
+      "Link": "ANA and grant-hub pages; examples through state calls and project notices"
+    },
+    {
+      "Country": "Brazil",
+      "Program": "CAR/SICAR (Rural Environmental Registry) – enabling condition",
+      "Focus": "Environmental compliance registry for all rural properties",
+      "Administered": "MMA/MAPA via SICAR + states",
+      "Definitions/How It Works": "Mandatory registry linking property info to environmental compliance (APP, RL)",
+      "Payment/Funding Cap": "N/A (regulatory instrument)",
+      "Eligibility Cut-Offs": "Must be registered and, where required, regularized to access many credit/subsidy lines",
+      "Application/Deadline": "Rolling",
+      "Budget Exhaustion Marker": "N/A",
+      "Notes/Structure": "Serves as gatekeeper for credit and incentives; linked to PRAs/CRAs",
+      "Link": "CAR overview - FIP support to CAR/SICAR"
+    },
+    {
+      "Country": "Brazil",
+      "Program": "BNDES/Export Guarantee and emergency lines (contextual for ag exporters)",
+      "Focus": "Working capital/investments for exporters, including ag",
+      "Administered": "BNDES + FGE",
+      "Definitions/How It Works": "Special credit for tariff/external shocks (Brasil Soberano) supports firms including agribusiness",
+      "Payment/Funding Cap": "Announced pools: R$30B via FGE + R$10B BNDES; individual loan caps per line",
+      "Eligibility Cut-Offs": "Affected exporter status; job maintenance",
+      "Application/Deadline": "Program windows in 2025; intake until pool used",
+      "Budget Exhaustion Marker": "Yes—pool caps by decree",
+      "Notes/Structure": "Complements core rural credit when shocks occur",
+      "Link": "Gov plan note - BNDES coverage"
+    },
+    {
+      "Country": "Program-specific cut-off examples to operationalize"
+    },
+    {
+      "Country": "ABC+/RenovAgro and PRONAF ABC+: Eligibility is cut off by CAR registration status, practice lists, and annual bank quotas; once a bank’s ABC+ quota is spent for the season, applications are deferred to other institutions or the next cycle."
+    },
+    {
+      "Country": "PSR (insurance): Subsidy calendars publish crop/region allocations and per‑policy subsidy ceilings; when annual appropriations run out, no new subsidized policies can be issued that season."
+    },
+    {
+      "Country": "ANA water grants: Competition calls specify co‑funding ratios, maximum grant values, and close on dates or at allocation limits; projects not scored above thresholds are not funded (grant mechanisms referenced) ."
+    },
+    {
+      "Country": "Plano Safra: All official lines operate under controlled envelopes with bank-level allocations; once a bank exhausts equalizable resources for a line, lending pauses or shifts to higher, market‑rate credit."
+    },
+    {
+      "Country": "How this maps to livestock and rotational grazing"
+    },
+    {
+      "Country": "Prioritize PRONAF ABC+ and RenovAgro sublines for degraded pasture recovery, ILPF, pasture renovation, shade trees, and water points; combine with PSR to de‑risk production and ANA/state grants for water reuse/efficiency."
+    },
+    {
+      "Country": "Ensure CAR registration and, where applicable, PRA compliance are complete before applying; these are frequent eligibility cut‑offs for low‑carbon credit lines and for some state programs."
+    },
+    {
+      "Country": "Time applications to Plano Safra opening and insurer PSR calendar; oversubscription is common in Q3–Q4 and lines can close quickly at major banks."
+    },
+    {
+      "Country": "If a columnar download is needed (CSV/Excel), this grid can be exported with per‑line interest bands and 2025/26 credit limits as they are published in the new Plano Safra ordinance updates"
+    }
+  ],
+  "LATAM": [
+    {
+      "Country": "Argentina",
+      "Program": "PROSAP (Programa de Servicios Agrícolas Provinciales)",
+      "Focus": "Rotational grazing, irrigation, rural infrastructure",
+      "Administered": "Ministry of Economy with provinces",
+      "What It Does / Definitions": "Co-finances provincial projects that raise farm productivity and resilience (e.g., paddock subdivision, water points, electric fencing)",
+      "Payment/Funding Cap": "Project caps set in calls; provincial counterpart funding required",
+      "Eligibility Cut‑Offs": "Producer access via provincial project participation lists",
+      "Application/Deadline": "Calls issued by provinces with fixed closing dates",
+      "Budget Exhaustion Marker": "Yes—envelopes per call/province",
+      "Notes/Structure": "Often bundled with grazing extension; selection by merit/economic impact",
+      "Link": "Provincial calls under PROSAP pages (project-based)"
+    },
+    {
+      "Country": "Argentina",
+      "Program": "INTA technical programs (national institute)",
+      "Focus": "IPM pest and rodent control, innovation",
+      "Administered": "INTA",
+      "What It Does / Definitions": "Technical assistance and competitive pilot funding for on-farm IPM/biocontrol, traps, habitat management",
+      "Payment/Funding Cap": "Small project caps set by calls",
+      "Eligibility Cut‑Offs": "Target crops/regions; producer co‑participation",
+      "Application/Deadline": "Fixed call calendars",
+      "Budget Exhaustion Marker": "Yes—limited research/extension budgets",
+      "Notes/Structure": "INTA channels calls and extension via regional centers",
+      "Link": "INTA program news hub"
+    },
+    {
+      "Country": "Colombia",
+      "Program": "Ministry of Agriculture — Alianzas Productivas",
+      "Focus": "Wildlife exclusion, market access, sustainability",
+      "Administered": "MinAgricultura + territorial partners",
+      "What It Does / Definitions": "Co-finances alliances between producer groups and buyers, including fencing and habitat protection where needed",
+      "Payment/Funding Cap": "Per alliance co‑financing cap published per call",
+      "Eligibility Cut‑Offs": "Must be producer groups with buyer MOUs; sustainable criteria",
+      "Application/Deadline": "2025 call extended to Aug 25",
+      "Budget Exhaustion Marker": "Yes—fixed national envelope",
+      "Notes/Structure": "Emphasis on smallholders, resilient agri-food systems",
+      "Link": "2025 call extension note"
+    },
+    {
+      "Country": "Colombia",
+      "Program": "ICA animal traceability (IdentifICA/DINES)",
+      "Focus": "Livestock traceability",
+      "Administered": "ICA",
+      "What It Does / Definitions": "Mandatory individual ID devices (DINES) to improve sanitary status and market access",
+      "Payment/Funding Cap": "Subsidy/aid varies by project; devices provided in some zones",
+      "Eligibility Cut‑Offs": "Resolution 110321/2021 mandates ID in frontier zones",
+      "Application/Deadline": "Seasonal/territorial operations",
+      "Budget Exhaustion Marker": "Yes—operational quotas and device inventories",
+      "Notes/Structure": "Improves compliance for export markets",
+      "Link": "ICA traceability update 2025 - Background explainer"
+    },
+    {
+      "Country": "Colombia",
+      "Program": "Ganadería Colombiana Sostenible (GEF/World Bank)",
+      "Focus": "Silvopastoral systems, PSA",
+      "Administered": "FEDEGÁN/CIPAV/TNC/Fondo Acción",
+      "What It Does / Definitions": "Pays for environmental services and gives TA to convert pastures to silvopastoral systems",
+      "Payment/Funding Cap": "Up to US$6,500 per farmer PSA",
+      "Eligibility Cut‑Offs": "Target areas and farm size criteria; contracts required",
+      "Application/Deadline": "Cohort-based intakes",
+      "Budget Exhaustion Marker": "Yes—donor pool and cohort caps",
+      "Notes/Structure": "Combines PSA, TA, credit access",
+      "Link": "Project benefits table"
+    },
+    {
+      "Country": "Peru",
+      "Program": "AgroRural programs",
+      "Focus": "Land and water care (terracing, water harvesting)",
+      "Administered": "MIDAGRI (AgroRural)",
+      "What It Does / Definitions": "Rehabilitates terraces, co‑finances siembra y cosecha de agua (dams, infiltration)",
+      "Payment/Funding Cap": "Caps by project modality",
+      "Eligibility Cut‑Offs": "Target Andean districts; communal organizations",
+      "Application/Deadline": "Annual/seasonal calls",
+      "Budget Exhaustion Marker": "Yes—regional budgets",
+      "Notes/Structure": "Strong climate resilience orientation",
+      "Link": "AgroRural program page - Water-harvesting framework"
+    },
+    {
+      "Country": "Peru",
+      "Program": "SERFOR — Programa de Incentivos Forestales (PIF)",
+      "Focus": "Conservation/forest plantations",
+      "Administered": "SERFOR (MIDAGRI)",
+      "What It Does / Definitions": "Co-finances commercial plantations and sustainable forest management",
+      "Payment/Funding Cap": "Up to S/742,500 per business plan; min 100 ha",
+      "Eligibility Cut‑Offs": "Eligible regions and technical plan approval",
+      "Application/Deadline": "2025 registration extended to May 14",
+      "Budget Exhaustion Marker": "Yes—competitive pool by regions",
+      "Notes/Structure": "Prioritizes sustainable productive forests",
+      "Link": "SERFOR 2025 notice - Sector brief"
+    },
+    {
+      "Country": "Mexico",
+      "Program": "SADER (ex‑SAGARPA) — Crédito Ganadero a la Palabra and state sustainable ranching",
+      "Focus": "Animal fencing, genetic improvement, regenerative practices",
+      "Administered": "SADER + states",
+      "What It Does / Definitions": "Interest‑free credit/stock delivery; 2025 sustainable ranching pilots in Tabasco/SE region include genetics, TA, and animal health",
+      "Payment/Funding Cap": "Caps by beneficiary and headcount per call",
+      "Eligibility Cut‑Offs": "Small producers prioritized by state",
+      "Application/Deadline": "Program windows per state",
+      "Budget Exhaustion Marker": "Yes—limited stock and budget",
+      "Notes/Structure": "Bundled TA and sanitary measures via SENASICA",
+      "Link": "Federal program brief - 2025 pilot news"
+    },
+    {
+      "Country": "Mexico",
+      "Program": "Producción para el Bienestar (replaced ProAgro Productivo)",
+      "Focus": "Sustainable practices for small/medium crop producers",
+      "Administered": "SADER",
+      "What It Does / Definitions": "Direct per‑hectare payments (no price linkage) for registered producers to improve liquidity and adopt practices",
+      "Payment/Funding Cap": "Budget was MXN 9B in 2019; per‑ha caps by region/size",
+      "Eligibility Cut‑Offs": "Registration in program directory; area caps (≤20 ha typical)",
+      "Application/Deadline": "Annual registration/verification",
+      "Budget Exhaustion Marker": "Yes—federal envelope limits",
+      "Notes/Structure": "Successor to ProAgro with sustainability orientation",
+      "Link": "USDA GAIN explainer (program change) - Official portal"
+    },
+    {
+      "Country": "Cut‑off mechanics to expect in practice"
+    },
+    {
+      "Country": "Fixed call windows and “until allocated” rules: Alianzas Productivas, AgroRural, SERFOR PIF, and state fencing/stock programs use firm closing dates and close when funds are exhausted."
+    },
+    {
+      "Country": "Eligibility gatekeepers: Colombian traceability requires DINES under ICA Resolution 110321/2021 in defined zones; many credit/aid lines require producer group status, MOUs, or registry enrollment (e.g., Producción para el Bienestar directory)."
+    },
+    {
+      "Country": "Per‑beneficiary and per‑project caps: PSA in Colombia up to US$6,500 per farmer; SERFOR PIF up to S/742,500 per plan; Mexico per‑hectare payments capped by area; Argentina PROSAP/INTA projects have fixed co‑finance ratios and ceilings."
+    },
+    {
+      "Country": "Observations"
+    },
+    {
+      "Country": "Across LATAM, most support is delivered via competitive or registry‑based schemes with explicit caps and closing dates rather than open‑ended subsidies—planning ahead for windows and assembling eligibility documents (registries, MOUs, technical plans) is critical."
+    },
+    {
+      "Country": "Livestock‑relevant levers recurring in these countries include fencing/electric paddocks, water harvesting, silvopastoral systems, and traceability—each linked to higher market access or climate resilience outcomes when combined with technical assistance cohorts"
+    }
+  ]
+}
