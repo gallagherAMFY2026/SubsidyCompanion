@@ -6,256 +6,274 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, DollarSign, MapPin, Search, ExternalLink, AlertCircle } from "lucide-react";
 
-interface SubsidyProgram {
+interface SubsidyProgramCurated {
   id: string;
-  title: string;
-  summary: string;
-  category: string;
-  publishedDate: Date;
-  url: string;
-  fundingAmount?: string | null;
-  deadline?: Date | null;
-  location?: string | null;
-  dataSource: string;
-  sourceAgency?: string | null;
   country: string;
-  region?: string | null;
-  opportunityNumber?: string | null;
-  isHighPriority?: boolean | null;
-}
-
-interface ProgramStats {
-  total: number;
-  active: number;
-  expired: number;
-  highPriority: number;
-  byCountry: Record<string, number>;
-  bySource: Record<string, number>;
-  byCategory: Record<string, number>;
-  upcomingDeadlines: number;
+  programName: string;
+  description: string | null;
+  hyperlink: string | null;
+  fundingAmount: string | null;
+  paymentCap: string | null;
+  keyObjectives: string | null;
+  focus: string | null;
+  administered: string | null;
+  acreageProductionLimit: string | null;
+  eligibilityCutoffs: string | null;
+  cutoffsCaps: string | null;
+  closingDate: string | null;
+  applicationDeadline: string | null;
+  budgetExhaustion: string | null;
+  additionalInfo: string | null;
+  notesStructure: string | null;
+  details: string | null;
+  definitionsHowItWorks: string | null;
+  sourceSheet: string;
 }
 
 interface SubsidyBrowserProps {
-  programs: SubsidyProgram[];
-  stats: ProgramStats | undefined;
+  programs: SubsidyProgramCurated[];
+  stats: Record<string, number>;
   isLoading: boolean;
 }
 
 export default function SubsidyBrowser({ programs, stats, isLoading }: SubsidyBrowserProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [countryFilter, setCountryFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("deadline");
+  const [sortBy, setSortBy] = useState("country");
 
-  // Get unique countries from programs
   const countries = Array.from(new Set(programs.map(p => p.country))).sort();
 
-  // Filter and sort programs
   let filteredPrograms = programs.filter(program => {
-    const matchesSearch = program.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         program.summary?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         program.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+      program.programName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      program.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      program.keyObjectives?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      program.focus?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCountry = countryFilter === "all" || program.country === countryFilter;
     return matchesSearch && matchesCountry;
   });
 
-  // Sort programs
   filteredPrograms = [...filteredPrograms].sort((a, b) => {
-    if (sortBy === "deadline") {
-      if (!a.deadline && !b.deadline) return 0;
-      if (!a.deadline) return 1;
-      if (!b.deadline) return -1;
-      return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
-    } else if (sortBy === "priority") {
-      if (a.isHighPriority && !b.isHighPriority) return -1;
-      if (!a.isHighPriority && b.isHighPriority) return 1;
-      return 0;
-    } else if (sortBy === "newest") {
-      return new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime();
+    if (sortBy === "country") {
+      return a.country.localeCompare(b.country) || a.programName.localeCompare(b.programName);
+    } else if (sortBy === "name") {
+      return a.programName.localeCompare(b.programName);
+    } else if (sortBy === "deadline") {
+      const aDeadline = a.closingDate || a.applicationDeadline;
+      const bDeadline = b.closingDate || b.applicationDeadline;
+      if (!aDeadline && !bDeadline) return 0;
+      if (!aDeadline) return 1;
+      if (!bDeadline) return -1;
+      return aDeadline.localeCompare(bDeadline);
     }
     return 0;
   });
 
-  const getDaysUntilDeadline = (deadline: Date | null) => {
-    if (!deadline) return null;
-    const now = new Date();
-    const days = Math.ceil((new Date(deadline).getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    return days;
-  };
+  const totalPrograms = programs.length;
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      {/* Header with Stats */}
       <div className="space-y-4">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-semibold" data-testid="text-title">Browse Subsidies</h1>
-          <p className="text-muted-foreground">Explore agricultural funding programs across 6 territories</p>
+          <p className="text-muted-foreground">Explore {totalPrograms} agricultural funding programs across 6 territories</p>
         </div>
 
         {/* Statistics Cards */}
-        {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          {Object.entries(stats).sort((a, b) => b[1] - a[1]).map(([country, count]) => (
+            <Card key={country}>
               <CardContent className="pt-6">
                 <div className="text-center space-y-1">
-                  <div className="text-3xl font-bold text-primary" data-testid="stat-total">{stats.total}</div>
-                  <div className="text-sm text-muted-foreground">Total Programs</div>
+                  <div className="text-3xl font-bold text-primary" data-testid={`stat-${country}`}>{count}</div>
+                  <div className="text-sm text-muted-foreground">{country}</div>
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center space-y-1">
-                  <div className="text-3xl font-bold text-green-600" data-testid="stat-active">{stats.active}</div>
-                  <div className="text-sm text-muted-foreground">Active Now</div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center space-y-1">
-                  <div className="text-3xl font-bold text-orange-600" data-testid="stat-priority">{stats.highPriority}</div>
-                  <div className="text-sm text-muted-foreground">High Priority</div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center space-y-1">
-                  <div className="text-3xl font-bold text-blue-600" data-testid="stat-deadlines">{stats.upcomingDeadlines}</div>
-                  <div className="text-sm text-muted-foreground">Closing Soon</div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
 
-      {/* Filters and Search */}
+      {/* Search and Filters */}
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search programs by name, category, or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-                data-testid="input-search"
-              />
+        <CardHeader>
+          <CardTitle className="text-lg">Search & Filter</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search programs by name, description, or objectives..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+              data-testid="input-search"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Country</label>
+              <Select value={countryFilter} onValueChange={setCountryFilter}>
+                <SelectTrigger data-testid="select-country">
+                  <SelectValue placeholder="All Countries" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Countries</SelectItem>
+                  {countries.map(country => (
+                    <SelectItem key={country} value={country}>{country} ({stats[country] || 0})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={countryFilter} onValueChange={setCountryFilter}>
-              <SelectTrigger className="w-full md:w-48" data-testid="select-country">
-                <SelectValue placeholder="All countries" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All countries</SelectItem>
-                {countries.map(country => (
-                  <SelectItem key={country} value={country}>{country}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full md:w-48" data-testid="select-sort">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="deadline">Deadline (Urgent First)</SelectItem>
-                <SelectItem value="priority">Priority Level</SelectItem>
-                <SelectItem value="newest">Newest First</SelectItem>
-              </SelectContent>
-            </Select>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">Sort By</label>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger data-testid="select-sort">
+                  <SelectValue placeholder="Sort by..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="country">Country</SelectItem>
+                  <SelectItem value="name">Program Name</SelectItem>
+                  <SelectItem value="deadline">Deadline</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Results Count */}
-      <div className="text-sm text-muted-foreground">
-        Showing {filteredPrograms.length} of {programs.length} programs
+      <div className="flex justify-between items-center text-sm text-muted-foreground">
+        <span>Showing {filteredPrograms.length} of {programs.length} programs</span>
+        {searchTerm && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSearchTerm("")}
+            data-testid="button-clear-search"
+          >
+            Clear search
+          </Button>
+        )}
       </div>
 
-      {/* Program Grid */}
+      {/* Program List */}
       {isLoading ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Loading programs...</p>
+        <div className="flex justify-center py-12">
+          <div className="text-muted-foreground">Loading programs...</div>
         </div>
       ) : filteredPrograms.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">No programs found matching your filters</p>
+            <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">No programs found</h3>
+            <p className="text-muted-foreground">Try adjusting your search or filters</p>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPrograms.map((program) => {
-            const daysUntil = getDaysUntilDeadline(program.deadline || null);
-            const isUrgent = daysUntil !== null && daysUntil > 0 && daysUntil <= 30;
-            const isClosingSoon = daysUntil !== null && daysUntil > 0 && daysUntil <= 14;
-            
-            return (
-              <Card key={program.id} className="hover-elevate flex flex-col" data-testid={`card-program-${program.id}`}>
-                <CardHeader className="space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-lg leading-tight">{program.title}</CardTitle>
-                    {program.isHighPriority && (
-                      <Badge variant="default" className="shrink-0">Priority</Badge>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="text-xs">
-                      <MapPin className="h-3 w-3 mr-1" />
-                      {program.country}
-                    </Badge>
-                    {program.category && (
-                      <Badge variant="secondary" className="text-xs">{program.category}</Badge>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-3">
-                    <CardDescription className="line-clamp-3">
-                      {program.summary || "Program details available through application"}
-                    </CardDescription>
-                    
-                    <div className="space-y-2 text-sm">
-                      {program.fundingAmount && (
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-green-600" />
-                          <span className="font-medium text-green-600">{program.fundingAmount}</span>
-                        </div>
-                      )}
-                      {program.deadline && (
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          <span className={isClosingSoon ? "text-red-600 font-medium" : isUrgent ? "text-orange-600 font-medium" : ""}>
-                            {new Date(program.deadline).toLocaleDateString()}
-                            {daysUntil !== null && daysUntil > 0 && ` (${daysUntil}d)`}
-                          </span>
-                        </div>
-                      )}
-                      {program.region && (
-                        <div className="text-xs text-muted-foreground">
-                          Available in: {program.region}
-                        </div>
+        <div className="grid gap-4">
+          {filteredPrograms.map((program) => (
+            <Card key={program.id} className="hover-elevate" data-testid={`card-program-${program.id}`}>
+              <CardHeader>
+                <div className="flex justify-between items-start gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="outline" data-testid={`badge-country-${program.country}`}>{program.country}</Badge>
+                      {program.budgetExhaustion && (
+                        <Badge variant="destructive">Budget Limited</Badge>
                       )}
                     </div>
+                    <CardTitle className="text-xl mb-2" data-testid={`text-program-name-${program.id}`}>
+                      {program.programName}
+                    </CardTitle>
+                    {program.description && (
+                      <CardDescription className="line-clamp-2">
+                        {program.description}
+                      </CardDescription>
+                    )}
                   </div>
+                  {program.hyperlink && (
+                    <Button asChild variant="outline" size="sm" data-testid={`button-view-program-${program.id}`}>
+                      <a href={program.hyperlink} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </CardHeader>
 
-                  <Button 
-                    variant="outline" 
-                    className="w-full mt-auto" 
-                    asChild
-                    data-testid={`button-view-${program.id}`}
-                  >
-                    <a href={program.url} target="_blank" rel="noopener noreferrer">
-                      View Details
-                      <ExternalLink className="h-4 w-4 ml-2" />
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
+              <CardContent className="space-y-3">
+                {/* Key Details Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  {program.fundingAmount && (
+                    <div className="flex items-start gap-2">
+                      <DollarSign className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <div>
+                        <div className="font-medium">Funding Amount</div>
+                        <div className="text-muted-foreground">{program.fundingAmount}</div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {program.paymentCap && (
+                    <div className="flex items-start gap-2">
+                      <DollarSign className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <div>
+                        <div className="font-medium">Payment Cap</div>
+                        <div className="text-muted-foreground">{program.paymentCap}</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {(program.closingDate || program.applicationDeadline) && (
+                    <div className="flex items-start gap-2">
+                      <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <div>
+                        <div className="font-medium">Deadline</div>
+                        <div className="text-muted-foreground">
+                          {program.closingDate || program.applicationDeadline}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {program.administered && (
+                    <div className="flex items-start gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <div>
+                        <div className="font-medium">Administered By</div>
+                        <div className="text-muted-foreground">{program.administered}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Objectives or Focus */}
+                {(program.keyObjectives || program.focus) && (
+                  <div className="pt-3 border-t">
+                    <div className="font-medium text-sm mb-1">
+                      {program.keyObjectives ? 'Key Objectives' : 'Focus'}
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {program.keyObjectives || program.focus}
+                    </p>
+                  </div>
+                )}
+
+                {/* Eligibility Info */}
+                {(program.eligibilityCutoffs || program.cutoffsCaps || program.acreageProductionLimit) && (
+                  <div className="pt-3 border-t">
+                    <div className="font-medium text-sm mb-1">Eligibility</div>
+                    <p className="text-sm text-muted-foreground">
+                      {program.eligibilityCutoffs || program.cutoffsCaps || program.acreageProductionLimit}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
     </div>
