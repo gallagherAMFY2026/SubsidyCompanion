@@ -9,7 +9,7 @@ interface WelcomeScreenProps {
 export default function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
   const modes = [
     {
-      id: "practices",
+      id: "browse",
       title: "Browse Subsidies",
       description: "Explore available programs across 6 territories with funding amounts and deadlines",
       icon: FileText,

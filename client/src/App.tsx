@@ -8,25 +8,25 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 interface SubsidyProgramCurated {
   id: string;
   country: string;
-  programName: string;
+  program_name: string;
   description: string | null;
   hyperlink: string | null;
-  fundingAmount: string | null;
-  paymentCap: string | null;
-  keyObjectives: string | null;
+  funding_amount: string | null;
+  payment_cap: string | null;
+  key_objectives: string | null;
   focus: string | null;
   administered: string | null;
-  acreageProductionLimit: string | null;
-  eligibilityCutoffs: string | null;
-  cutoffsCaps: string | null;
-  closingDate: string | null;
-  applicationDeadline: string | null;
-  budgetExhaustion: string | null;
-  additionalInfo: string | null;
-  notesStructure: string | null;
+  acreage_production_limit: string | null;
+  eligibility_cutoffs: string | null;
+  cutoffs_caps: string | null;
+  closing_date: string | null;
+  application_deadline: string | null;
+  budget_exhaustion_marker: string | null;
+  additional_information: string | null;
+  notes_structure: string | null;
   details: string | null;
-  definitionsHowItWorks: string | null;
-  sourceSheet: string;
+  definitions_how_it_works: string | null;
+  source_sheet: string;
 }
 
 interface ProgramStats {
@@ -102,20 +102,20 @@ function AppContent() {
                 {allPrograms.slice(0, 12).map((program, idx) => (
                   <PracticeCard
                     key={program.id}
-                    title={program.programName}
+                    title={program.program_name}
                     category={program.country}
-                    costShare={program.fundingAmount || "Varies by program"}
-                    capRange={program.paymentCap || "Contact local office"}
-                    payoffPeriod={program.closingDate || program.applicationDeadline || "Ongoing"}
+                    costShare={program.funding_amount || "Varies by program"}
+                    capRange={program.payment_cap || "Contact local office"}
+                    payoffPeriod={program.closing_date || program.application_deadline || "Ongoing"}
                     benefits={[
                       "Government funding available",
-                      program.keyObjectives || program.focus || "Agricultural support program",
+                      program.key_objectives || program.focus || "Agricultural support program",
                       program.administered || "Multiple funding sources",
                     ].filter(Boolean)}
                     verificationNotes={[
                       "Application through program office",
-                      program.eligibilityCutoffs || "Eligibility requirements apply",
-                      program.additionalInfo || "Program-specific documentation"
+                      program.eligibility_cutoffs || "Eligibility requirements apply",
+                      program.additional_information || "Program-specific documentation"
                     ].filter(Boolean)}
                     onBuildPlan={() => {
                       if (program.hyperlink) {
@@ -147,12 +147,12 @@ function AppContent() {
             </button>
             <DeadlineCalendar 
               deadlines={allPrograms
-                .filter(p => p.closingDate || p.applicationDeadline)
+                .filter(p => p.closing_date || p.application_deadline)
                 .map((program) => ({
                   id: program.id,
-                  program: program.programName,
+                  program: program.program_name,
                   type: 'signup' as const,
-                  date: program.closingDate || program.applicationDeadline || 'TBD',
+                  date: program.closing_date || program.application_deadline || 'TBD',
                   daysUntil: 0,
                   location: program.country,
                   status: 'open' as const

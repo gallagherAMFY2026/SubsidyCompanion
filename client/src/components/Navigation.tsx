@@ -13,7 +13,7 @@ export default function Navigation({ currentPage, onNavigate, hasUnsavedProgress
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { id: "practices", label: "Browse Subsidies", icon: FileText },
+    { id: "browse", label: "Browse Subsidies", icon: FileText },
     { id: "eligibility", label: "Check Eligibility", icon: CheckCircle },
     { id: "help", label: "Help", icon: HelpCircle }
   ];

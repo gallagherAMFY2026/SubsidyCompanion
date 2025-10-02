@@ -9,25 +9,25 @@ import { Clock, DollarSign, MapPin, Search, ExternalLink, AlertCircle } from "lu
 interface SubsidyProgramCurated {
   id: string;
   country: string;
-  programName: string;
+  program_name: string;
   description: string | null;
   hyperlink: string | null;
-  fundingAmount: string | null;
-  paymentCap: string | null;
-  keyObjectives: string | null;
+  funding_amount: string | null;
+  payment_cap: string | null;
+  key_objectives: string | null;
   focus: string | null;
   administered: string | null;
-  acreageProductionLimit: string | null;
-  eligibilityCutoffs: string | null;
-  cutoffsCaps: string | null;
-  closingDate: string | null;
-  applicationDeadline: string | null;
-  budgetExhaustion: string | null;
-  additionalInfo: string | null;
-  notesStructure: string | null;
+  acreage_production_limit: string | null;
+  eligibility_cutoffs: string | null;
+  cutoffs_caps: string | null;
+  closing_date: string | null;
+  application_deadline: string | null;
+  budget_exhaustion_marker: string | null;
+  additional_information: string | null;
+  notes_structure: string | null;
   details: string | null;
-  definitionsHowItWorks: string | null;
-  sourceSheet: string;
+  definitions_how_it_works: string | null;
+  source_sheet: string;
 }
 
 interface SubsidyBrowserProps {
@@ -44,23 +44,26 @@ export default function SubsidyBrowser({ programs, stats, isLoading }: SubsidyBr
   const countries = Array.from(new Set(programs.map(p => p.country))).sort();
 
   let filteredPrograms = programs.filter(program => {
-    const matchesSearch = 
-      program.programName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      program.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      program.keyObjectives?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      program.focus?.toLowerCase().includes(searchTerm.toLowerCase());
+    if (!program.program_name) return false;
+    
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch = searchTerm === "" || 
+      program.program_name?.toLowerCase().includes(searchLower) ||
+      program.description?.toLowerCase().includes(searchLower) ||
+      program.key_objectives?.toLowerCase().includes(searchLower) ||
+      program.focus?.toLowerCase().includes(searchLower);
     const matchesCountry = countryFilter === "all" || program.country === countryFilter;
     return matchesSearch && matchesCountry;
   });
 
   filteredPrograms = [...filteredPrograms].sort((a, b) => {
     if (sortBy === "country") {
-      return a.country.localeCompare(b.country) || a.programName.localeCompare(b.programName);
+      return a.country.localeCompare(b.country) || a.program_name.localeCompare(b.program_name);
     } else if (sortBy === "name") {
-      return a.programName.localeCompare(b.programName);
+      return a.program_name.localeCompare(b.program_name);
     } else if (sortBy === "deadline") {
-      const aDeadline = a.closingDate || a.applicationDeadline;
-      const bDeadline = b.closingDate || b.applicationDeadline;
+      const aDeadline = a.closing_date || a.application_deadline;
+      const bDeadline = b.closing_date || b.application_deadline;
       if (!aDeadline && !bDeadline) return 0;
       if (!aDeadline) return 1;
       if (!bDeadline) return -1;
@@ -181,12 +184,12 @@ export default function SubsidyBrowser({ programs, stats, isLoading }: SubsidyBr
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="outline" data-testid={`badge-country-${program.country}`}>{program.country}</Badge>
-                      {program.budgetExhaustion && (
+                      {program.budget_exhaustion_marker && (
                         <Badge variant="destructive">Budget Limited</Badge>
                       )}
                     </div>
                     <CardTitle className="text-xl mb-2" data-testid={`text-program-name-${program.id}`}>
-                      {program.programName}
+                      {program.program_name}
                     </CardTitle>
                     {program.description && (
                       <CardDescription className="line-clamp-2">
@@ -207,33 +210,33 @@ export default function SubsidyBrowser({ programs, stats, isLoading }: SubsidyBr
               <CardContent className="space-y-3">
                 {/* Key Details Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  {program.fundingAmount && (
+                  {program.funding_amount && (
                     <div className="flex items-start gap-2">
                       <DollarSign className="h-4 w-4 text-muted-foreground mt-0.5" />
                       <div>
                         <div className="font-medium">Funding Amount</div>
-                        <div className="text-muted-foreground">{program.fundingAmount}</div>
+                        <div className="text-muted-foreground">{program.funding_amount}</div>
                       </div>
                     </div>
                   )}
                   
-                  {program.paymentCap && (
+                  {program.payment_cap && (
                     <div className="flex items-start gap-2">
                       <DollarSign className="h-4 w-4 text-muted-foreground mt-0.5" />
                       <div>
                         <div className="font-medium">Payment Cap</div>
-                        <div className="text-muted-foreground">{program.paymentCap}</div>
+                        <div className="text-muted-foreground">{program.payment_cap}</div>
                       </div>
                     </div>
                   )}
 
-                  {(program.closingDate || program.applicationDeadline) && (
+                  {(program.closing_date || program.application_deadline) && (
                     <div className="flex items-start gap-2">
                       <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />
                       <div>
                         <div className="font-medium">Deadline</div>
                         <div className="text-muted-foreground">
-                          {program.closingDate || program.applicationDeadline}
+                          {program.closing_date || program.application_deadline}
                         </div>
                       </div>
                     </div>
@@ -251,23 +254,23 @@ export default function SubsidyBrowser({ programs, stats, isLoading }: SubsidyBr
                 </div>
 
                 {/* Objectives or Focus */}
-                {(program.keyObjectives || program.focus) && (
+                {(program.key_objectives || program.focus) && (
                   <div className="pt-3 border-t">
                     <div className="font-medium text-sm mb-1">
-                      {program.keyObjectives ? 'Key Objectives' : 'Focus'}
+                      {program.key_objectives ? 'Key Objectives' : 'Focus'}
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2">
-                      {program.keyObjectives || program.focus}
+                      {program.key_objectives || program.focus}
                     </p>
                   </div>
                 )}
 
                 {/* Eligibility Info */}
-                {(program.eligibilityCutoffs || program.cutoffsCaps || program.acreageProductionLimit) && (
+                {(program.eligibility_cutoffs || program.cutoffs_caps || program.acreage_production_limit) && (
                   <div className="pt-3 border-t">
                     <div className="font-medium text-sm mb-1">Eligibility</div>
                     <p className="text-sm text-muted-foreground">
-                      {program.eligibilityCutoffs || program.cutoffsCaps || program.acreageProductionLimit}
+                      {program.eligibility_cutoffs || program.cutoffs_caps || program.acreage_production_limit}
                     </p>
                   </div>
                 )}

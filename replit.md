@@ -6,6 +6,16 @@ Subsidy Companion is a comprehensive global agricultural funding intelligence pl
 
 ## Recent Changes
 
+### October 2, 2025 - Complete Migration to Curated Spreadsheet Data
+- **Major architectural pivot**: Abandoned unreliable web scraping approach in favor of curated Excel spreadsheet data
+- **Deleted all scraping services**: Removed 9 scraping service files (rssService, comprehensiveUsdaService, australiaService, newZealandService, brazilService, chileService, stateSpecificScraperService, grantsGovService, rssParser)
+- **New curated data table**: Created `subsidy_programs_curated_10_01_25` with 287 real subsidy programs imported from user-provided Excel file
+- **Verified program counts by territory**: CA=184, US=45, AU=14, CL=14, NZ=14, LATAM=9, BR=7 (Total: 287)
+- **Simplified backend**: Rewrote routes.ts to provide read-only REST API endpoints (GET /api/programs, /api/programs/stats, /api/programs/:id)
+- **Updated frontend interfaces**: Modified App.tsx and SubsidyBrowser.tsx to use SubsidyProgramCurated interface matching new spreadsheet schema
+- **Data source philosophy**: Curated reference data updated via spreadsheet re-import rather than continuous scraping
+- **Architect verification**: Complete purge confirmed with no remaining imports or references to deleted services
+
 ### September 29, 2025 - Homepage Restructuring: Subsidies as Primary Content
 - **Homepage restructured from 4 to 2 options**: Simplified from eligibility/practices/submission/deadlines to "Browse Subsidies" (primary) and "Check My Eligibility" to make subsidies the focal point
 - **SubsidyBrowser component created**: New comprehensive subsidy browser with search, country filtering, sort options (deadline/priority/newest), and program statistics prominently displayed at top
@@ -52,21 +62,21 @@ Preferred communication style: Simple, everyday language.
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js framework
 - **Language**: TypeScript with ES modules
-- **API Design**: RESTful API endpoints with consistent error handling and logging middleware
-- **Data Processing**: Custom RSS parsing service for Agriculture and Agri-Food Canada feeds
-- **Storage Interface**: Abstracted storage layer with in-memory implementation and PostgreSQL schema support
+- **API Design**: RESTful read-only API endpoints for curated subsidy data (GET operations)
+- **Data Source**: Curated Excel spreadsheet with 287 programs across 6 territories
+- **Import Process**: Direct SQL import from JSON-parsed spreadsheet via import_spreadsheet_data.ts
 
 ### Data Storage Solutions
-- **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
-- **Schema**: Structured tables for users and subsidy programs with proper relationships
-- **Migrations**: Drizzle Kit for database schema management and version control
-- **Connection**: Neon Database serverless PostgreSQL with environment-based configuration
+- **Database**: PostgreSQL (Neon serverless) for storing curated subsidy programs
+- **Primary Table**: subsidy_programs_curated_10_01_25 with 287 programs
+- **Schema**: Maps Excel spreadsheet columns (program_name, description, funding_amount, payment_cap, key_objectives, focus, administered, eligibility_cutoffs, closing_date, hyperlink, etc.)
+- **Data Updates**: Via re-running import script when spreadsheet is updated
 
-### External Service Integrations
-- **RSS Feed Integration**: Automated parsing and synchronization of Canadian agriculture program data
-- **Real-time Updates**: Configurable refresh intervals with force-refresh capabilities
-- **Data Processing**: XML parsing with sanitization and structured data transformation
-- **Caching Strategy**: Application-level caching with stale-while-revalidate patterns
+### Data Management
+- **Data Source**: User-provided Excel spreadsheet with curated subsidy programs
+- **Import Tool**: import_spreadsheet_data.ts script for loading spreadsheet into PostgreSQL
+- **Caching Strategy**: React Query stale-while-revalidate patterns (10-30 minute stale times)
+- **Data Integrity**: Single source of truth from spreadsheet, no web scraping
 
 ### Design System Architecture
 - **Component Library**: Modular, reusable components with consistent props interfaces
