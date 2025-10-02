@@ -867,8 +867,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     validateBody(generalSyncSchema),
     async (req, res) => {
     try {
-      const { maxPages } = req.body;
-      const result = await australiaService.syncAllSources(maxPages);
+      const result = await australiaService.syncAllSources();
       res.json({ 
         success: true, 
         message: 'Australia comprehensive sync completed successfully',
@@ -877,23 +876,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Australia comprehensive sync error:', error);
       res.status(500).json({ error: 'Australia comprehensive sync failed' });
-    }
-  });
-
-  app.post('/api/sync/australia/daff-rss',
-    requireAdminAuth,
-    rateLimit(5, 10 * 60 * 1000), // 5 requests per 10 minutes  
-    async (req, res) => {
-    try {
-      const result = await australiaService.syncDaffRss();
-      res.json({ 
-        success: true, 
-        message: 'Australia DAFF RSS sync completed successfully',
-        processed: result
-      });
-    } catch (error) {
-      console.error('Australia DAFF RSS sync error:', error);
-      res.status(500).json({ error: 'Australia DAFF RSS sync failed' });
     }
   });
 
