@@ -2,19 +2,25 @@
 
 ## Overview
 
-Subsidy Companion is a comprehensive global agricultural funding intelligence platform covering 6 territories (Canada, US, Australia, New Zealand, Brazil, Chile). The application streamlines the complex process of finding, evaluating, and applying for conservation and agricultural subsidies by providing eligibility checking, practice exploration, submission pack generation, and deadline tracking. The system integrates with multiple government data sources across territories to provide real-time program information and uses a clean, utility-first design approach inspired by productivity applications like Notion and Linear.
+Subsidy Companion is a comprehensive global agricultural funding intelligence platform covering 6 territories (Canada, US, Australia, New Zealand, Brazil, Chile). The application streamlines the complex process of finding, evaluating, and applying for conservation and agricultural subsidies by providing eligibility checking, practice exploration, submission pack generation, and deadline tracking. The system uses curated Excel spreadsheet data (287 programs) imported into PostgreSQL, replacing the previous unreliable web scraping approach. Design follows a clean, utility-first approach inspired by productivity applications like Notion and Linear.
 
 ## Recent Changes
 
-### October 2, 2025 - Complete Migration to Curated Spreadsheet Data
+### October 2, 2025 - Complete Migration to Curated Spreadsheet Data & Legacy Code Purge
 - **Major architectural pivot**: Abandoned unreliable web scraping approach in favor of curated Excel spreadsheet data
 - **Deleted all scraping services**: Removed 9 scraping service files (rssService, comprehensiveUsdaService, australiaService, newZealandService, brazilService, chileService, stateSpecificScraperService, grantsGovService, rssParser)
 - **New curated data table**: Created `subsidy_programs_curated_10_01_25` with 287 real subsidy programs imported from user-provided Excel file
 - **Verified program counts by territory**: CA=184, US=45, AU=14, CL=14, NZ=14, LATAM=9, BR=7 (Total: 287)
 - **Simplified backend**: Rewrote routes.ts to provide read-only REST API endpoints (GET /api/programs, /api/programs/stats, /api/programs/:id)
-- **Updated frontend interfaces**: Modified App.tsx and SubsidyBrowser.tsx to use SubsidyProgramCurated interface matching new spreadsheet schema
+- **Updated frontend interfaces**: Modified App.tsx and SubsidyBrowser.tsx to use snake_case field names (program_name, funding_amount, etc.) matching database schema exactly
+- **Complete legacy code purge**:
+  - Dropped old database tables: `subsidy_programs`, `data_sources`, `data_fetch_logs`
+  - Rewrote `shared/schema.ts`: Removed all old table definitions, kept only `users` and `subsidy_programs_curated_10_01_25` with correct snake_case column names
+  - Rewrote `server/storage.ts`: Removed all subsidy/data source CRUD methods, kept only minimal user authentication interface
+  - Deleted `server/services/deduplicationService.ts`: Removed obsolete 700+ line deduplication logic
+  - Fixed frontend field name mismatches: Changed all camelCase (programName) to snake_case (program_name) in App.tsx and SubsidyBrowser.tsx
 - **Data source philosophy**: Curated reference data updated via spreadsheet re-import rather than continuous scraping
-- **Architect verification**: Complete purge confirmed with no remaining imports or references to deleted services
+- **Zero legacy contamination**: Complete verification via grep/SQL queries confirmed no remaining references to old code or tables
 
 ### September 29, 2025 - Homepage Restructuring: Subsidies as Primary Content
 - **Homepage restructured from 4 to 2 options**: Simplified from eligibility/practices/submission/deadlines to "Browse Subsidies" (primary) and "Check My Eligibility" to make subsidies the focal point
@@ -67,10 +73,13 @@ Preferred communication style: Simple, everyday language.
 - **Import Process**: Direct SQL import from JSON-parsed spreadsheet via import_spreadsheet_data.ts
 
 ### Data Storage Solutions
-- **Database**: PostgreSQL (Neon serverless) for storing curated subsidy programs
-- **Primary Table**: subsidy_programs_curated_10_01_25 with 287 programs
-- **Schema**: Maps Excel spreadsheet columns (program_name, description, funding_amount, payment_cap, key_objectives, focus, administered, eligibility_cutoffs, closing_date, hyperlink, etc.)
-- **Data Updates**: Via re-running import script when spreadsheet is updated
+- **Database**: PostgreSQL (Neon serverless) 
+- **Active Tables**: 
+  - `subsidy_programs_curated_10_01_25` - 287 curated programs (snake_case columns)
+  - `users` - User authentication (minimal, currently unused)
+- **Schema**: All column names use snake_case (program_name, funding_amount, key_objectives, closing_date, etc.) matching database exactly
+- **Data Updates**: Via re-running import_spreadsheet_data.ts when spreadsheet is updated
+- **No legacy tables**: All pre-10.01.25 tables (subsidy_programs, data_sources, data_fetch_logs) have been dropped
 
 ### Data Management
 - **Data Source**: User-provided Excel spreadsheet with curated subsidy programs
