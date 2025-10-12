@@ -82,16 +82,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all documents for a program
+  // Get all documents for a program (with caching)
   app.get("/api/programs/:id/documents", async (req, res) => {
     try {
       const { id } = req.params;
+      
+      // Validate UUID format to prevent SQL injection
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(id)) {
+        return res.status(400).json({ error: 'Invalid program ID format' });
+      }
+      
       const documents = await sql`
         SELECT * FROM program_docs
         WHERE program_id = ${id}
         ORDER BY doc_type, display_name
       `;
       
+      // Set cache headers (5 minutes)
+      res.set('Cache-Control', 'public, max-age=300');
       res.json(documents);
     } catch (error) {
       console.error('Error fetching documents:', error);
@@ -119,16 +128,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get program attributes
+  // Get program attributes (with caching)
   app.get("/api/programs/:id/attributes", async (req, res) => {
     try {
       const { id } = req.params;
+      
+      // Validate UUID format
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(id)) {
+        return res.status(400).json({ error: 'Invalid program ID format' });
+      }
+      
       const attributes = await sql`
         SELECT attr_key, attr_value FROM program_attributes
         WHERE program_id = ${id}
         ORDER BY attr_key
       `;
       
+      // Set cache headers (5 minutes)
+      res.set('Cache-Control', 'public, max-age=300');
       res.json(attributes);
     } catch (error) {
       console.error('Error fetching attributes:', error);

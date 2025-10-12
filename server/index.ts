@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import path from "path";
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,8 +12,44 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Serve PDF files from static/pdfs
-app.use('/pdfs', express.static(path.join(__dirname, '../static/pdfs')));
+// Secure PDF file serving with validation and access control
+app.use('/pdfs', (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // Decode URL path (handles %20 spaces and other URL encoding)
+    const decodedPath = decodeURIComponent(req.path);
+    
+    // Only allow .pdf files (prevents directory traversal to other file types)
+    if (!decodedPath.toLowerCase().endsWith('.pdf')) {
+      return res.status(403).json({ error: 'Access denied - PDF files only' });
+    }
+
+    // Build and normalize the full path
+    const pdfsRoot = path.resolve(__dirname, '../static/pdfs');
+    const requestedPath = path.normalize(path.join(pdfsRoot, decodedPath));
+    
+    // Security check: ensure the resolved path is within the pdfs directory
+    if (!requestedPath.startsWith(pdfsRoot)) {
+      log(`Directory traversal attempt blocked: ${decodedPath}`);
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Verify file exists before serving
+    if (!fs.existsSync(requestedPath)) {
+      log(`PDF not found at: ${requestedPath}`);
+      return res.status(404).json({ error: 'Document not found' });
+    }
+
+    // Set secure headers for PDF downloads
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Content-Disposition', 'inline'); // Display in browser, not auto-download
+    
+    next();
+  } catch (error) {
+    log(`PDF serving error: ${error}`);
+    return res.status(400).json({ error: 'Invalid request' });
+  }
+}, express.static(path.join(__dirname, '../static/pdfs')));
 
 app.use((req, res, next) => {
   const start = Date.now();

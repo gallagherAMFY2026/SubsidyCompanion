@@ -4,7 +4,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, DollarSign, MapPin, Search, ExternalLink, AlertCircle } from "lucide-react";
+import { Clock, DollarSign, MapPin, Search, ExternalLink, AlertCircle, FileText, ChevronDown, ChevronUp, Download } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface SubsidyProgramCurated {
   id: string;
@@ -34,6 +36,110 @@ interface SubsidyBrowserProps {
   programs: SubsidyProgramCurated[];
   stats: Record<string, number>;
   isLoading: boolean;
+}
+
+interface ProgramDoc {
+  doc_id: string;
+  program_id: string;
+  doc_type: string;
+  display_name: string;
+  file_slug: string | null;
+  source_url: string | null;
+  language: string;
+  effective_date: string | null;
+  sha256: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+function ProgramDocuments({ programId }: { programId: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const { data: documents = [], isLoading } = useQuery<ProgramDoc[]>({
+    queryKey: ['/api/programs', programId, 'documents'],
+    enabled: isOpen,
+  });
+
+  // Always show the toggle button, even when no documents
+
+  const docTypeLabels: Record<string, string> = {
+    guideline: "Program Guide",
+    application_form: "Application Form",
+    faq: "FAQ",
+    checklist: "Checklist",
+    terms: "Terms & Conditions",
+    webpage: "Web Page",
+    quick_guide: "Quick Guide",
+    reference: "Reference",
+  };
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-between"
+          data-testid={`button-toggle-docs-${programId}`}
+        >
+          <span className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Program Documents {documents.length > 0 && `(${documents.length})`}
+          </span>
+          {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        {isLoading ? (
+          <div className="text-sm text-muted-foreground py-2">Loading documents...</div>
+        ) : documents.length > 0 ? (
+          <div className="space-y-2 pt-2">
+            {documents.map((doc) => (
+              <div
+                key={doc.doc_id}
+                className="flex items-center justify-between p-2 rounded-md bg-muted/50"
+                data-testid={`doc-item-${doc.doc_id}`}
+              >
+                <div className="flex-1">
+                  <div className="font-medium text-sm">{doc.display_name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {docTypeLabels[doc.doc_type] || doc.doc_type}
+                    {doc.language && doc.language !== 'en' && ` · ${doc.language.toUpperCase()}`}
+                  </div>
+                </div>
+                {doc.file_slug && (
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    data-testid={`button-download-${doc.doc_id}`}
+                  >
+                    <a href={`/pdfs/${doc.file_slug}`} target="_blank" rel="noopener noreferrer">
+                      <Download className="h-4 w-4" />
+                    </a>
+                  </Button>
+                )}
+                {!doc.file_slug && doc.source_url && (
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    data-testid={`button-view-${doc.doc_id}`}
+                  >
+                    <a href={doc.source_url} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-sm text-muted-foreground py-2">No documents available</div>
+        )}
+      </CollapsibleContent>
+    </Collapsible>
+  );
 }
 
 export default function SubsidyBrowser({ programs, stats, isLoading }: SubsidyBrowserProps) {
@@ -274,6 +380,11 @@ export default function SubsidyBrowser({ programs, stats, isLoading }: SubsidyBr
                     </p>
                   </div>
                 )}
+
+                {/* Program Documents */}
+                <div className="pt-3 border-t">
+                  <ProgramDocuments programId={program.id} />
+                </div>
               </CardContent>
             </Card>
           ))}

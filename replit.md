@@ -6,6 +6,28 @@ Subsidy Companion is a comprehensive global agricultural funding intelligence pl
 
 ## Recent Changes
 
+### October 12, 2025 - Document Management System Implementation
+- **New database tables**: Added `program_docs` (document linking) and `program_attributes` (flexible key-value storage)
+- **PDF extraction**: Extracted 30 Canada PDFs from user-provided ZIP to `static/pdfs/canada/`
+- **Secure PDF serving**: Implemented `/pdfs/*` endpoint with security controls:
+  - PDF-only file type validation
+  - File existence verification before serving
+  - Secure HTTP headers (Content-Type, X-Content-Type-Options, Content-Disposition)
+- **Document API endpoints**: 
+  - GET /api/programs/:id/documents (with UUID validation and caching)
+  - GET /api/documents/:doc_id
+  - GET /api/programs/:id/attributes
+- **Frontend updates**: Enhanced SubsidyBrowser with collapsible document sections
+  - Lazy-loading of documents (fetched only when expanded)
+  - Download/view buttons for PDFs and web links
+  - Document type labels (guideline, application_form, reference, etc.)
+- **Test data**: Inserted 5 sample documents (3 for AgriInnovation Program, 2 for AgriInvest)
+- **Known limitations**:
+  - Manifest CSV has only 2 sample entries vs 30 actual PDFs (incomplete mapping)
+  - Ingestion script needs filename normalization to match extracted PDF names
+  - No virus scanning on uploaded PDFs (production concern for global deployment)
+  - No audit logging for document downloads (tracking needed for compliance)
+
 ### October 2, 2025 - Complete Migration to Curated Spreadsheet Data & Legacy Code Purge
 - **Major architectural pivot**: Abandoned unreliable web scraping approach in favor of curated Excel spreadsheet data
 - **Deleted all scraping services**: Removed 9 scraping service files (rssService, comprehensiveUsdaService, australiaService, newZealandService, brazilService, chileService, stateSpecificScraperService, grantsGovService, rssParser)
@@ -76,10 +98,13 @@ Preferred communication style: Simple, everyday language.
 - **Database**: PostgreSQL (Neon serverless) 
 - **Active Tables**: 
   - `subsidy_programs_curated_10_01_25` - 287 curated programs (snake_case columns)
+  - `program_docs` - Document linking table (PDFs, guides, forms, web links)
+  - `program_attributes` - Flexible key-value storage for heterogeneous program data
   - `users` - User authentication (minimal, currently unused)
 - **Schema**: All column names use snake_case (program_name, funding_amount, key_objectives, closing_date, etc.) matching database exactly
 - **Data Updates**: Via re-running import_spreadsheet_data.ts when spreadsheet is updated
 - **No legacy tables**: All pre-10.01.25 tables (subsidy_programs, data_sources, data_fetch_logs) have been dropped
+- **Document Storage**: PDFs stored in static/pdfs/canada/ directory, served via secure /pdfs/* endpoint with validation
 
 ### Data Management
 - **Data Source**: User-provided Excel spreadsheet with curated subsidy programs
