@@ -9,24 +9,34 @@ Subsidy Companion is a comprehensive global agricultural funding intelligence pl
 ### October 12, 2025 - Document Management System Implementation
 - **New database tables**: Added `program_docs` (document linking) and `program_attributes` (flexible key-value storage)
 - **PDF extraction**: Extracted 30 Canada PDFs from user-provided ZIP to `static/pdfs/canada/`
-- **Secure PDF serving**: Implemented `/pdfs/*` endpoint with security controls:
-  - PDF-only file type validation
+- **Secure PDF serving**: Implemented `/pdfs/*` endpoint with comprehensive security controls:
+  - URL decoding with error handling (fixes %20 space encoding)
+  - PDF-only file type validation (403 for non-PDF requests)
+  - Path normalization to prevent directory traversal (../ attacks)
+  - Root directory prefix check (ensures paths stay within /static/pdfs)
   - File existence verification before serving
-  - Secure HTTP headers (Content-Type, X-Content-Type-Options, Content-Disposition)
+  - Secure HTTP headers (Content-Type, X-Content-Type-Options, Content-Disposition: inline)
+  - Try/catch error handling for malformed requests
 - **Document API endpoints**: 
-  - GET /api/programs/:id/documents (with UUID validation and caching)
+  - GET /api/programs/:id/documents (with UUID validation and 5-min cache)
   - GET /api/documents/:doc_id
-  - GET /api/programs/:id/attributes
+  - GET /api/programs/:id/attributes (with UUID validation and 5-min cache)
 - **Frontend updates**: Enhanced SubsidyBrowser with collapsible document sections
   - Lazy-loading of documents (fetched only when expanded)
   - Download/view buttons for PDFs and web links
   - Document type labels (guideline, application_form, reference, etc.)
 - **Test data**: Inserted 5 sample documents (3 for AgriInnovation Program, 2 for AgriInvest)
-- **Known limitations**:
-  - Manifest CSV has only 2 sample entries vs 30 actual PDFs (incomplete mapping)
-  - Ingestion script needs filename normalization to match extracted PDF names
-  - No virus scanning on uploaded PDFs (production concern for global deployment)
-  - No audit logging for document downloads (tracking needed for compliance)
+- **Testing**: Full end-to-end Playwright tests pass for document display and PDF downloads
+- **Architect approval**: Pass verdict for production deployment with follow-up recommendations
+- **Post-launch priorities** (documented for future work):
+  - Add virus scanning for uploaded PDFs (production security requirement)
+  - Implement audit logging for document downloads (compliance tracking)
+  - Add rate limiting on /pdfs/* endpoint (anti-scraping protection)
+  - Enable SHA256 hash verification during serving (integrity checking)
+  - Add HTTP 206 range support for large file streaming
+- **Known current limitations**:
+  - Manifest CSV incomplete (2 entries vs 30 PDFs) - manual mapping needed for full ingestion
+  - Ingestion script requires filename normalization to match extracted PDF names
 
 ### October 2, 2025 - Complete Migration to Curated Spreadsheet Data & Legacy Code Purge
 - **Major architectural pivot**: Abandoned unreliable web scraping approach in favor of curated Excel spreadsheet data
