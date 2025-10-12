@@ -70,3 +70,35 @@ export const insertSubsidyProgramCuratedSchema = createInsertSchema(subsidyProgr
 
 export type InsertSubsidyProgramCurated = z.infer<typeof insertSubsidyProgramCuratedSchema>;
 export type SubsidyProgramCurated = typeof subsidyProgramsCurated.$inferSelect;
+
+// Program attributes - flexible key-value storage for heterogeneous data
+export const programAttributes = pgTable("program_attributes", {
+  program_id: varchar("program_id").notNull().references(() => subsidyProgramsCurated.id, { onDelete: "cascade" }),
+  attr_key: text("attr_key").notNull(),
+  attr_value: text("attr_value"),
+});
+
+export type ProgramAttribute = typeof programAttributes.$inferSelect;
+
+// Program documents - PDFs, guides, application forms, web links
+export const programDocs = pgTable("program_docs", {
+  doc_id: varchar("doc_id").primaryKey().default(sql`gen_random_uuid()`),
+  program_id: varchar("program_id").notNull().references(() => subsidyProgramsCurated.id, { onDelete: "cascade" }),
+  doc_type: text("doc_type").notNull(), // guideline, application_form, faq, checklist, terms, webpage, quick_guide, reference
+  display_name: text("display_name").notNull(),
+  file_slug: text("file_slug"), // null for webpages
+  source_url: text("source_url"), // PDF origin or canonical webpage
+  language: text("language").default("en"),
+  effective_date: text("effective_date"),
+  sha256: text("sha256"), // file integrity hash
+  notes: text("notes"),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertProgramDocSchema = createInsertSchema(programDocs).omit({
+  doc_id: true,
+  created_at: true,
+});
+
+export type InsertProgramDoc = z.infer<typeof insertProgramDocSchema>;
+export type ProgramDoc = typeof programDocs.$inferSelect;
