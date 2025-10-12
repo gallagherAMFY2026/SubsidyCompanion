@@ -135,7 +135,7 @@ function ProgramDocuments({ programId }: { programId: string }) {
             ))}
           </div>
         ) : (
-          <div className="text-sm text-muted-foreground py-2">No documents available</div>
+          <div className="text-sm text-muted-foreground py-2">No PDF available.</div>
         )}
       </CollapsibleContent>
     </Collapsible>
