@@ -82,6 +82,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all documents for a program
+  app.get("/api/programs/:id/documents", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const documents = await sql`
+        SELECT * FROM program_docs
+        WHERE program_id = ${id}
+        ORDER BY doc_type, display_name
+      `;
+      
+      res.json(documents);
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+      res.status(500).json({ error: 'Failed to fetch documents' });
+    }
+  });
+
+  // Get document by ID
+  app.get("/api/documents/:doc_id", async (req, res) => {
+    try {
+      const { doc_id } = req.params;
+      const document = await sql`
+        SELECT * FROM program_docs
+        WHERE doc_id = ${doc_id}
+      `;
+      
+      if (document.length === 0) {
+        return res.status(404).json({ error: 'Document not found' });
+      }
+      
+      res.json(document[0]);
+    } catch (error) {
+      console.error('Error fetching document:', error);
+      res.status(500).json({ error: 'Failed to fetch document' });
+    }
+  });
+
+  // Get program attributes
+  app.get("/api/programs/:id/attributes", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const attributes = await sql`
+        SELECT attr_key, attr_value FROM program_attributes
+        WHERE program_id = ${id}
+        ORDER BY attr_key
+      `;
+      
+      res.json(attributes);
+    } catch (error) {
+      console.error('Error fetching attributes:', error);
+      res.status(500).json({ error: 'Failed to fetch attributes' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
