@@ -1,0 +1,67 @@
+Below is a copy-paste prompt you can give Replit to dump everything I need to review the code for hallucination risk, data hygiene, and UI logic. After they paste it back, I’ll do a surgical code review.
+
+Paste this to Replit (verbatim)
+
+“Please print the full project tree and the ENTIRE contents of the following, in this order. Include any hidden configs and startup scripts.”
+
+Backend
+
+app.py (or server.py / main backend file)
+
+All route/controller files (e.g., routes/*.py)
+
+Data models / schema (e.g., models.py)
+
+Validation layer (schemas, DTOs)
+
+Any service modules (e.g., services/*.py)
+
+Config: .replit, pyproject.toml or requirements.txt
+
+Startup/run command
+
+Frontend
+
+Entry file (e.g., src/main.(js|ts|tsx))
+
+Program card/component(s) that render program data
+
+API client (how SC fetches data)
+
+Any state/store (Redux/Zustand/etc.)
+
+Environment config (where API URLs live)
+
+Templates & LLM usage
+
+Any prompts/templates (if any)
+
+Any LLM/tooling calls (confirm NONE are used—or paste the code if they are)
+
+Security / misc
+
+Middleware (auth, rate limit, CORS)
+
+Error handling / logging
+
+Anything that hits the network (confirm SC does NOT scrape)
+
+Additionally, answer these directly with code snippets where relevant:
+
+Data source: Where does SC get program data today? (Paste the exact function that fetches data; confirm there’s no web scraping in SC.)
+
+Schema: Paste the exact data shape SC expects (fields & types) and where it’s validated.
+
+Link policy: Show where SC requires a link/source_url per program and where it renders it in the UI.
+
+Empty fields: Show how SC renders missing fields (no guesses).
+
+LLM: Confirm there is no freeform LLM call or “summarize” path; if present, paste the code.
+
+Caching: Show any caching layer and invalidation (optional).
+
+Moderation: If present, paste the pending/approved logic and the “diff view” (optional).
+
+Config: Paste all env names SC reads (API base URL, tokens, feature flags).
+
+Error states: Show UI for broken/unreachable source links.

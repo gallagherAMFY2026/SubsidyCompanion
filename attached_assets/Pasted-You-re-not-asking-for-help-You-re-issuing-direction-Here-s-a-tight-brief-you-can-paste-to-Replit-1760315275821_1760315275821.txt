@@ -1,0 +1,159 @@
+You’re not asking for “help.” You’re issuing direction. Here’s a tight brief you can paste to Replit that clears the fog, sets the scaffolding to your structure, and avoids any legacy bleed-through.
+
+Directive to Replit — Clean Foundation, No Legacy Drift
+
+Decision: Build a clean, canonical data foundation. No reuse of legacy ingestion, scraping, or ad-hoc fields. Use only the new spreadsheets we supply.
+
+Production posture:
+
+Keep the current ~187 records live for users as-is until I explicitly approve the replacement.
+
+Stand up a clean, parallel environment (separate DB schema or database) for the canonical rebuild.
+
+Do not merge or auto-“enrich” legacy content into the canonical set.
+
+Source of truth:
+
+We will supply one spreadsheet per territory, starting with Canada, using the exact structure below.
+
+Canada template spreadsheet (attach this file to your project):
+Subsidy_Companion_Canada_Template.xlsx
+Download
+
+All future data loads must conform to this template. If a field is unknown, leave it blank—do not invent.
+
+What to do now (Replit):
+
+Create a new schema: canonical (Postgres) and do all new work there.
+
+Implement the canonical tables below (no extra columns).
+
+Build one deterministic importer that reads the template (Canada), rejects malformed rows, and writes only valid rows.
+
+Build a read-only API that exposes only canonical data behind a feature flag (off by default).
+
+Disable/ignore any legacy scrapers, embeddings, or heuristics for canonical data. No mixing sources.
+
+Canonical schema (territory spreadsheet → Postgres)
+Table: canonical.programs
+
+Core farmer-facing shape; filters and UI work off this.
+
+create schema if not exists canonical;
+
+create table if not exists canonical.programs (
+  program_id              text primary key,                  -- stable: e.g., CA-BC-agriinvest
+  title                   text not null,
+  country                 text not null,                     -- e.g., CA
+  jurisdiction_level      text not null,                     -- Federal | Provincial | Territorial | State | Local
+  province_or_territory   text not null,                     -- e.g., BC, AB, Federal
+  status                  text not null default 'unknown',   -- open | rolling | deadline | closed | unknown
+  last_reviewed_utc       timestamptz,
+  reviewed_by             text,
+  evidence_url            text,                              -- canonical source page
+  program_summary         text,
+  eligibility_summary     text,
+  eligible_farm_types     text,                              -- “cow-calf; dairy; mixed”
+  eligible_commodities    text,                              -- “beef; dairy; maple; horticulture”
+  eligible_regions        text,                              -- “provincial; county list; remote”
+  special_categories      text,                              -- “youth; indigenous; small; new entrant”
+  funding_type            text,                              -- grant | rebate | loan | tax_credit | cost_share | voucher | other
+  max_amount              text,                              -- keep as text to preserve real-world phrasing, e.g., “Up to CAD 250,000”
+  cost_share_pct          numeric,                           -- null if not applicable
+  reimbursement_pct       numeric,
+  eligible_expense_categories text,                          -- “equipment; infrastructure; training; software”
+  is_rolling              boolean,
+  open_date               date,
+  close_date              date,
+  application_process_summary text,
+  required_documents_summary  text,
+  official_link           text,
+  contact_email           text,
+  contact_phone           text,
+  tags                    text,                              -- “water; fencing; pasture; emissions”
+  notes_admin             text
+);
+
+-- Optional full-text
+alter table canonical.programs
+  add column if not exists search_text tsvector;
+create index if not exists programs_search_idx
+  on canonical.programs using gin(search_text);
+
+Table: canonical.docs
+
+First-class docs: PDFs or official webpages (for portals or programs).
+
+create table if not exists canonical.docs (
+  program_id            text references canonical.programs(program_id) on delete cascade,
+  doc_id                text primary key,             -- e.g., hash(program_id + display_name + url/file)
+  doc_type              text not null,                -- guideline | application_form | faq | checklist | terms | portal | webpage | quick_guide | reference | other
+  display_name          text not null,
+  file_name             text,                         -- stored file name if we host it
+  source_url            text,                         -- canonical URL (required if no file)
+  language              text,                         -- en | fr | ...
+  effective_date        date,
+  sha256                text,                         -- computed for hosted files
+  province_or_territory text not null,
+  country               text not null,
+  notes                 text
+);
+
+create index if not exists docs_prog_idx on canonical.docs(program_id);
+create index if not exists docs_geo_idx  on canonical.docs(country, province_or_territory);
+
+Importer requirements (non-negotiable)
+
+Accept exactly the two sheets in the template:
+
+Programs: one row per program. program_id MUST be unique and stable.
+
+Docs: one row per file/webpage. If file_name is blank, source_url is required.
+
+Validate before write:
+
+Hard fails if title, country, jurisdiction_level, province_or_territory, or official_link are missing in Programs.
+
+Hard fails if a Docs row has neither file_name nor source_url.
+
+Set search_text = to_tsvector('english', coalesce(title,'') || ' ' || coalesce(program_summary,'') || ' ' || coalesce(tags,'')).
+
+Compute sha256 on uploaded files and store in canonical.docs.sha256.
+
+No “smart guesses.” If a value is unknown, leave it blank; we will fill it.
+
+API & feature-flag
+
+Build /canonical/programs and /canonical/docs endpoints that only read from canonical.*.
+
+Add env flag USE_CANONICAL=0. When USE_CANONICAL=1, routes switch to the canonical endpoints.
+
+Do not co-mingle legacy data with canonical results while the flag is off.
+
+Purge & isolation rules
+
+Do not gradually migrate fields or re-map legacy columns into canonical tables. Canonical is clean ingest only.
+
+Do not auto-carry forward legacy attributes; only what exists in the canonical spreadsheet/doc manifest.
+
+Disable any legacy auto-scrape, enrichment, or fallback pipelines for canonical paths.
+
+Branch/Schema isolation: house canonical in its own DB schema and its own ingestion scripts to prevent cross-contamination.
+
+Acceptance criteria for Canada handoff
+
+Import runs clean with Canada spreadsheet; produces zero errors.
+
+/canonical/programs returns only Canada programs from the template.
+
+/canonical/docs returns the expected PDF/webpage rows with valid links and hashes for hosted files.
+
+Feature flag off: customers still see the current ~187 programs (legacy).
+
+Feature flag on (internal test): customers see only canonical Canada (no legacy bleed-through).
+
+No codepaths read both legacy and canonical in the same request.
+
+Answering your question directly
+
+Yes—tell Replit to scaffold to the exact format above and to wipe legacy behavior for the canonical path. We’ll ship a territory at a time (Canada first) in that template. When it’s clean, you flip the flag and promote. Until then, nothing from V2 touches production.

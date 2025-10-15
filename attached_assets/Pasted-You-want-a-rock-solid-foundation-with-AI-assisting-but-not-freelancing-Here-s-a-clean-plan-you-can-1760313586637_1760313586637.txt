@@ -1,0 +1,74 @@
+You want a rock-solid foundation, with AI assisting but not freelancing. Here’s a clean plan you can hand to Replit plus the first asset (a canonical Canada spreadsheet template) so we start right.
+
+1) Note to Replit (paste this verbatim)
+
+Subject: Temporary revert + staged rebuild of data foundation
+
+Team—quick alignment on data hygiene and rollout:
+
+Please revert the app to the last known-good production dataset (the 180-ish Canadian programs already in Postgres). Do not overwrite or drop these rows.
+
+Hold all “V2” content in staging (do not surface to users) until we provide a clean, validated import per territory. If you’re using a feature flag, set FEATURE_V2=0. If you’re using schemas, route all reads to public.* only.
+
+We will deliver one territory at a time, starting with Canada, in a single canonical spreadsheet with a stable schema and a companion docs manifest (web/PDF).
+
+Replit’s job:
+
+Import the canonical sheet into programs + program_attributes.
+
+Import the docs manifest (PDFs/webpages) into docs (or resources) with integrity fields (sha256 for files, canonical source_url for webpages).
+
+Keep the existing React UI and Express API; only the data ingestion changes.
+
+Outcome: deterministic filters, stable links, clear provenance. Bot and UI will read the same source of truth.
+
+We’ll confirm when Canada is clean and ready to promote; then move to the US. Until then, please keep V2 out of production.
+
+2) What we’re doing (farmer-first, same shape everywhere)
+
+We’re creating one spreadsheet per territory with a repeatable, farmer-friendly schema:
+
+Program Summary – plain-language purpose, target recipients, outcomes.
+
+Eligibility Criteria – farm type, scale, commodity, geography, org status, special categories.
+
+Required Documentation – identity/registration, land tenure, financials, project plan, permits/co-funding.
+
+Application Process & Deadlines – steps, open/close or rolling, contacts/assistance.
+
+Funding Details – amount, categories covered (equipment/infrastructure/training/etc.), match or reimbursement %, reporting obligations.
+
+Official Application Link – the one canonical URL.
+
+Documents – PDFs or official webpages, stored and referenced deterministically.
+
+3) Your clean spreadsheet (download)
+
+This is the canonical Canada template with two sheets: Programs and Docs. Use this as the basis for the “rock solid” foundation.
+
+Download: Subsidy_Companion_Canada_Template.xlsx
+
+Programs has stable columns (identity, geography, summary, eligibility, funding, deadlines, process, required docs, links, contacts, tags, provenance).
+Docs links PDFs/webpages to programs or provinces (for portals) with doc_type, display_name, source_url/file_name, language, and optional sha256 (we’ll compute hashes when we ingest files).
+
+4) Workflow we’ll follow (tight and boring)
+
+You upload the original structured sheet(s) (e.g., “Subsidies and Cut-Offs/CA”) and any province tabs you want us to normalize.
+
+I map and clean: pull every usable program into the Programs sheet (one row per program), put non-program links into Docs as webpage/portal.
+
+We fill gaps: if any required field is missing, I flag it; you confirm or provide the link/amount/date.
+
+We ingest into Replit’s existing Postgres tables (programs, program_attributes, docs)—no rewrite.
+
+We promote Canada when the set is verified; then repeat for the US.
+
+5) Guardrails that keep us safe
+
+Revert + freeze prod: keep the current 180 in place for users.
+
+Stage V2: all new cleaning and imports live in staging until you give the green light.
+
+Deterministic docs: every “View PDF” or “View on Web” is traceable to docs with source_url or sha256.
+
+Verification fields: status, last_reviewed_utc, reviewed_by, evidence_url so we can prove “active” vs “archived.”
